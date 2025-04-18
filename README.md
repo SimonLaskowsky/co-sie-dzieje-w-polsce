@@ -18,9 +18,5 @@ Co się dzieje w Polsce is a web application that aggregates legislative acts fr
 - Scheduling: APScheduler (hourly API polling)
 - Hosting: Vercel (frontend), Fly.io (backend, free tier)
 
-## 📧 Contact
-
-For questions, reach out via GitHub Issues.
-
 ##
 Built with ❤️ by the Co się dzieje w Polsce team.
