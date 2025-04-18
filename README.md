@@ -1,24 +1,36 @@
-# ⬜🟥 Co się dzieje w Polsce
-Co sie dzieje w Polsce is a web application that aggregates legislative acts from external APIs, stores them in a database, and displays them as beautifully tiled summaries. Powered by Next.js for the frontend and Python (FastAPI) for the backend, it leverages OpenAI to generate concise, human-readable summaries of legal documents.
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## 🔧 Features
+## Getting Started
 
-- Centralized Storage: Collects and organizes legislative acts in a single database.  
-- AI-Powered Summaries: Uses OpenAI to create clear, concise descriptions of each act.  
-- Tiled Display: Presents laws as visually appealing tiles using Next.js.  
-- Hourly Updates: Automatically fetches new or updated acts via a scheduled backend process.  
-- Static Site Generation (SSG): Ensures fast, cost-efficient hosting with Next.js and Vercel.  
+First, run the development server:
 
-## 🧑‍💻 Tech Stack
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-- Frontend: Next.js (SSG with getStaticProps, ISR for hourly updates)  
-- Backend: Python (FastAPI), SQLite (lightweight database)  
-- AI: OpenAI SDK (GPT-4o-mini for cost-effective summarization)  
-- Scheduling: APScheduler (hourly API polling)  
-- Hosting: Vercel (frontend), Fly.io (backend, free tier)  
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 📧 Contact
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-For questions, reach out via GitHub Issues.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Built with ❤️ by the Co się dzieje w Polsce team.
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
