@@ -23,5 +23,4 @@ Co się dzieje w Polsce is a web application that aggregates legislative acts fr
 For questions, reach out via GitHub Issues.
 
 ##
-
 Built with ❤️ by the Co się dzieje w Polsce team.
