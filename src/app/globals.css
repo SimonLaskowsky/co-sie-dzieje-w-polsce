@@ -40,6 +40,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
 }
 
 :root {
@@ -116,4 +117,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+}
+
+[data-state="open"][data-slot="dialog-overlay"] {
+  @apply backdrop-blur-lg
+}
+
+[data-slot="dialog-content"] button{
+  @apply focus:!ring-0 cursor-pointer;
 }

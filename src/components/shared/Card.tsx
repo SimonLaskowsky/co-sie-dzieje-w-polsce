@@ -4,7 +4,7 @@ type InfoTileProps = {
   title: string;
   description: string;
   isImportant?: boolean;
-  onActionClick?: () => void;
+  onClick: () => void;
   categories?: string[];
   governmentPercentage: number;
 };
@@ -13,6 +13,7 @@ const Card = ({
   title,
   description,
   isImportant = false,
+  onClick,
   categories = [],
   governmentPercentage,
 }: InfoTileProps) => {
@@ -22,6 +23,7 @@ const Card = ({
 
   return (
     <div
+      onClick={onClick}
       className={`bg-neutral-700/10 dark:bg-neutral-800/40 max-w-60 border-2 ${
         isImportant ? "border-red-500/50" : "border-neutral-200 dark:border-neutral-700"
       } flex flex-col gap-3 p-5 rounded-3xl shadow-md cursor-pointer hover:ring-2 
