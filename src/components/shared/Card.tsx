@@ -33,7 +33,7 @@ const Card = ({
           {categories.map((category, index) => (
             <span
               key={index}
-              className="px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 border-2 dark:border-neutral-700 border-neutral-300 rounded-full"
+              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full"
             >
               {category}
             </span>
