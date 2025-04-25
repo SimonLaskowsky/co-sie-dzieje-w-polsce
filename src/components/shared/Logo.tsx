@@ -2,7 +2,7 @@ import React from 'react'
 
 const Logo = () => {
   return (
-    <div className='flex items-center absolute top-5 left-1/2 -translate-x-1/2 z-10 gap-1 mt-[1px]'>
+    <div className='flex items-center absolute top-5 left-1/2 -translate-x-1/2 z-10 gap-1'>
       <svg xmlns="http://www.w3.org/2000/svg" 
         viewBox="0 0 60 60" 
         className='dark:fill-neutral-200 fill-neutral-900' 
