@@ -132,5 +132,5 @@
 }
 
 [data-slot="dialog-content"]{
-  @apply p-8 border-neutral-700 border-2;
+  @apply p-8 border-neutral-200 dark:border-neutral-700 border-2;
 }
