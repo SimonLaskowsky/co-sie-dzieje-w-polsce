@@ -11,54 +11,66 @@ const cards = [
       "text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sh",
     isImportant: true,
     categories: ["Tech", "News", "Update"],
+    governmentPercentage: 30,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact that a reader will be distract",
     categories: ["News", "Update"],
+    governmentPercentage: 50,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact that a reader will be distract",
+    governmentPercentage: 60,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "Zyski netto po opodatkowaniu. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    governmentPercentage: 10,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact",
     categories: ["Tech", "News"],
+    governmentPercentage: 80,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description:
       "text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sh",
     categories: ["Tech", "News", "Update", "Important"],
+    governmentPercentage: 70,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact",
     isImportant: true,
+    governmentPercentage: 30,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact that a reader will be distract",
     categories: ["Tech", "News", "Update"],
+    governmentPercentage: 0,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact that a reader will be distract",
+    governmentPercentage: 50,
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description: "It is a long established fact",
+    governmentPercentage: 90,
+
   },
   {
     title: "Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)",
     description:
       "text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sh",
     categories: ["Tech", "News", "Update"],
+    governmentPercentage: 80,
   },
 ];
 
@@ -96,6 +108,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
           description={card.description}
           isImportant={card.isImportant}
           categories={card.categories}
+          governmentPercentage={card.governmentPercentage}
         />
       ))}
     </Masonry>
