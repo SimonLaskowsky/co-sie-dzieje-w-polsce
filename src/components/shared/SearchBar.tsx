@@ -14,8 +14,8 @@ const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
         before:opacity-50 before:blur-3xl before:rounded-full before:w-160 before:h-120 before:rotate-45 before:-z-1"
     >
       <div
-        className="bg-neutral-800/40 border-neutral-700 focus-within:border-transparent border-2 rounded-3xl p-5 py-0 w-full focus:outline-none
-            focus-within:ring-2 focus-within:ring-neutral-100 transition-all duration-300
+        className="dark:bg-neutral-800/40 bg-neutral-700/10 border-neutral-200 dark:border-neutral-700 focus-within:border-transparent border-2 rounded-3xl p-5 py-0 w-full focus:outline-none
+            focus-within:ring-2 dark:focus-within:ring-neutral-100 focus-within:ring-neutral-300 transition-all duration-300
             shadow-md flex items-center"
       >
         <input
@@ -23,7 +23,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Szukaj..."
-          className="hover:outline-none focus:outline-none bg-transparent w-full pr-5 py-5 text-neutral-100 placeholder:text-neutral-300"
+          className="hover:outline-none focus:outline-none bg-transparent w-full pr-5 py-5 dark:text-neutral-100 text-neutral-900 dark:placeholder:text-neutral-300"
           aria-label="Wyszukaj"
         />
         <svg
@@ -36,7 +36,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-neutral-100"
+          className="dark:text-neutral-100 text-neutral-900"
         >
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
