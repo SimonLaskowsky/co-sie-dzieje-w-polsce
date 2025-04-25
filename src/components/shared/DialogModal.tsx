@@ -79,10 +79,8 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         <div className="flex flex-col space-y-1.5">
             <div className="font-semibold tracking-tight text-xl">Wykres szczegółowy</div>
             <div className="text-sm text-muted-foreground">Procentowy szczegółowy wykres partii głosujących za ustawą.</div>
-            <div className='flex gap-5 w-full'>
-                <div>
-
-                    <ChartContainer config={chartConfig} className='w-max'>
+            <div className='flex gap-5 w-full h-auto max-h-80'>
+                    <ChartContainer config={chartConfig} className='w-1/2'>
                         <LineChart
                         accessibilityLayer
                         data={chartData}
@@ -112,10 +110,9 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                         />
                         </LineChart>
                     </ChartContainer>
-                </div>
-                <div>
+         
 
-                    <ChartContainer config={chartConfig} className="w-max mx-auto aspect-square">
+                    <ChartContainer config={chartConfig} className="w-1/2 mx-auto aspect-square">
                     <PieChart>
                         <ChartTooltip
                         cursor={false}
@@ -160,7 +157,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                         </Pie>
                     </PieChart>
                     </ChartContainer>
-                </div>
+
             </div>
         </div>
 

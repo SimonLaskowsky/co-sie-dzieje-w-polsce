@@ -123,6 +123,14 @@
   @apply backdrop-blur-lg
 }
 
+[data-slot="dialog-content"]::-webkit-scrollbar{
+  @apply bg-transparent hidden;
+}
+
 [data-slot="dialog-content"] button{
   @apply focus:!ring-0 cursor-pointer;
+}
+
+[data-slot="dialog-content"]{
+  @apply p-8 border-neutral-700 border-2;
 }
