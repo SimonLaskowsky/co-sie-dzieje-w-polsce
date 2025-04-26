@@ -5,28 +5,28 @@ import Logo from '@/components/shared/Logo';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
-    const [isDarkMode, setIsDarkMode] = useState(true);
-    const [isOpen, setIsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
-    const toggleDarkMode = () => {
-        setIsDarkMode(!isDarkMode);
-    };
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
-    useEffect(() => {
-        if (isDarkMode) {
-            document.body.classList.add('dark');
-        } else {
-            document.body.classList.remove('dark');
-        }
-    }, [isDarkMode]);
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
-    return (
-        <div>
-            <Menu isOpen={isOpen} toggleMenu={() => setIsOpen(!isOpen)} />
-            <Logo />
-            <DarkMode isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-        </div>
-    );
+  return (
+    <div>
+      <Menu isOpen={isOpen} toggleMenu={() => setIsOpen(!isOpen)} />
+      <Logo />
+      <DarkMode isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+    </div>
+  );
 };
 
 export default Navbar;
