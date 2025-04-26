@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis, Label, Pie, PieChart } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis, Label, Pie, PieChart, Bar, BarChart } from 'recharts';
 
 type DialogModalProps = {
   isOpen: boolean;
@@ -58,7 +58,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
           <DialogDescription>
                 
             </DialogDescription>
-          <DialogDescription className='text-base dark:text-neutral-100 max-w-4/5'>{card.description}</DialogDescription>
+          <DialogDescription className='text-base font-light dark:text-neutral-100 max-w-4/5'>{card.description}</DialogDescription>
         </DialogHeader>
         
         {card.categories && card.categories.length > 0 && (
@@ -81,7 +81,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
             <div className="text-sm text-muted-foreground">Procentowy szczegółowy wykres partii głosujących za ustawą.</div>
             <div className='flex gap-5 w-full h-auto max-h-80'>
                     <ChartContainer config={chartConfig} className='w-1/2'>
-                        <LineChart
+                        <BarChart
                         accessibilityLayer
                         data={chartData}
                         margin={{ top: 20, right: 12, left: 12, bottom: 5 }}
@@ -94,21 +94,19 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                             tickMargin={8}
                         />
                         <ChartTooltip
-                            cursor={{ stroke: 'var(--color-percentage)', strokeWidth: 1, opacity: 0.5 }}
+                            cursor={false}
                             content={<ChartTooltipContent indicator="dot" />}
                         />
-                        <Line
+                        <Bar
                             dataKey="percentage"
                             type="natural"
                             fill="var(--color-percentage)"
                             fillOpacity={1}
                             stroke="var(--color-percentage)"
                             strokeWidth={2}
-                            activeDot={{
-                                r: 6,
-                            }}
+                            radius={8}
                         />
-                        </LineChart>
+                        </BarChart>
                     </ChartContainer>
          
 
