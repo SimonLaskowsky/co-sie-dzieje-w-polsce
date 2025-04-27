@@ -14,8 +14,6 @@ import {
 } from '@/components/ui/chart';
 import {
   CartesianGrid,
-  Line,
-  LineChart,
   XAxis,
   Label,
   Pie,
@@ -31,15 +29,25 @@ type DialogModalProps = {
     title: string;
     description: string;
     categories?: string[];
-    governmentCharts: { party: string; percentage: number }[];
-    governmentPercentage: number;
+    votesYes: {
+      partyVotes: { party: string; percentage: number }[];
+      governmentPercentage: number;
+    };
+    votesNo: {
+      partyVotes: { party: string; percentage: number }[];
+      governmentPercentage: number;
+    };
   } | null;
 };
 
 const chartConfig = {
-  percentage: {
-    label: 'Procent głosów',
+  percentageNo: {
+    label: 'Procent głosów przeciw',
     color: '#E6736B',
+  },
+  percentageYes: {
+    label: 'Procent głosów za',
+    color: '#f1f1f1',
   },
   government: {
     label: 'Rządzący',
@@ -54,29 +62,29 @@ const chartConfig = {
 const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
   if (!card) return null;
 
-  const chartData = card.partyVotes.map(vote => ({
-    party: vote.party,
-    percentage: vote.percentage,
-  }));
+  // Poprawione dane dla wykresów słupkowych
+  const chartDataYes = card.votesYes.partyVotes;
+  const chartDataNo = card.votesNo.partyVotes;
 
   const pieChartData = [
     {
       name: 'Rządzący',
-      value: card.governmentPercentage,
+      value: card.votesYes.governmentPercentage,
       fill: chartConfig.government.color,
     },
     {
       name: 'Opozycja',
-      value: 100 - card.governmentPercentage,
+      value: 100 - card.votesYes.governmentPercentage,
       fill: chartConfig.opposition.color,
     },
   ];
 
+  console.log('heej', card.votesYes);
+  console.log('hej', chartDataYes);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="overflow-auto w-4/5 h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6">
-        {' '}
-        {/* Te style napisują shadcn temu tak dziwnie */}
         <DialogHeader className="h-fit">
           <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter">
             {card.title}
@@ -89,7 +97,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         {card.categories && card.categories.length > 0 && (
           <div className="flex flex-col space-y-1.5">
             <div className="font-semibold tracking-tight text-xl">
-              Kategorie uchwały
+              Uchwała dotyczy
             </div>
             <div className="flex flex-wrap gap-1.5 mt-1 h-fit">
               {card.categories.map((category: string, index: number) => (
@@ -105,16 +113,17 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         )}
         <div className="flex flex-col space-y-1.5">
           <div className="font-semibold tracking-tight text-xl">
-            Wykres szczegółowy
+            Wykres głosów za i przeciw
           </div>
           <div className="text-sm text-muted-foreground">
-            Procentowy szczegółowy wykres partii głosujących za ustawą.
+            Procentowy szczegółowy wykres partii głosujących za ustawą oraz
+            przeciw ustawie.
           </div>
           <div className="flex gap-5 w-full h-auto max-h-80">
             <ChartContainer config={chartConfig} className="w-1/2">
               <BarChart
                 accessibilityLayer
-                data={chartData}
+                data={chartDataYes}
                 margin={{
                   top: 20,
                   right: 12,
@@ -136,18 +145,55 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 <Bar
                   dataKey="percentage"
                   type="natural"
-                  fill="var(--color-percentage)"
+                  fill={chartConfig.percentageYes.color}
                   fillOpacity={1}
-                  stroke="var(--color-percentage)"
-                  strokeWidth={2}
                   radius={8}
                 />
               </BarChart>
             </ChartContainer>
-
+            <ChartContainer config={chartConfig} className="w-1/2">
+              <BarChart
+                accessibilityLayer
+                data={chartDataNo}
+                margin={{
+                  top: 20,
+                  right: 12,
+                  left: 12,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="party"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="dot" />}
+                />
+                <Bar
+                  dataKey="percentage"
+                  type="natural"
+                  fill={chartConfig.percentageNo.color}
+                  fillOpacity={1}
+                  radius={8}
+                />
+              </BarChart>
+            </ChartContainer>
+          </div>
+          <div className="font-semibold tracking-tight text-xl">
+            Rozkład głosów za
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Procentowy szczegółowy rozkład głosów za ustawą na partię rządzącą
+            oraz opozycję.
+          </div>
+          <div className="flex gap-5 w-full h-auto max-h-80">
             <ChartContainer
               config={chartConfig}
-              className="w-1/2 mx-auto aspect-square"
+              className="w-1/2 aspect-square"
             >
               <PieChart>
                 <ChartTooltip
@@ -176,7 +222,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                               y={viewBox.cy}
                               className="fill-foreground text-3xl font-bold"
                             >
-                              {card.governmentPercentage}%
+                              {card.votesYes.governmentPercentage}%
                             </tspan>
                             <tspan
                               x={viewBox.cx}
