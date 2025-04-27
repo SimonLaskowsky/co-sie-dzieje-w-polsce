@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 type SearchBarProps = {
   searchQuery: string;
@@ -6,6 +6,18 @@ type SearchBarProps = {
 };
 
 const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
+  useEffect(() => {
+    if (searchQuery === '2137') {
+      document.body.style.backgroundImage = 'url("/papaj.jpg")';
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+    } else {
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundPosition = '';
+    }
+  }, [searchQuery]);
+
   return (
     <div
       className="w-[300px] md:w-full max-w-[600px] relative before:absolute before:bg-neutral-100
