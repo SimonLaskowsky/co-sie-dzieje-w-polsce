@@ -33,6 +33,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -59,6 +60,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -84,6 +86,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -110,6 +113,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -136,6 +140,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -163,6 +168,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -189,6 +195,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -215,6 +222,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -240,6 +248,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -265,6 +274,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
     title:
@@ -292,6 +302,7 @@ const cards = [
         { party: 'Konfederacja', percentage: 80 },
       ],
     },
+    url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
 ];
 
@@ -348,13 +359,11 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
           />
         ))}
       </Masonry>
-      {selectedCard && (
-        <DialogModal
-          isOpen={!!selectedCard}
-          onClose={closeModal}
-          card={selectedCard}
-        />
-      )}
+      <DialogModal
+        isOpen={selectedCard !== null}
+        onClose={closeModal}
+        card={selectedCard}
+      />
     </>
   );
 };
