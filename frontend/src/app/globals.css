@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -109,13 +109,27 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  @apply bg-neutral-950 text-neutral-50;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+}
+
+[data-state='open'][data-slot='dialog-overlay'] {
+  @apply backdrop-blur-lg;
+}
+
+[data-slot='dialog-content']::-webkit-scrollbar {
+  @apply bg-transparent hidden;
+}
+
+[data-slot='dialog-content'] button {
+  @apply focus:!ring-0 cursor-pointer;
+}
+
+[data-slot='dialog-content'] {
+  @apply p-8 border-neutral-200 dark:border-neutral-700 border-2;
 }
