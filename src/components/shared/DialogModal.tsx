@@ -102,7 +102,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                   {card.categories.map((category: string, index: number) => (
                     <span
                       key={index}
-                      className="dark:bg-neutral-700/50 h-fit bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full"
+                      className="dark:bg-neutral-700/50 h-fit bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full cursor-default"
                     >
                       {category}
                     </span>

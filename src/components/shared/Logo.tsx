@@ -9,7 +9,7 @@ const Logo = () => {
       'noopener,noreferrer'
     );
     window.open(
-      'https://www.linkedin.com/in/kolega-profil/',
+      'https://github.com/Rurek5000',
       '_blank',
       'noopener,noreferrer'
     );

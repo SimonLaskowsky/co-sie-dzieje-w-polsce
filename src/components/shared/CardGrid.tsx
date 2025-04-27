@@ -7,6 +7,7 @@ import DialogModal from '@/components/shared/DialogModal';
 
 const cards = [
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description:
@@ -36,6 +37,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact that a reader will be distract',
@@ -63,6 +65,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact that a reader will be distract',
@@ -89,6 +92,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description:
@@ -116,6 +120,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact',
@@ -143,6 +148,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description:
@@ -171,6 +177,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact',
@@ -198,6 +205,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact that a reader will be distract',
@@ -225,6 +233,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact that a reader will be distract',
@@ -251,6 +260,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact',
@@ -277,6 +287,7 @@ const cards = [
     url: 'https://www.sejm.gov.pl/Sejm9.nsf/PrzebiegProc.xsp?nr=1',
   },
   {
+    date: '2025-01-02',
     title:
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description:

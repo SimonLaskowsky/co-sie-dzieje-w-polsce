@@ -23,7 +23,7 @@ const Menu = ({ isOpen, toggleMenu }: MenuProps) => {
           x2={isOpen ? '350' : '400'}
           y2="190"
           stroke="currentColor"
-          strokeWidth="40"
+          strokeWidth="30"
           strokeLinecap="round"
           style={{
             transform: isOpen ? 'translate(0px, 30px) rotate(45deg)' : 'none',
@@ -37,7 +37,7 @@ const Menu = ({ isOpen, toggleMenu }: MenuProps) => {
           x2={isOpen ? '350' : '350'}
           y2="330"
           stroke="currentColor"
-          strokeWidth="40"
+          strokeWidth="30"
           strokeLinecap="round"
           style={{
             transform: isOpen ? 'translate(0px, -70px) rotate(-45deg)' : 'none',

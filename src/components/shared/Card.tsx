@@ -29,7 +29,7 @@ const Card = ({
           ? 'border-red-500/70'
           : 'border-neutral-200 dark:border-neutral-700'
       } flex flex-col gap-3 p-5 rounded-3xl shadow-md cursor-pointer hover:ring-2 
-      dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:border-transparent transition-all duration-300 h-fit`}
+      dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:!border-transparent transition-all duration-300 h-fit`}
     >
       <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3">
         {title}
