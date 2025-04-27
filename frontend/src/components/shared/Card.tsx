@@ -3,6 +3,7 @@
 type InfoTileProps = {
   title: string;
   description: string;
+  date: string;
   isImportant?: boolean;
   onClick: () => void;
   categories?: string[];
@@ -12,6 +13,7 @@ type InfoTileProps = {
 const Card = ({
   title,
   description,
+  date,
   isImportant = false,
   onClick,
   categories = [],
@@ -20,6 +22,12 @@ const Card = ({
   const totalDots = 14;
   const governmentDots = Math.round((governmentPercentage / 100) * totalDots);
   const oppositionDots = totalDots - governmentDots;
+
+  const formattedDate = new Date(date).toLocaleDateString('pl-PL', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   return (
     <div
@@ -31,7 +39,10 @@ const Card = ({
       } flex flex-col gap-3 p-5 rounded-3xl shadow-md cursor-pointer hover:ring-2 
       dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:!border-transparent transition-all duration-300 h-fit`}
     >
-      <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3">
+      <div className="dark:text-neutral-600 text-neutral-500 text-xs">
+        {formattedDate}
+      </div>
+      <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3 -mt-2.5">
         {title}
       </h3>
       {categories.length > 0 && (

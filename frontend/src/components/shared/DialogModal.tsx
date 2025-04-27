@@ -28,6 +28,7 @@ type DialogModalProps = {
   card: {
     title: string;
     description: string;
+    date: string;
     isImportant?: boolean;
     categories?: string[];
     votesYes: {
@@ -80,6 +81,14 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       ]
     : [];
 
+    const formattedDate = card && card.date
+      ? new Date(card.date).toLocaleDateString('pl-PL', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      : 'Brak daty';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`overflow-auto w-4/5 h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
@@ -99,24 +108,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 {card.description}
               </DialogDescription>
             </DialogHeader>
-            {card.categories && card.categories.length > 0 && (
-              <div className="flex flex-col space-y-1.5">
-                <div className="font-semibold tracking-tight text-xl">
-                  Uchwała dotyczy
-                </div>
-                <div className="flex flex-wrap gap-1.5 mt-1 h-fit">
-                  {card.categories.map((category: string, index: number) => (
-                    <span
-                      key={index}
-                      className="dark:bg-neutral-700/50 h-fit bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full cursor-default"
-                    >
-                      {category}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-col">
               <div className="font-semibold tracking-tight text-xl">
                 Odnośnik do pełnej treści uchwały
               </div>
@@ -134,6 +126,32 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               >
                 {card.title}
               </a>
+            </div>
+            {card.categories && card.categories.length > 0 && (
+              <div className="flex flex-col space-y-1.5">
+                <div className="font-semibold tracking-tight text-xl">
+                  Uchwała dotyczy
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-1 h-fit">
+                  {card.categories.map((category: string, index: number) => (
+                    <span
+                      key={index}
+                      className="dark:bg-neutral-700/50 h-fit bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full cursor-default"
+                    >
+                      {category}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="flex flex-col">
+              <div className="font-semibold tracking-tight text-xl">
+                Data ogłoszenia uchwały
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
+              <span className="text-sm text-muted-foreground">
+                {formattedDate}
+              </span>
             </div>
             <div className="flex flex-col space-y-1.5">
               <div className="font-semibold tracking-tight text-xl">

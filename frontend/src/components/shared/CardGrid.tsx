@@ -52,6 +52,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
             key={index}
             title={card.title}
             description={card.description}
+            date={card.date}
             isImportant={card.isImportant}
             categories={card.categories}
             governmentPercentage={card.votesYes.governmentPercentage}
