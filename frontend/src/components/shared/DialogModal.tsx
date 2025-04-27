@@ -28,6 +28,7 @@ type DialogModalProps = {
   card: {
     title: string;
     description: string;
+    isImportant?: boolean;
     categories?: string[];
     votesYes: {
       partyVotes: { party: string; percentage: number }[];
@@ -81,7 +82,12 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="overflow-auto w-4/5 h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6">
+      <DialogContent className={`overflow-auto w-4/5 h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
+        ${
+          card?.isImportant
+            ? '!border-red-500/70'
+            : 'border-neutral-200 dark:border-neutral-700'
+        }`}>
         {card && (
           <>
             <DialogHeader className="h-fit">
