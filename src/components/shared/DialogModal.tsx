@@ -43,7 +43,7 @@ type DialogModalProps = {
 const chartConfig = {
   percentageNo: {
     label: 'Procent głosów przeciw',
-    color: '#E6736B',
+    color: '#f96d6e',
   },
   percentageYes: {
     label: 'Procent głosów za',
@@ -55,7 +55,7 @@ const chartConfig = {
   },
   opposition: {
     label: 'Opozycja',
-    color: '#E6736B',
+    color: '#f96d6e',
   },
 } satisfies ChartConfig;
 
@@ -79,9 +79,6 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     },
   ];
 
-  console.log('heej', card.votesYes);
-  console.log('hej', chartDataYes);
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="overflow-auto w-4/5 h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6">
@@ -90,7 +87,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
             {card.title}
           </DialogTitle>
           <DialogDescription></DialogDescription>
-          <DialogDescription className="text-base font-light dark:text-neutral-100 max-w-4/5">
+          <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5">
             {card.description}
           </DialogDescription>
         </DialogHeader>
@@ -116,11 +113,11 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
             Wykres głosów za i przeciw
           </div>
           <div className="text-sm text-muted-foreground">
-            Procentowy szczegółowy wykres partii głosujących za ustawą oraz
-            przeciw ustawie.
+            Wykresy słupkowe przedstawiają procentowy rozkład głosów za oraz
+            przeciw.
           </div>
-          <div className="flex gap-5 w-full h-auto max-h-80">
-            <ChartContainer config={chartConfig} className="w-1/2">
+          <div className="flex flex-col md:flex-row gap-5 w-full h-auto max-h-80">
+            <ChartContainer config={chartConfig} className="md:w-1/2">
               <BarChart
                 accessibilityLayer
                 data={chartDataYes}
@@ -151,7 +148,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 />
               </BarChart>
             </ChartContainer>
-            <ChartContainer config={chartConfig} className="w-1/2">
+            <ChartContainer config={chartConfig} className="md:w-1/2">
               <BarChart
                 accessibilityLayer
                 data={chartDataNo}
@@ -187,13 +184,13 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
             Rozkład głosów za
           </div>
           <div className="text-sm text-muted-foreground">
-            Procentowy szczegółowy rozkład głosów za ustawą na partię rządzącą
-            oraz opozycję.
+            Wykres kołowy przedstawia procentowy rozkład głosów za wśród
+            rządzących oraz opozycji.
           </div>
           <div className="flex gap-5 w-full h-auto max-h-80">
             <ChartContainer
               config={chartConfig}
-              className="w-1/2 aspect-square"
+              className="md:w-1/2 aspect-square"
             >
               <PieChart>
                 <ChartTooltip

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type SearchBarProps = {
   searchQuery: string;
@@ -8,7 +8,7 @@ type SearchBarProps = {
 const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
   return (
     <div
-      className="w-full max-w-[600px] relative before:absolute before:bg-neutral-100
+      className="w-[300px] md:w-full max-w-[600px] relative before:absolute before:bg-neutral-100
         before:flex before:top-1/2 before:-translate-y-1/2
         before:left-1/2 before:-translate-x-1/2 before:bg-gradient-to-r before:from-white before:to-red-500 
         before:opacity-50 before:blur-3xl before:rounded-full before:w-160 before:h-120 before:rotate-45 before:-z-1"
@@ -21,7 +21,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
           placeholder="Szukaj..."
           className="hover:outline-none focus:outline-none bg-transparent w-full pr-5 py-5 dark:text-neutral-100 text-neutral-900 dark:placeholder:text-neutral-300"
           aria-label="Wyszukaj"

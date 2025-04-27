@@ -26,7 +26,7 @@ const Card = ({
       onClick={onClick}
       className={`bg-neutral-700/10 dark:bg-neutral-800/40 max-w-60 border-2 ${
         isImportant
-          ? 'border-red-500/50'
+          ? 'border-red-500/70'
           : 'border-neutral-200 dark:border-neutral-700'
       } flex flex-col gap-3 p-5 rounded-3xl shadow-md cursor-pointer hover:ring-2 
       dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:border-transparent transition-all duration-300 h-fit`}
@@ -58,7 +58,7 @@ const Card = ({
           {[...Array(oppositionDots)].map((_, index) => (
             <div
               key={`opp-${index}`}
-              className="w-2 h-2 bg-red-500/50 rounded-full"
+              className="w-2 h-2 bg-red-500/70 rounded-full"
             ></div>
           ))}
         </div>

@@ -14,7 +14,7 @@ const cards = [
     isImportant: true,
     categories: ['Tech', 'News', 'Update'],
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 50,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -24,7 +24,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 50,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -40,7 +40,7 @@ const cards = [
     description: 'It is a long established fact that a reader will be distract',
     categories: ['News', 'Update'],
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 70,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -50,7 +50,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 30,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -91,7 +91,7 @@ const cards = [
     description:
       'Zyski netto po opodatkowaniu. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 20,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -101,7 +101,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 80,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -117,7 +117,7 @@ const cards = [
     description: 'It is a long established fact',
     categories: ['Tech', 'News'],
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 80,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -127,7 +127,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 20,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -144,7 +144,7 @@ const cards = [
       'text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sh',
     categories: ['Tech', 'News', 'Update', 'Important'],
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 60,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -154,7 +154,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 40,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -170,7 +170,7 @@ const cards = [
     description: 'It is a long established fact',
     isImportant: true,
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 100,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -180,7 +180,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 0,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -196,7 +196,7 @@ const cards = [
     description: 'It is a long established fact that a reader will be distract',
     categories: ['Tech', 'News', 'Update'],
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 10,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -206,7 +206,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 90,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -221,7 +221,7 @@ const cards = [
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact that a reader will be distract',
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 90,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -231,7 +231,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 10,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -246,7 +246,7 @@ const cards = [
       'Uchwała podnosząca minimalną pensję programistów do 2 baniek (na miecha)',
     description: 'It is a long established fact',
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 40,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -256,7 +256,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 60,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
@@ -273,7 +273,7 @@ const cards = [
       'text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sh',
     categories: ['Tech', 'News', 'Update'],
     votesYes: {
-      governmentPercentage: 30,
+      governmentPercentage: 50,
       partyVotes: [
         { party: 'PIS', percentage: 30 },
         { party: 'KO', percentage: 25 },
@@ -283,7 +283,7 @@ const cards = [
       ],
     },
     votesNo: {
-      governmentPercentage: 70,
+      governmentPercentage: 50,
       partyVotes: [
         { party: 'PIS', percentage: 70 },
         { party: 'KO', percentage: 75 },
