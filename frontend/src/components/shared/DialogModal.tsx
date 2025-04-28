@@ -67,6 +67,27 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
   const chartDataYes = card?.votesYes.partyVotes ?? [];
   const chartDataNo = card?.votesNo.partyVotes ?? [];
 
+  const allParties = Array.from(new Set([
+    ...chartDataYes.map(d => d.party),
+    ...chartDataNo.map(d => d.party)
+  ]));
+  const combinedData = allParties.map(party => ({
+    party,
+    yes: chartDataYes.find(d => d.party === party)?.percentage || 0,
+    no: chartDataNo.find(d => d.party === party)?.percentage || 0,
+  }));
+
+  const combinedChartConfig = {
+    yes: {
+      label: "Udział w głosach za",
+      color: chartConfig.percentageYes.color,
+    },
+    no: {
+      label: "Udział w głosach przeciw",
+      color: chartConfig.percentageNo.color,
+    },
+  };
+
   const pieChartData = card
     ? [
         {
@@ -82,13 +103,13 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       ]
     : [];
 
-    const formattedDate = card && card.date
-      ? new Date(card.date).toLocaleDateString('pl-PL', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })
-      : 'Brak daty';
+  const formattedDate = card && card.date
+    ? new Date(card.date).toLocaleDateString('pl-PL', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : 'Brak daty';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -160,14 +181,13 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 Wykres głosów za i przeciw
               </div>
               <div className="text-sm text-muted-foreground">
-                Wykresy słupkowe przedstawiają procentowy rozkład głosów za oraz
-                przeciw.
+                Wykres słupkowy przedstawia procentowy udział każdej partii w głosach za oraz przeciw.
               </div>
-              <div className="flex flex-col md:flex-row gap-5 w-full h-auto max-h-80">
-                <ChartContainer config={chartConfig} className="md:w-1/2">
+              <div className="flex gap-5 w-full h-auto max-h-80">
+                <ChartContainer config={combinedChartConfig} className="md:w-1/2">
                   <BarChart
                     accessibilityLayer
-                    data={chartDataYes}
+                    data={combinedData}
                     margin={{
                       top: 20,
                       right: 12,
@@ -184,46 +204,10 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                     />
                     <ChartTooltip
                       cursor={false}
-                      content={<ChartTooltipContent indicator="dot" />}
+                      content={<ChartTooltipContent indicator="dashed" />}
                     />
-                    <Bar
-                      dataKey="percentage"
-                      type="natural"
-                      fill={chartConfig.percentageYes.color}
-                      fillOpacity={1}
-                      radius={8}
-                    />
-                  </BarChart>
-                </ChartContainer>
-                <ChartContainer config={chartConfig} className="md:w-1/2">
-                  <BarChart
-                    accessibilityLayer
-                    data={chartDataNo}
-                    margin={{
-                      top: 20,
-                      right: 12,
-                      left: 12,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="party"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                    />
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent indicator="dot" />}
-                    />
-                    <Bar
-                      dataKey="percentage"
-                      type="natural"
-                      fill={chartConfig.percentageNo.color}
-                      fillOpacity={1}
-                      radius={8}
-                    />
+                    <Bar dataKey="yes" fill="var(--color-yes)" radius={4} />
+                    <Bar dataKey="no" fill="var(--color-no)" radius={4} />
                   </BarChart>
                 </ChartContainer>
               </div>
