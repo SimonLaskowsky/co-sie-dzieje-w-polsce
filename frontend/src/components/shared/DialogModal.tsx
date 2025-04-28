@@ -21,6 +21,7 @@ import {
   Bar,
   BarChart,
 } from 'recharts';
+import FixedElement from './FixedElement';
 
 type DialogModalProps = {
   isOpen: boolean;
@@ -99,6 +100,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         }`}>
         {card && (
           <>
+            <FixedElement />
             <DialogHeader className="h-fit">
               <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter">
                 {card.title}

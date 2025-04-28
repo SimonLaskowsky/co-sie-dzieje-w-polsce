@@ -50,12 +50,15 @@ const Card = ({
       {/* 
       To (summary) wydaje się konieczne z punktu widzenia ux, powody:
       1. Tytuły chuja mówią
-      2. Z 6 liniek opisy też chuja wiesz
+      2. Z 6 liniek opisu też chuja wiesz
       3. A masz apkę przeglądać na zasadzie (o! co tam się dzieje w polsce?) No to średnio musieć klikać każdy news
       Z drugiej jednak strony trochę tego tekstu nawalone jest, być może kwestia ostylowania tego lepiej. 
       Chuj narazie niech będzie, zobaczymy na twardych danych.
       */}
-      <div className="text-sm text-muted-foreground leading-snug line-clamp-4 text-gradient-gloss">
+      <div className="dark:text-neutral-600 text-neutral-500 text-xs">
+        W skrócie
+      </div>
+      <div className="text-sm text-muted-foreground leading-snug line-clamp-4 text-gradient-gloss font-medium -mt-2.5">
         &quot;{summary}&quot;
       </div>
       {categories.length > 0 && (
@@ -70,8 +73,13 @@ const Card = ({
           ))}
         </div>
       )}
-      <p className="line-clamp-6 font-light text-sm">{description}</p>
-      <div className="flex flex-col items-center mt-0.5 gap-1">
+      <p className="line-clamp-7 font-light text-sm">
+        {description}
+        </p>
+      <div className="dark:text-neutral-600 text-neutral-500 text-xs">
+        Rozkład głosów &quot;za&quot;
+      </div>
+      <div className="flex flex-col items-center gap-1 -mt-1.5">
         <div className="flex justify-between w-full">
           {[...Array(governmentDots)].map((_, index) => (
             <div
