@@ -3,6 +3,7 @@
 type InfoTileProps = {
   title: string;
   description: string;
+  summary?: string;
   date: string;
   isImportant?: boolean;
   onClick: () => void;
@@ -13,6 +14,7 @@ type InfoTileProps = {
 const Card = ({
   title,
   description,
+  summary,
   date,
   isImportant = false,
   onClick,
@@ -32,7 +34,7 @@ const Card = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-neutral-700/10 dark:bg-neutral-800/40 max-w-60 border-2 ${
+      className={`bg-neutral-700/10 dark:bg-neutral-800/40 max-w-60 border-2 rounded-3xl ${
         isImportant
           ? 'border-red-500/70'
           : 'border-neutral-200 dark:border-neutral-700'
@@ -42,9 +44,20 @@ const Card = ({
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
         {formattedDate}
       </div>
-      <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3 -mt-2.5">
+      <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-2 -mt-2.5">
         {title}
       </h3>
+      {/* 
+      To (summary) wydaje się konieczne z punktu widzenia ux, powody:
+      1. Tytuły chuja mówią
+      2. Z 6 liniek opisy też chuja wiesz
+      3. A masz apkę przeglądać na zasadzie (o! co tam się dzieje w polsce?) No to średnio musieć klikać każdy news
+      Z drugiej jednak strony trochę tego tekstu nawalone jest, być może kwestia ostylowania tego lepiej. 
+      Chuj narazie niech będzie, zobaczymy na twardych danych.
+      */}
+      <div className="text-sm text-muted-foreground leading-snug line-clamp-4 text-gradient-gloss">
+        &quot;{summary}&quot;
+      </div>
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {categories.map((category, index) => (

@@ -133,3 +133,43 @@
 [data-slot='dialog-content'] {
   @apply p-8 border-neutral-200 dark:border-neutral-700 border-2;
 }
+
+.dark .text-gradient-gloss {
+  background-image: linear-gradient(
+    to right,
+    #6b7280,
+    #afb2b7,
+    #6b7280
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gloss 5s ease-in-out infinite;
+}
+
+@keyframes gloss {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.text-gradient-gloss {
+  background-image: linear-gradient(
+    to right,
+    #0d0e0f,
+    #717377,
+    #6b7280
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gloss 5s ease-in-out infinite;
+}
