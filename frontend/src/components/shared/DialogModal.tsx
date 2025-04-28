@@ -145,7 +145,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                   focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none 
                   [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground hover:bg-transparent 
                   hover:underline justify-start w-fit max-w-full truncate relative after:absolute after:block 
-                  after:h-full after:w-1/2 after:right-0 after:bg-gradient-to-l after:from-background after:to-transparent"
+                  after:h-full after:w-1/4 after:right-0 after:bg-gradient-to-l after:from-background after:to-transparent"
               >
                 {card.title}
               </a>

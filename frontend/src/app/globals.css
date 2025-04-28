@@ -171,5 +171,5 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: gloss 5s ease-in-out infinite;
+  animation: gloss 3s ease-in-out infinite;
 }
