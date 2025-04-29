@@ -11,7 +11,7 @@ const DarkMode = ({ isDarkMode, toggleDarkMode }: DarkModeProps) => {
       className={`fixed top-5 right-5 cursor-pointer  ${
         isDarkMode
           ? 'fill-neutral-500 hover:fill-neutral-100'
-          : 'fill-neutral-400 hover:fill-neutral-500'
+          : 'fill-neutral-400 hover:fill-neutral-600'
       } transition-all duration-300`}
       onClick={toggleDarkMode}
     >
