@@ -99,6 +99,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
             onClick={() => openModal(card)}
           />
         ))}
+        {filteredAndSortedCards.length > 0 && (
         <div className="flex justify-end absolute right-0 -top-11">
           <button 
             onClick={toggleFilterOptions} 
@@ -142,6 +143,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
             </button>
           </div>
         </div>
+        )}
       </Masonry>
       <DialogModal
         isOpen={selectedCard !== null}
