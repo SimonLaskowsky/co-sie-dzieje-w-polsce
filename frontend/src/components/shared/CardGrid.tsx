@@ -29,16 +29,16 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
 
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-    setSortByTitle(null); // Reset title sorting when sorting by date
+    setSortByTitle(null);
   };
 
   const toggleSortByTitle = () => {
     setSortByTitle(prev => {
-      if (prev === null) return 'asc'; // First click: A to Z
-      if (prev === 'asc') return 'desc'; // Second click: Z to A
-      return null; // Third click: no sorting
+      if (prev === null) return 'asc';
+      if (prev === 'asc') return 'desc'; 
+      return null;
     });
-    setSortOrder('desc'); // Reset date sorting to default when sorting by title
+    setSortOrder('desc');
   };
 
   const filteredAndSortedCards = useMemo(() => {
@@ -83,7 +83,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
     <div className="w-full max-w-screen-lg mx-auto">
       <Masonry
         breakpointCols={breakpointColumnsObj}
-        className="flex gap-5 w-full justify-center relative"
+        className="flex gap-5 w-fit justify-center relative mx-auto"
         columnClassName="flex flex-col gap-5 !w-fit"
       >
         {filteredAndSortedCards.map((card, index) => (
