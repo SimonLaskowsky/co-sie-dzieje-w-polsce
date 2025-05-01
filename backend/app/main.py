@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from openai_analyzer import analyze_text_with_openai, save_analysis_to_file
+from openai_analyzer import split_and_analyze_text, save_analysis_to_file
 from pdf_utils import pdf_to_text, save_text_to_file
 from storage import get_last_known, save_last_known
 from api import fetch_api_data
@@ -23,10 +23,10 @@ def get_new_acts(items, last_known):
 def process_and_save_act(latest, text):
     save_text_to_file(text, "act_content.txt")
     
-    analysis = analyze_text_with_openai(text)
+    analysis = split_and_analyze_text(text)
     save_analysis_to_file(analysis, "act_analysis.json")
     
-    analysis_dict = json.loads(analysis)
+    analysis_dict = analysis if isinstance(analysis, dict) else json.loads(analysis)
     
     eli = latest.get("ELI")
     act_number = eli.split("/")[-1]
