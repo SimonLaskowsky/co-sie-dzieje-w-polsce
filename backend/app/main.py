@@ -72,33 +72,16 @@ def check_for_new_acts():
     else:
         new_acts = get_new_acts(items, last_known)
 
-    # if new_acts:
-    #     print(f"🔔 Znaleziono {len(new_acts)} nowych aktów prawnych!")
-    #     i = 2
-    #     for act in reversed(new_acts):
-    #         if(i > 2):
-    #             return
-    #         print(f"➡️ Przetwarzanie aktu: {act['title']}")
-    #         pdf_url = BASIC_URL + act.get('ELI') + '/text.pdf'
-    #         pdf_text = pdf_to_text(pdf_url)
-    #         process_and_save_act(act, pdf_text)
-    #         i+1
-
-    #     save_last_known(new_acts[0])
-
     if new_acts:
         print(f"🔔 Znaleziono {len(new_acts)} nowych aktów prawnych!")
-        
         for i, act in enumerate(reversed(new_acts)):
-            if i < 2:
-                continue  # pomiń dwa pierwsze
-            if i > 2:
-                break  # przetwórz tylko trzeci
+            if(i > 2):
+                return
             print(f"➡️ Przetwarzanie aktu: {act['title']}")
             pdf_url = BASIC_URL + act.get('ELI') + '/text.pdf'
             pdf_text = pdf_to_text(pdf_url)
             process_and_save_act(act, pdf_text)
-        
+
         save_last_known(new_acts[0])
 
     else:
