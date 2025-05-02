@@ -31,6 +31,10 @@ const Card = ({
     year: 'numeric',
   });
 
+  const stripHtml = (html: string) => {
+    return html.replace(/<[^>]*>/g, '');
+  };
+
   return (
     <div
       onClick={onClick}
@@ -74,8 +78,9 @@ const Card = ({
         </div>
       )}
       <p className="line-clamp-7 font-light text-sm">
-        {description}
-        </p>
+        {stripHtml(description)}
+      </p>
+
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
         Rozkład głosów &quot;za&quot;
       </div>
