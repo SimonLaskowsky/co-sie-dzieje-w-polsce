@@ -64,7 +64,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
-  // Zabezpieczenie przed brakiem votesYes i votesNo
   const chartDataYes = card?.votesYes?.partyVotes ?? [];
   const chartDataNo = card?.votesNo?.partyVotes ?? [];
 

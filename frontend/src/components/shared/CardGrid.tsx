@@ -96,7 +96,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
           <Card
             key={card.id}
             title={card.title}
-            description={card.content}
+            content={card.content}
             summary={card.simple_title}
             date={card.announcement_date}
             categories={card.keywords}

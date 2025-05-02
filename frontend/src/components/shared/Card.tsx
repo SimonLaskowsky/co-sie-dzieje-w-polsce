@@ -2,7 +2,7 @@
 
 type InfoTileProps = {
   title: string;
-  description: string;
+  content: string;
   summary?: string;
   date: string;
   isImportant?: boolean;
@@ -13,7 +13,7 @@ type InfoTileProps = {
 
 const Card = ({
   title,
-  description,
+  content,
   summary,
   date,
   isImportant = false,
@@ -51,14 +51,6 @@ const Card = ({
       <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-2 -mt-2.5">
         {title}
       </h3>
-      {/* 
-      To (summary) wydaje się konieczne z punktu widzenia ux, powody:
-      1. Tytuły chuja mówią
-      2. Z 6 liniek opisu też chuja wiesz
-      3. A masz apkę przeglądać na zasadzie (o! co tam się dzieje w polsce?) No to średnio musieć klikać każdy news
-      Z drugiej jednak strony trochę tego tekstu nawalone jest, być może kwestia ostylowania tego lepiej. 
-      Chuj narazie niech będzie, zobaczymy na twardych danych.
-      */}
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
         W skrócie
       </div>
@@ -78,7 +70,7 @@ const Card = ({
         </div>
       )}
       <p className="line-clamp-7 font-light text-sm">
-        {stripHtml(description)}
+        {stripHtml(content)}
       </p>
 
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
