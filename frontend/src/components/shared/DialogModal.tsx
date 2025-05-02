@@ -29,7 +29,7 @@ type DialogModalProps = {
   card: {
     title: string;
     content: string;
-    date: string;
+    announcement_date: string;
     item_type?: string;
     categories?: string[];
     votesYes?: {
@@ -105,8 +105,8 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     : [];
 
 
-  const formattedDate = card?.date
-    ? new Date(card.date).toLocaleDateString('pl-PL', {
+  const formattedDate = card?.announcement_date
+    ? new Date(card.announcement_date).toLocaleDateString('pl-PL', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -151,7 +151,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               href={card.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md text-sm font-medium 
+              className="cursor-pointer inline-flex items-center gap-2 rounded-md text-sm font-medium 
                 transition-colors focus-visible:outline-none focus-visible:ring-1 
                 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none 
                 [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground hover:bg-transparent 

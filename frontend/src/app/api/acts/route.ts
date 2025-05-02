@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    console.log('Próba połączenia z bazą i pobrania danych...');
     const acts = await prisma.acts.findMany({
       select: {
         id: true,
@@ -17,7 +16,6 @@ export async function GET() {
         item_type: true,
       },
     });
-    console.log('Pobrane dane:', acts);
     return NextResponse.json(acts);
   } catch (error) {
     console.error('Błąd podczas pobierania danych:', error);
