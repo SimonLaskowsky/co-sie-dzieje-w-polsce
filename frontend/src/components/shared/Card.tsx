@@ -48,7 +48,7 @@ const Card = ({
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
         {formattedDate}
       </div>
-      <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-2 -mt-2.5">
+      <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3 -mt-2.5">
         {title}
       </h3>
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
