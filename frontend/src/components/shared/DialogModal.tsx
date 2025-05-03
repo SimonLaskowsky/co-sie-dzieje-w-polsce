@@ -124,7 +124,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`overflow-auto w-4/5 h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
+      <DialogContent className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
         ${
           isImportant
             ? '!border-red-500/70'
@@ -133,11 +133,11 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         <>
           <FixedElement />
           <DialogHeader className="h-fit">
-            <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter">
+            <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
               {card.title}
             </DialogTitle>
             <DialogDescription></DialogDescription>
-            <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5">
+            <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5 text-left">
               {stripHtml(card.content)}
             </DialogDescription>
           </DialogHeader>

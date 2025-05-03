@@ -8,7 +8,7 @@ type MenuProps = {
 const Menu = ({ isOpen, toggleMenu }: MenuProps) => {
   return (
     <div
-      className="cursor-pointer fixed top-5 left-5 text-neutral-400 dark:text-neutral-500 dark:hover:text-neutral-100 hover:text-neutral-600"
+      className="cursor-pointer absolute top-5 left-5 text-neutral-400 dark:text-neutral-500 dark:hover:text-neutral-100 hover:text-neutral-600"
       onClick={toggleMenu}
     >
       <svg

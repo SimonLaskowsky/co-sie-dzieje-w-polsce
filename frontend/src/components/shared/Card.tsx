@@ -38,7 +38,7 @@ const Card = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-neutral-700/10 dark:bg-neutral-800/40 max-w-60 border-2 rounded-3xl ${
+      className={`bg-neutral-700/10 dark:bg-neutral-800/40 mx-auto max-w-11/12 sm:max-w-60 border-2 rounded-3xl ${
         isImportant
           ? 'border-red-500/70'
           : 'border-neutral-200 dark:border-neutral-700'
