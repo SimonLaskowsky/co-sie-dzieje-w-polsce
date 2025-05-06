@@ -3,7 +3,7 @@
 type InfoTileProps = {
   title: string;
   content: string;
-  summary?: string;
+  summary: string;
   date: string;
   isImportant?: boolean;
   onClick: () => void;

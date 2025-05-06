@@ -18,7 +18,7 @@ export async function GET() {
     });
     return NextResponse.json(acts);
   } catch (error) {
-    console.error('Błąd podczas pobierania danych:', error);
-    return NextResponse.json({ error: 'Nie udało się pobrać danych' }, { status: 500 });
+    console.error('Error while downloading data:', error);
+    return NextResponse.json({ error: 'Failed to download data' }, { status: 500 });
   }
 }
