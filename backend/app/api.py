@@ -3,7 +3,7 @@ from config import API_URL, CURRENT_YEAR
 
 def fetch_api_data():
     if not API_URL:
-        print("Błąd: DU_URL nie jest ustawiony w pliku .env")
+        print("Error: DU_URL is not set in .env file")
         return None
     
     url = f"{API_URL}/{CURRENT_YEAR}"
@@ -13,8 +13,8 @@ def fetch_api_data():
             data = response.json()
             return data.get("items", [])
         else:
-            print("Błąd API:", response.status_code)
+            print("API error:", response.status_code)
             return None
     except requests.exceptions.RequestException as e:
-        print("Błąd połączenia:", e)
+        print("Connection error:", e)
         return None
