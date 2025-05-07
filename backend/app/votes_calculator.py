@@ -1,95 +1,125 @@
 import requests
 from collections import defaultdict
 
-def get_sejm_voting_data(term=10, sitting=32, voting=29, government_parties=None):
-    """
-    Pobiera dane głosowania z API Sejmu i zwraca je w określonym formacie.
-    
-    Args:
-        term (int): Numer kadencji Sejmu
-        sitting (int): Numer posiedzenia
-        voting (int): Numer głosowania
-        government_parties (list): Lista partii tworzących koalicję rządzącą.
-                                  Jeśli None, wyliczony zostanie tylko procent głosów każdej partii.
-    
-    Returns:
-        dict: Dane o głosowaniu w określonym formacie
-    """
+def get_sejm_voting_data(term=10, sitting=32, voting=29):
     url = f"https://api.sejm.gov.pl/sejm/term{term}/votings/{sitting}/{voting}"
     response = requests.get(url)
     
     if response.status_code != 200:
-        raise Exception(f"Błąd pobierania danych: {response.status_code}")
+        raise Exception(f"Data download error: {response.status_code}")
     
     data = response.json()
     
-    # Przygotowanie struktury wynikowej
     result = {
-        "votesYes": {
-            "governmentPercentage": 0,
-            "partyVotes": []
+        "parties": {},
+        "government": {
+            "parties": ["KO", "Lewica", "Polska2050-TD", "PSL-TD"] if term == 10 else [],
+            "votesPercentage": {
+                "yes": 0,
+                "no": 0,
+                "abstain": 0,
+                "absent": 0
+            }
         },
-        "votesNo": {
-            "governmentPercentage": 0,
-            "partyVotes": []
+        "summary": {
+            "total": 0,
+            "yes": 0,
+            "no": 0,
+            "abstain": 0,
+            "absent": 0,
+            "percentages": {
+                "yes": 0,
+                "no": 0,
+                "abstain": 0,
+                "absent": 0
+            }
         }
     }
     
-    # Słownik do grupowania głosów według klubów/partii
     party_votes = defaultdict(lambda: {"yes": 0, "no": 0, "abstain": 0, "absent": 0, "total": 0})
+    government_parties = result["government"]["parties"]
     
-    # Aktualna koalicja rządząca (2025), można przekazać jako parametr
-    if government_parties is None:
-        # Domyślnie dla kadencji 10 (2023-2027)
-        government_parties = ["KO", "Lewica", "TD", "PSL"] if term == 10 else []
-    
-    # Analiza głosów
     if "votes" in data:
         for vote in data["votes"]:
-            # Użyj klubu parlamentarnego lub "Niezrzeszeni" jeśli brak
-            club = vote.get("club", "Niezrzeszeni")
-            vote_type = vote.get("vote", "Nieobecny")
+            club = vote.get("club")
+            if not club:
+                continue
+                
+            vote_type = vote.get("vote")
             
-            # Zwiększenie licznika dla odpowiedniego typu głosu
             party_votes[club]["total"] += 1
+            result["summary"]["total"] += 1
             
-            if vote_type == "Yes":
+            if vote_type == "YES":
                 party_votes[club]["yes"] += 1
-            elif vote_type == "No":
+                result["summary"]["yes"] += 1
+            elif vote_type == "NO":
                 party_votes[club]["no"] += 1
-            elif vote_type == "Abstain":
+                result["summary"]["no"] += 1
+            elif vote_type == "ABSTAIN":
                 party_votes[club]["abstain"] += 1
-            else:  # "Absent", "Not voting" itp.
+                result["summary"]["abstain"] += 1
+            else:
                 party_votes[club]["absent"] += 1
+                result["summary"]["absent"] += 1
     
-    # Obliczenie procentów dla każdej partii
     for party, votes in party_votes.items():
         total = votes["total"]
         if total > 0:
-            yes_percentage = round((votes["yes"] / total) * 100)
-            no_percentage = round((votes["no"] / total) * 100)
-            
-            result["votesYes"]["partyVotes"].append({
-                "party": party,
-                "percentage": yes_percentage
-            })
-            
-            result["votesNo"]["partyVotes"].append({
-                "party": party,
-                "percentage": no_percentage
-            })
+            result["parties"][party] = {
+                "totalMembers": total,
+                "votes": {
+                    "yes": votes["yes"],
+                    "no": votes["no"],
+                    "abstain": votes["abstain"],
+                    "absent": votes["absent"]
+                },
+                "percentages": {
+                    "yes": round((votes["yes"] / total) * 100, 1),
+                    "no": round((votes["no"] / total) * 100, 1),
+                    "abstain": round((votes["abstain"] / total) * 100, 1),
+                    "absent": round((votes["absent"] / total) * 100, 1)
+                }
+            }
     
-    # Obliczenie procentu głosów rządowych
-    gov_yes_votes = sum(votes["yes"] for party, votes in party_votes.items() if party in government_parties)
-    gov_total_votes = sum(votes["total"] for party, votes in party_votes.items() if party in government_parties)
+    if result["summary"]["total"] > 0:
+        total = result["summary"]["total"]
+        result["summary"]["percentages"] = {
+            "yes": round((result["summary"]["yes"] / total) * 100, 1),
+            "no": round((result["summary"]["no"] / total) * 100, 1),
+            "abstain": round((result["summary"]["abstain"] / total) * 100, 1),
+            "absent": round((result["summary"]["absent"] / total) * 100, 1)
+        }
     
-    if gov_total_votes > 0:
-        result["votesYes"]["governmentPercentage"] = round((gov_yes_votes / gov_total_votes) * 100)
-        result["votesNo"]["governmentPercentage"] = 100 - result["votesYes"]["governmentPercentage"]
+    gov_votes = {"yes": 0, "no": 0, "abstain": 0, "absent": 0, "total": 0}
+    for party in government_parties:
+        if party in party_votes:
+            gov_votes["yes"] += party_votes[party]["yes"]
+            gov_votes["no"] += party_votes[party]["no"]
+            gov_votes["abstain"] += party_votes[party]["abstain"]
+            gov_votes["absent"] += party_votes[party]["absent"]
+            gov_votes["total"] += party_votes[party]["total"]
+    
+    if gov_votes["total"] > 0:
+        result["government"]["votesPercentage"] = {
+            "yes": round((gov_votes["yes"] / gov_votes["total"]) * 100, 1),
+            "no": round((gov_votes["no"] / gov_votes["total"]) * 100, 1),
+            "abstain": round((gov_votes["abstain"] / gov_votes["total"]) * 100, 1),
+            "absent": round((gov_votes["absent"] / gov_votes["total"]) * 100, 1)
+        }
+    
+    for party, data in result["parties"].items():
+        result["originalFormat"]["votesYes"]["partyVotes"].append({
+            "party": party,
+            "percentage": data["percentages"]["yes"]
+        })
+        result["originalFormat"]["votesNo"]["partyVotes"].append({
+            "party": party,
+            "percentage": data["percentages"]["no"]
+        })
     
     return result
 
-# # Przykład użycia
 # if __name__ == "__main__":
 #     try:
 #         result = get_sejm_voting_data(10, 32, 29)
