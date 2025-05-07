@@ -84,7 +84,6 @@ def process_and_save_act(latest, text):
         "processData": process_data
     }
 
-    # print(filtered_item.get('title'))
     print(latest)
 
     if filtered_item.get('votingNumber'):
@@ -100,12 +99,15 @@ def save_latest_act(latest):
 
 def check_for_new_acts():
     items = fetch_api_data()
+    items = [item for item in items if item.get("type") in ["Ustawa", "Rozporządzenie"]]
+
     if not items:
         return
     items.sort(
         key=lambda x: datetime.strptime(x["promulgation"], "%Y-%m-%d"),
         reverse=True
     )
+
     last_known = get_last_known()
 
     if not last_known:
@@ -117,10 +119,10 @@ def check_for_new_acts():
     if new_acts:
         # print(f"🔔 Znaleziono {len(new_acts)} nowych aktów prawnych!")
         for i, act in enumerate(reversed(new_acts)):
-            if(i > 31):
+            if(i > 13):
                 return
             # print(f"➡️ Przetwarzanie aktu: {act['title']}")
-            if(i > 28):
+            if(i > 11):
                 pdf_url = BASIC_URL + act.get('ELI') + '/text.pdf'
                 pdf_text = pdf_to_text(pdf_url)
                 process_and_save_act(act, pdf_text)
