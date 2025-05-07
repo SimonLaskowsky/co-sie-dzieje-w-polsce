@@ -1,14 +1,16 @@
 import psycopg2
 from psycopg2.extras import execute_values
 import os
+import json
 
 def save_to_database(filtered_item):
-    connection_string = os.getenv("NEON_CONNECTION_STRING")
+    connection_string = os.getenv("DATABASE_URL")
     
     insert_query = """
     INSERT INTO acts (
         title, act_number, simple_title, content, refs, texts, item_type,
-        announcement_date, change_date, promulgation, item_status, comments, keywords, file
+        announcement_date, change_date, promulgation, item_status, comments,
+        keywords, file, votes
     ) VALUES %s
     """
     
@@ -16,20 +18,21 @@ def save_to_database(filtered_item):
         conn = psycopg2.connect(connection_string)
         cursor = conn.cursor()
         execute_values(cursor, insert_query, [( 
-            filtered_item["title"],
-            filtered_item["actNumber"],
-            filtered_item["simpleTitle"],
-            filtered_item["content"],
-            filtered_item["references"],
-            filtered_item["texts"],
-            filtered_item["type"],
-            filtered_item["announcementDate"],
-            filtered_item["changeDate"],
-            filtered_item["promulgation"],
-            filtered_item["status"],
-            filtered_item["comments"],
-            filtered_item["keywords"],
-            filtered_item["file"]
+            filtered_item.get("title"),
+            filtered_item.get("actNumber"),
+            filtered_item.get("simpleTitle"),
+            filtered_item.get("content"),
+            filtered_item.get("references"),
+            filtered_item.get("texts"),
+            filtered_item.get("type"),
+            filtered_item.get("announcementDate"),
+            filtered_item.get("changeDate"),
+            filtered_item.get("promulgation"),
+            filtered_item.get("status"),
+            filtered_item.get("comments"),
+            filtered_item.get("keywords"),
+            filtered_item.get("file"),
+            json.dumps(filtered_item.get("votes")) if filtered_item.get("votes") is not None else None
         )])
         conn.commit()
     except Exception as e:
