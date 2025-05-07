@@ -47,11 +47,11 @@ def summarize_fragment(text):
 def split_and_analyze_text(text, chunk_size=3000, chunk_overlap=200):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len)
     chunks = text_splitter.split_text(text)
-    logger.info(f “Split into {len(chunks)} fragments”)
+    logger.info(f"Split into {len(chunks)} fragments")
 
     summaries = []
     for i, chunk in enumerate(chunks):
-        logger.info(f “Abstract fragment {i+1}/{len(chunks)}”)
+        logger.info(f"Abstract fragment {i+1}/{len(chunks)}")
         summary = summarize_fragment(chunk)
         summaries.append(summary)
 
@@ -74,6 +74,6 @@ def save_analysis_to_file(analysis, filename):
     try:
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(analysis, f, ensure_ascii=False, indent=2)
-        logger.info(f "Saved analysis to {filename}")
+        logger.info(f"Saved analysis to {filename}")
     except Exception as e:
         logger.error(f"Write error: {e}")
