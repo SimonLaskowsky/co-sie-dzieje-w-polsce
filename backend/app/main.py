@@ -4,7 +4,8 @@ from datetime import datetime
 from openai_analyzer import split_and_analyze_text, save_analysis_to_file
 from pdf_utils import pdf_to_text, save_text_to_file
 from storage import get_last_known, save_last_known
-from api import fetch_api_data
+from api import fetch_api_data, fetch_one_law, get_voting_data
+from votes_calculator import get_sejm_voting_data
 from dotenv import load_dotenv
 from database import save_to_database
 
@@ -49,23 +50,19 @@ def process_and_save_act(latest, text):
     
     eli = latest.get("ELI")
     act_number = eli.split("/")[-1]
+    latest = fetch_one_law(eli);
 
     process_data = None
+    voting_details = None
     prints = latest.get("prints", [])
     if prints and isinstance(prints, list):
         process_api_link = prints[0].get("linkProcessAPI")
-        if process_api_link:
-            try:
-                response = requests.get(process_api_link, timeout=10)
-                response.raise_for_status()
-                process_data = response.json()
-                sitting, voting_number = extract_last_vote_info(process_data)
-                if sitting and voting_number:
-                    filtered_item["sitting"] = sitting
-                    filtered_item["votingNumber"] = voting_number
-            except requests.RequestException as e:
-                logger.warning(f"Błąd podczas pobierania danych z processAPI: {e}")
-    
+        voting_data = get_voting_data(process_api_link)
+
+        sitting, voting_number = extract_last_vote_info(voting_data)
+        if sitting and voting_number:
+            voting_details = get_sejm_voting_data(10, sitting, voting_number)
+
     filtered_item = {
         "title": latest.get("title"),
         "actNumber": act_number,
@@ -81,15 +78,13 @@ def process_and_save_act(latest, text):
         "comments": latest.get("comments"),
         "keywords": latest.get("keywords"),
         "file": BASIC_URL + eli + '/text.pdf',
-        "processData": process_data
+        "processData": process_data,
+        "votes": voting_details
     }
 
-    print(latest)
-
-    if filtered_item.get('votingNumber'):
-        print(filtered_item)
-
-    # save_to_database(filtered_item)
+    # print(filtered_item)
+    # return
+    save_to_database(filtered_item)
 
 def save_latest_act(latest):
     
@@ -119,10 +114,10 @@ def check_for_new_acts():
     if new_acts:
         # print(f"🔔 Znaleziono {len(new_acts)} nowych aktów prawnych!")
         for i, act in enumerate(reversed(new_acts)):
-            if(i > 13):
+            if(i > 11):
                 return
             # print(f"➡️ Przetwarzanie aktu: {act['title']}")
-            if(i > 11):
+            if(i > 10):
                 pdf_url = BASIC_URL + act.get('ELI') + '/text.pdf'
                 pdf_text = pdf_to_text(pdf_url)
                 process_and_save_act(act, pdf_text)
