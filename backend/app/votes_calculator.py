@@ -108,22 +108,4 @@ def get_sejm_voting_data(term=10, sitting=32, voting=29):
             "absent": round((gov_votes["absent"] / gov_votes["total"]) * 100, 1)
         }
     
-    for party, data in result["parties"].items():
-        result["originalFormat"]["votesYes"]["partyVotes"].append({
-            "party": party,
-            "percentage": data["percentages"]["yes"]
-        })
-        result["originalFormat"]["votesNo"]["partyVotes"].append({
-            "party": party,
-            "percentage": data["percentages"]["no"]
-        })
-    
     return result
-
-# if __name__ == "__main__":
-#     try:
-#         result = get_sejm_voting_data(10, 32, 29)
-#         import json
-#         print(json.dumps(result, indent=2, ensure_ascii=False))
-#     except Exception as e:
-#         print(f"Wystąpił błąd: {e}")
