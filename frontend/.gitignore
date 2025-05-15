@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+backend/app/__pycache__/*
+backend/app/last_known.json
+backend/app/act_analysis.json
+backend/app/act_analysis.json
+backend/app/act_content.txt
