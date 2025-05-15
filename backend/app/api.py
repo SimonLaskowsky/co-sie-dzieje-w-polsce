@@ -1,54 +1,33 @@
 import requests
-from config import BASIC_URL, API_URL, CURRENT_YEAR, VOTING_URL
+from typing import Optional, Any
+from config import BASIC_URL, API_URL, CURRENT_YEAR
 
-def fetch_one_law(eli):
-    if not BASIC_URL:
-        print("Error: DU_URL is not set in .env file")
-        return None
-        
-    url = f"{BASIC_URL}//{eli}"
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            return data
-        else:
-            print("API error:", response.status_code)
-            return None
-    except requests.exceptions.RequestException as e:
-        print("Connection error:", e)
-        return None
-
-def get_voting_data(url):
+def fetch_json(url: str, error_prefix: str = "API") -> Optional[Any]:
     if not url:
-        print("Error: url is not set")
+        print(f"Error: URL is not set ({error_prefix})")
         return None
     try:
         response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            return data
-        else:
-            print("API error:", response.status_code)
-            return None
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError:
+        print(f"{error_prefix} error: {response.status_code}")
     except requests.exceptions.RequestException as e:
-        print("Connection error:", e)
-        return None
+        print(f"{error_prefix} connection error:", e)
+    return None
 
-def fetch_api_data():
+def fetch_one_law(eli: str) -> Optional[dict]:
+    if not BASIC_URL:
+        print("Error: BASIC_URL is not set in .env file")
+        return None
+    return fetch_json(f"{BASIC_URL}//{eli}", error_prefix="Law")
+
+def get_voting_data(url: str) -> Optional[dict]:
+    return fetch_json(url, error_prefix="Voting")
+
+def fetch_api_data() -> Optional[list[dict]]:
     if not API_URL:
-        print("Error: DU_URL is not set in .env file")
+        print("Error: API_URL is not set in .env file")
         return None
-    
-    url = f"{API_URL}/{CURRENT_YEAR}"
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("items", [])
-        else:
-            print("API error:", response.status_code)
-            return None
-    except requests.exceptions.RequestException as e:
-        print("Connection error:", e)
-        return None
+    data = fetch_json(f"{API_URL}/{CURRENT_YEAR}", error_prefix="API")
+    return data.get("items", []) if isinstance(data, dict) else None

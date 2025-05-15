@@ -1,97 +1,129 @@
 import requests
+from typing import Dict, Any, List, Tuple, Optional
 from collections import defaultdict
 
-def get_sejm_voting_data(term=10, sitting=32, voting=29):
+GOVERNMENT_PARTIES = {
+    10: ["KO", "Lewica", "Polska2050-TD", "PSL-TD"]
+}
+
+def get_sejm_voting_data(term: int = 10, sitting: int = 32, voting: int = 29) -> Dict[str, Any]:
     url = f"https://api.sejm.gov.pl/sejm/term{term}/votings/{sitting}/{voting}"
-    response = requests.get(url)
     
-    if response.status_code != 200:
-        raise Exception(f"Data download error: {response.status_code}")
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Data download error: {e}")
+        return create_empty_result()
     
-    data = response.json()
-    
-    result = {
+    return process_voting_data(data, term)
+
+def create_empty_result() -> Dict[str, Any]:
+    return {
         "parties": {},
         "government": {
-            "parties": ["KO", "Lewica", "Polska2050-TD", "PSL-TD"] if term == 10 else [],
+            "parties": [],
             "votesPercentage": {
-                "yes": 0,
-                "no": 0,
-                "abstain": 0,
-                "absent": 0
+                "yes": 0, "no": 0, "abstain": 0, "absent": 0
             }
         },
         "summary": {
-            "total": 0,
-            "yes": 0,
-            "no": 0,
-            "abstain": 0,
-            "absent": 0,
+            "total": 0, "yes": 0, "no": 0, "abstain": 0, "absent": 0,
             "percentages": {
-                "yes": 0,
-                "no": 0,
-                "abstain": 0,
-                "absent": 0
+                "yes": 0, "no": 0, "abstain": 0, "absent": 0
             }
         }
     }
+
+def process_voting_data(data: Dict[str, Any], term: int) -> Dict[str, Any]:
+    result = create_empty_result()
     
-    party_votes = defaultdict(lambda: {"yes": 0, "no": 0, "abstain": 0, "absent": 0, "total": 0})
-    government_parties = result["government"]["parties"]
+    government_parties = GOVERNMENT_PARTIES.get(term, [])
+    result["government"]["parties"] = government_parties
     
-    if "votes" in data:
-        for vote in data["votes"]:
-            club = vote.get("club")
-            if not club:
-                continue
-                
-            vote_type = vote.get("vote")
-            
-            party_votes[club]["total"] += 1
-            result["summary"]["total"] += 1
-            
-            if vote_type == "YES":
-                party_votes[club]["yes"] += 1
-                result["summary"]["yes"] += 1
-            elif vote_type == "NO":
-                party_votes[club]["no"] += 1
-                result["summary"]["no"] += 1
-            elif vote_type == "ABSTAIN":
-                party_votes[club]["abstain"] += 1
-                result["summary"]["abstain"] += 1
-            else:
-                party_votes[club]["absent"] += 1
-                result["summary"]["absent"] += 1
+    if "votes" not in data:
+        return result
+    
+    party_votes = collect_votes_by_party(data["votes"])
     
     for party, votes in party_votes.items():
-        total = votes["total"]
-        if total > 0:
-            result["parties"][party] = {
-                "totalMembers": total,
-                "votes": {
-                    "yes": votes["yes"],
-                    "no": votes["no"],
-                    "abstain": votes["abstain"],
-                    "absent": votes["absent"]
-                },
-                "percentages": {
-                    "yes": round((votes["yes"] / total) * 100, 1),
-                    "no": round((votes["no"] / total) * 100, 1),
-                    "abstain": round((votes["abstain"] / total) * 100, 1),
-                    "absent": round((votes["absent"] / total) * 100, 1)
-                }
-            }
+        calculate_party_percentages(result, party, votes)
     
-    if result["summary"]["total"] > 0:
-        total = result["summary"]["total"]
-        result["summary"]["percentages"] = {
-            "yes": round((result["summary"]["yes"] / total) * 100, 1),
-            "no": round((result["summary"]["no"] / total) * 100, 1),
-            "abstain": round((result["summary"]["abstain"] / total) * 100, 1),
-            "absent": round((result["summary"]["absent"] / total) * 100, 1)
+    calculate_summary_percentages(result)
+    calculate_government_percentages(result, party_votes, government_parties)
+    
+    return result
+
+def collect_votes_by_party(votes: List[Dict[str, Any]]) -> Dict[str, Dict[str, int]]:
+    party_votes = defaultdict(lambda: {"yes": 0, "no": 0, "abstain": 0, "absent": 0, "total": 0})
+    
+    for vote in votes:
+        club = vote.get("club")
+        vote_type = vote.get("vote")
+        
+        if not club:
+            continue
+            
+        party_votes[club]["total"] += 1
+        
+        if vote_type == "YES":
+            party_votes[club]["yes"] += 1
+        elif vote_type == "NO":
+            party_votes[club]["no"] += 1
+        elif vote_type == "ABSTAIN":
+            party_votes[club]["abstain"] += 1
+        else:
+            party_votes[club]["absent"] += 1
+    
+    return party_votes
+
+def calculate_party_percentages(result: Dict[str, Any], party: str, votes: Dict[str, int]) -> None:
+    total = votes["total"]
+    if total <= 0:
+        return
+    
+    result["summary"]["total"] += total
+    result["summary"]["yes"] += votes["yes"]
+    result["summary"]["no"] += votes["no"]
+    result["summary"]["abstain"] += votes["abstain"]
+    result["summary"]["absent"] += votes["absent"]
+    
+    result["parties"][party] = {
+        "totalMembers": total,
+        "votes": {
+            "yes": votes["yes"],
+            "no": votes["no"],
+            "abstain": votes["abstain"],
+            "absent": votes["absent"]
+        },
+        "percentages": {
+            "yes": round((votes["yes"] / total) * 100, 1),
+            "no": round((votes["no"] / total) * 100, 1),
+            "abstain": round((votes["abstain"] / total) * 100, 1),
+            "absent": round((votes["absent"] / total) * 100, 1)
         }
+    }
+
+def calculate_summary_percentages(result: Dict[str, Any]) -> None:
+    total = result["summary"]["total"]
+    if total <= 0:
+        return
     
+    result["summary"]["percentages"] = {
+        "yes": round((result["summary"]["yes"] / total) * 100, 1),
+        "no": round((result["summary"]["no"] / total) * 100, 1),
+        "abstain": round((result["summary"]["abstain"] / total) * 100, 1),
+        "absent": round((result["summary"]["absent"] / total) * 100, 1)
+    }
+
+def calculate_government_percentages(
+    result: Dict[str, Any], 
+    party_votes: Dict[str, Dict[str, int]], 
+    government_parties: List[str]
+) -> None:
     gov_votes = {"yes": 0, "no": 0, "abstain": 0, "absent": 0, "total": 0}
+    
     for party in government_parties:
         if party in party_votes:
             gov_votes["yes"] += party_votes[party]["yes"]
@@ -107,5 +139,3 @@ def get_sejm_voting_data(term=10, sitting=32, voting=29):
             "abstain": round((gov_votes["abstain"] / gov_votes["total"]) * 100, 1),
             "absent": round((gov_votes["absent"] / gov_votes["total"]) * 100, 1)
         }
-    
-    return result
