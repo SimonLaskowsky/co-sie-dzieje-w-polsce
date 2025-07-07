@@ -56,3 +56,7 @@ This application fetches the latest acts from the Polish Monitor and populates t
 ```bash
 python main.py
 ```
+
+## Additional Information
+
+- The project includes a data structure definition in data_structure.json to guide the frontend on how to fetch and utilize the data.
