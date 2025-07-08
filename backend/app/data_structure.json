@@ -1,0 +1,69 @@
+[
+  {
+    "id": 0,
+    "title": "",
+    "act_number": "",
+    "simple_title": "",
+    "content": "",
+    "refs": {
+      "Akty zmienione": [],
+      "Podstawa prawna": [],
+      "Podstawa prawna z art.": []
+    },
+    "texts": [
+      {
+        "type": "",
+        "fileName": ""
+      }
+    ],
+    "item_type": "",
+    "announcement_date": "",
+    "change_date": "",
+    "promulgation": "",
+    "item_status": "",
+    "comments": "",
+    "keywords": [],
+    "file": "",
+    "votes": {
+      "parties": {
+        "party_name": {
+          "votes": {
+            "no": 0,
+            "yes": 0,
+            "absent": 0,
+            "abstain": 0
+          },
+          "percentages": {
+            "no": 0,
+            "yes": 0,
+            "absent": 0,
+            "abstain": 0
+          },
+          "totalMembers": 0
+        }
+      },
+      "summary": {
+        "no": 0,
+        "yes": 0,
+        "total": 0,
+        "absent": 0,
+        "abstain": 0,
+        "percentages": {
+          "no": 0,
+          "yes": 0,
+          "absent": 0,
+          "abstain": 0
+        }
+      },
+      "government": {
+        "parties": [],
+        "votesPercentage": {
+          "no": 0,
+          "yes": 0,
+          "absent": 0,
+          "abstain": 0
+        }
+      }
+    }
+  }
+]
