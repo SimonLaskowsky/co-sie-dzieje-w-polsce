@@ -31,3 +31,11 @@ def fetch_api_data() -> Optional[list[dict]]:
         return None
     data = fetch_json(f"{API_URL}/{CURRENT_YEAR}", error_prefix="API")
     return data.get("items", []) if isinstance(data, dict) else None
+
+def fetch_available_years() -> Optional[list[int]]:
+    if not BASIC_URL:
+        print("Error: BASIC_URL is not set in .env file")
+        return None
+    url = f"{BASIC_URL}/DU/"
+    data = fetch_json(url, error_prefix="Years")
+    return data.get("years") if isinstance(data, dict) and "years" in data else None
