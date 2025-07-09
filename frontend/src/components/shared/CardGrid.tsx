@@ -19,6 +19,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
 
   const { data, error } = useSWR('/api/acts', fetcher);
+  console.log(data);
 
   const breakpointColumnsObj = {
     default: 4,
@@ -101,7 +102,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
             date={card.announcement_date}
             categories={card.keywords}
             isImportant={card.item_type === 'Ustawa'} 
-            governmentPercentage={50}
+            governmentPercentage={card.votes?.government?.votesPercentage?.yes || 0}
             onClick={() => openModal(card)}
           />
         ))}

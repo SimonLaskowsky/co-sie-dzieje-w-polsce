@@ -14,6 +14,7 @@ export async function GET() {
         announcement_date: true,
         keywords: true,
         item_type: true,
+        votes: true,
       },
     });
     return NextResponse.json(acts);

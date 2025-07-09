@@ -23,6 +23,27 @@ import {
 } from 'recharts';
 import FixedElement from './FixedElement';
 
+// Definicja typu dla nowych danych
+type NewVotes = {
+  government: {
+    parties: string[];
+  };
+  parties: {
+    [party: string]: {
+      votes: {
+        yes: number;
+        no: number;
+        abstain: number;
+        absent: number;
+      };
+    };
+  };
+  summary: {
+    yes: number;
+    no: number;
+  };
+};
+
 type DialogModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -32,14 +53,7 @@ type DialogModalProps = {
     announcement_date: string;
     item_type?: string;
     categories?: string[];
-    votesYes?: {
-      partyVotes: { party: string; percentage: number }[];
-      governmentPercentage: number;
-    };
-    votesNo?: {
-      partyVotes: { party: string; percentage: number }[];
-      governmentPercentage: number;
-    };
+    votes: NewVotes;
     url: string;
   } | null;
 };
@@ -64,12 +78,58 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
-  const chartDataYes = card?.votesYes?.partyVotes ?? [];
-  const chartDataNo = card?.votesNo?.partyVotes ?? [];
+  if (!card) {
+    return null;
+  }
+
+  // Przetwarzanie nowych danych
+  const { votes } = card;
+  let votesYes: { partyVotes: { party: string; percentage: number }[]; governmentPercentage: number } | undefined;
+  let votesNo: { partyVotes: { party: string; percentage: number }[]; governmentPercentage: number } | undefined;
+
+  if (votes) {
+    const { government, parties, summary } = votes;
+    const governmentParties = government.parties;
+    const totalYes = summary.yes; // Całkowita liczba głosów "za"
+    const totalNo = summary.no;   // Całkowita liczba głosów "przeciw"
+
+    // Obliczanie udziału każdej partii w głosach "za"
+    const partyVotesYes = Object.keys(parties).map(party => {
+      const yesVotes = parties[party].votes.yes;
+      const percentage = totalYes > 0 ? (yesVotes / totalYes) * 100 : 0;
+      return { party, percentage };
+    });
+
+    // Obliczanie udziału każdej partii w głosach "przeciw"
+    const partyVotesNo = Object.keys(parties).map(party => {
+      const noVotes = parties[party].votes.no;
+      const percentage = totalNo > 0 ? (noVotes / totalNo) * 100 : 0;
+      return { party, percentage };
+    });
+
+    // Obliczanie łącznej liczby głosów "za" od partii rządzących
+    const governmentYesVotes = governmentParties.reduce((sum, party) => {
+      return sum + (parties[party]?.votes.yes || 0);
+    }, 0);
+    const governmentPercentageYes = totalYes > 0 ? (governmentYesVotes / totalYes) * 100 : 0;
+
+    votesYes = {
+      partyVotes: partyVotesYes,
+      governmentPercentage: governmentPercentageYes,
+    };
+
+    votesNo = {
+      partyVotes: partyVotesNo,
+      governmentPercentage: 0, // W tym przypadku partie rządzące nie głosowały "przeciw"
+    };
+  }
+
+  const chartDataYes = votesYes?.partyVotes ?? [];
+  const chartDataNo = votesNo?.partyVotes ?? [];
 
   const allParties = Array.from(new Set([
     ...chartDataYes.map(d => d.party),
-    ...chartDataNo.map(d => d.party)
+    ...chartDataNo.map(d => d.party),
   ]));
   const combinedData = allParties.map(party => ({
     party,
@@ -88,33 +148,29 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     },
   };
 
-  const pieChartData = card?.votesYes
+  const pieChartData = votesYes
     ? [
         {
           name: 'Rządzący',
-          value: card.votesYes.governmentPercentage,
+          value: votesYes.governmentPercentage,
           fill: chartConfig.government.color,
         },
         {
           name: 'Opozycja',
-          value: 100 - card.votesYes.governmentPercentage,
+          value: 100 - votesYes.governmentPercentage,
           fill: chartConfig.opposition.color,
         },
       ]
     : [];
+  console.log(pieChartData[0].value)
 
-
-  const formattedDate = card?.announcement_date
+  const formattedDate = card.announcement_date
     ? new Date(card.announcement_date).toLocaleDateString('pl-PL', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       })
     : 'Brak daty';
-
-  if (!card) {
-    return null;
-  }
 
   const stripHtml = (html: string) => {
     return html.replace(/<[^>]*>/g, '');
@@ -186,7 +242,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               {formattedDate}
             </span>
           </div>
-          {card.votesYes && card.votesNo && (
+          {votesYes && votesNo && (
             <>
               <div className="font-semibold tracking-tight text-xl">
                 Wykres głosów za i przeciw
@@ -262,7 +318,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card.votesYes?.governmentPercentage ?? 0}%
+                                    {votesYes.governmentPercentage.toFixed(1)}%
                                   </tspan>
                                   <tspan
                                     x={viewBox.cx}
@@ -282,7 +338,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 </div>
               </div>
             </>
-            )}
+          )}
         </>
       </DialogContent>
     </Dialog>
