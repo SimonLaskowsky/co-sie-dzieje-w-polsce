@@ -94,8 +94,6 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     return null;
   }
 
-  console.log(card.votes)
-
   const { votes } = card;
   const parties = votes?.parties;
 
