@@ -19,7 +19,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
 
   const { data, error } = useSWR('/api/acts', fetcher);
-  console.log(data);
+  console.log(data)
 
   const breakpointColumnsObj = {
     default: 4,
@@ -87,7 +87,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
   };
 
   return (
-    <div className="w-full max-w-screen-lg mx-auto">
+    <div className="w-full max-w-screen-xl mx-auto px-2.5">
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="flex gap-5 w-fit justify-center relative mx-auto"

@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef, useState, useEffect } from 'react';
+
 type InfoTileProps = {
   title: string;
   content: string;
@@ -21,7 +23,25 @@ const Card = ({
   categories = [],
   governmentPercentage,
 }: InfoTileProps) => {
-  const totalDots = 14;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [totalDots, setTotalDots] = useState(14); // Początkowa wartość, zostanie zaktualizowana
+
+  useEffect(() => {
+    const updateTotalDots = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.offsetWidth; // Szerokość kontenera w pikselach
+        const dotWidth = 8; // Szerokość kulki (w-2 = 0.5rem ≈ 8px)
+        const desiredGap = 8; // Pożądany odstęp między kulkami w pikselach
+        const N = Math.round((width + desiredGap) / (desiredGap + dotWidth));
+        setTotalDots(Math.max(10, N)); // Minimum 10 kulek dla lepszej precyzji procentów
+      }
+    };
+
+    updateTotalDots(); // Początkowe wywołanie
+    window.addEventListener('resize', updateTotalDots); // Aktualizacja przy zmianie rozmiaru okna
+    return () => window.removeEventListener('resize', updateTotalDots); // Sprzątanie
+  }, []);
+
   const governmentDots = Math.round((governmentPercentage / 100) * totalDots);
   const oppositionDots = totalDots - governmentDots;
 
@@ -38,7 +58,7 @@ const Card = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-neutral-700/10 dark:bg-neutral-800/40 mx-auto max-w-11/12 sm:max-w-60 border-2 rounded-3xl ${
+      className={`bg-neutral-700/10 dark:bg-neutral-800/40 mx-auto max-w-11/12 sm:max-w-80 border-2 rounded-3xl ${
         isImportant
           ? 'border-red-500/70'
           : 'border-neutral-200 dark:border-neutral-700'
@@ -55,11 +75,11 @@ const Card = ({
         W skrócie
       </div>
       <div className="text-sm text-muted-foreground leading-snug line-clamp-4 text-gradient-gloss font-medium -mt-2.5">
-        &quot;{summary}&quot;
+        "{summary}"
       </div>
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {categories.map((category, index) => (
+          {categories.slice(0, 4).map((category, index) => (
             <span
               key={index}
               className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full"
@@ -72,30 +92,33 @@ const Card = ({
       <p className="line-clamp-7 font-light text-sm">
         {stripHtml(content)}
       </p>
-
-      <div className="dark:text-neutral-600 text-neutral-500 text-xs">
-        Rozkład głosów &quot;za&quot;
-      </div>
-      <div className="flex flex-col items-center gap-1 -mt-1.5">
-        <div className="flex justify-between w-full">
-          {[...Array(governmentDots)].map((_, index) => (
-            <div
-              key={`gov-${index}`}
-              className="w-2 h-2 bg-neutral-100 rounded-full"
-            ></div>
-          ))}
-          {[...Array(oppositionDots)].map((_, index) => (
-            <div
-              key={`opp-${index}`}
-              className="w-2 h-2 bg-red-500/70 rounded-full"
-            ></div>
-          ))}
-        </div>
-        <div className="flex justify-between w-full dark:text-neutral-600 text-neutral-500 text-xs">
-          <span>Rządz.</span>
-          <span>Opoz.</span>
-        </div>
-      </div>
+      {governmentPercentage > 0 && (
+        <>
+          <div className="dark:text-neutral-600 text-neutral-500 text-xs">
+            Rozkład głosów "za"
+          </div>
+          <div className="flex flex-col items-center gap-1 -mt-1.5">
+            <div ref={containerRef} className="flex justify-between w-full">
+              {[...Array(governmentDots)].map((_, index) => (
+                <div
+                  key={`gov-${index}`}
+                  className="w-2 h-2 bg-neutral-100 rounded-full"
+                ></div>
+              ))}
+              {[...Array(oppositionDots)].map((_, index) => (
+                <div
+                  key={`opp-${index}`}
+                  className="w-2 h-2 bg-red-500/70 rounded-full"
+                ></div>
+              ))}
+            </div>
+            <div className="flex justify-between w-full dark:text-neutral-600 text-neutral-500 text-xs">
+              <span>Rządz.</span>
+              <span>Opoz.</span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

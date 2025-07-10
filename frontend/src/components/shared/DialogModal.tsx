@@ -23,7 +23,6 @@ import {
 } from 'recharts';
 import FixedElement from './FixedElement';
 
-// Definicja typu dla nowych danych
 type NewVotes = {
   government: {
     parties: string[];
@@ -77,12 +76,18 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const truncatePartyName = (name: string): string => {
+  if (name.length > 3) {
+    return name.slice(0, 3) + '.';
+  }
+  return name;
+};
+
 const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
   if (!card) {
     return null;
   }
 
-  // Przetwarzanie nowych danych
   const { votes } = card;
   let votesYes: { partyVotes: { party: string; percentage: number }[]; governmentPercentage: number } | undefined;
   let votesNo: { partyVotes: { party: string; percentage: number }[]; governmentPercentage: number } | undefined;
@@ -90,24 +95,21 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
   if (votes) {
     const { government, parties, summary } = votes;
     const governmentParties = government.parties;
-    const totalYes = summary.yes; // Całkowita liczba głosów "za"
-    const totalNo = summary.no;   // Całkowita liczba głosów "przeciw"
+    const totalYes = summary.yes;
+    const totalNo = summary.no;
 
-    // Obliczanie udziału każdej partii w głosach "za"
     const partyVotesYes = Object.keys(parties).map(party => {
       const yesVotes = parties[party].votes.yes;
       const percentage = totalYes > 0 ? (yesVotes / totalYes) * 100 : 0;
       return { party, percentage };
     });
 
-    // Obliczanie udziału każdej partii w głosach "przeciw"
     const partyVotesNo = Object.keys(parties).map(party => {
       const noVotes = parties[party].votes.no;
       const percentage = totalNo > 0 ? (noVotes / totalNo) * 100 : 0;
       return { party, percentage };
     });
 
-    // Obliczanie łącznej liczby głosów "za" od partii rządzących
     const governmentYesVotes = governmentParties.reduce((sum, party) => {
       return sum + (parties[party]?.votes.yes || 0);
     }, 0);
@@ -120,19 +122,18 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
     votesNo = {
       partyVotes: partyVotesNo,
-      governmentPercentage: 0, // W tym przypadku partie rządzące nie głosowały "przeciw"
+      governmentPercentage: 0,
     };
   }
 
   const chartDataYes = votesYes?.partyVotes ?? [];
   const chartDataNo = votesNo?.partyVotes ?? [];
-
   const allParties = Array.from(new Set([
     ...chartDataYes.map(d => d.party),
     ...chartDataNo.map(d => d.party),
   ]));
   const combinedData = allParties.map(party => ({
-    party,
+    party: truncatePartyName(party),
     yes: chartDataYes.find(d => d.party === party)?.percentage || 0,
     no: chartDataNo.find(d => d.party === party)?.percentage || 0,
   }));
@@ -162,7 +163,6 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         },
       ]
     : [];
-  console.log(pieChartData[0].value)
 
   const formattedDate = card.announcement_date
     ? new Date(card.announcement_date).toLocaleDateString('pl-PL', {
@@ -274,13 +274,13 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                         cursor={false}
                         content={<ChartTooltipContent indicator="dashed" />}
                       />
-                      <Bar dataKey="yes" fill="var(--color-yes)" radius={4} />
-                      <Bar dataKey="no" fill="var(--color-no)" radius={4} />
+                      <Bar dataKey="yes" fill="var(--color-yes)" radius={4} minPointSize={2} />
+                      <Bar dataKey="no" fill="var(--color-no)" radius={4} minPointSize={2} />
                     </BarChart>
                   </ChartContainer>
                 </div>
                 <div className="font-semibold tracking-tight text-xl">
-                  Rozkład głosów za
+                  Rozkład głosów za przyjęciem ustawy
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Wykres kołowy przedstawia procentowy rozkład głosów za wśród
