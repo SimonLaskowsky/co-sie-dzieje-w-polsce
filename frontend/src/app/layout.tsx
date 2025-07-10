@@ -30,7 +30,7 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en" >
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${libreBodoni.variable} antialiased dark`}
       >
