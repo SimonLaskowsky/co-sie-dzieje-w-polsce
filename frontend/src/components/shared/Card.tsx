@@ -24,22 +24,22 @@ const Card = ({
   governmentPercentage,
 }: InfoTileProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [totalDots, setTotalDots] = useState(14); // Początkowa wartość, zostanie zaktualizowana
+  const [totalDots, setTotalDots] = useState(14);
 
   useEffect(() => {
     const updateTotalDots = () => {
       if (containerRef.current) {
-        const width = containerRef.current.offsetWidth; // Szerokość kontenera w pikselach
-        const dotWidth = 8; // Szerokość kulki (w-2 = 0.5rem ≈ 8px)
-        const desiredGap = 8; // Pożądany odstęp między kulkami w pikselach
+        const width = containerRef.current.offsetWidth;
+        const dotWidth = 8;
+        const desiredGap = 8;
         const N = Math.round((width + desiredGap) / (desiredGap + dotWidth));
-        setTotalDots(Math.max(10, N)); // Minimum 10 kulek dla lepszej precyzji procentów
+        setTotalDots(Math.max(10, N));
       }
     };
 
-    updateTotalDots(); // Początkowe wywołanie
-    window.addEventListener('resize', updateTotalDots); // Aktualizacja przy zmianie rozmiaru okna
-    return () => window.removeEventListener('resize', updateTotalDots); // Sprzątanie
+    updateTotalDots();
+    window.addEventListener('resize', updateTotalDots);
+    return () => window.removeEventListener('resize', updateTotalDots);
   }, []);
 
   const governmentDots = Math.round((governmentPercentage / 100) * totalDots);
