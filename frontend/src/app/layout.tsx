@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Libre_Bodoni } from 'next/font/google';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +11,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const libreBodoni = Libre_Bodoni({
+  subsets: ['latin'],         
+  weight: ['400', '500', '600', '700'], 
+  variable: '--font-libre-bodoni',
 });
 
 export const metadata: Metadata = {
@@ -23,9 +30,9 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+        className={`${geistSans.variable} ${geistMono.variable} ${libreBodoni.variable} antialiased dark`}
       >
         {children}
       </body>

@@ -19,7 +19,6 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
 
   const { data, error } = useSWR('/api/acts', fetcher);
-  console.log(data)
 
   const breakpointColumnsObj = {
     default: 4,

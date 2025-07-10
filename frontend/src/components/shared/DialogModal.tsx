@@ -26,6 +26,12 @@ import FixedElement from './FixedElement';
 type NewVotes = {
   government: {
     parties: string[];
+    votesPercentage: {
+      yes: number;
+      no: number;
+      abstain: number;
+      absent: number;
+    };
   };
   parties: {
     [party: string]: {
@@ -88,77 +94,40 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     return null;
   }
 
+  console.log(card.votes)
+
   const { votes } = card;
-  let votesYes: { partyVotes: { party: string; percentage: number }[]; governmentPercentage: number } | undefined;
-  let votesNo: { partyVotes: { party: string; percentage: number }[]; governmentPercentage: number } | undefined;
+  const parties = votes?.parties;
 
-  if (votes) {
-    const { government, parties, summary } = votes;
-    const governmentParties = government.parties;
-    const totalYes = summary.yes;
-    const totalNo = summary.no;
-
-    const partyVotesYes = Object.keys(parties).map(party => {
-      const yesVotes = parties[party].votes.yes;
-      const percentage = totalYes > 0 ? (yesVotes / totalYes) * 100 : 0;
-      return { party, percentage };
-    });
-
-    const partyVotesNo = Object.keys(parties).map(party => {
-      const noVotes = parties[party].votes.no;
-      const percentage = totalNo > 0 ? (noVotes / totalNo) * 100 : 0;
-      return { party, percentage };
-    });
-
-    const governmentYesVotes = governmentParties.reduce((sum, party) => {
-      return sum + (parties[party]?.votes.yes || 0);
-    }, 0);
-    const governmentPercentageYes = totalYes > 0 ? (governmentYesVotes / totalYes) * 100 : 0;
-
-    votesYes = {
-      partyVotes: partyVotesYes,
-      governmentPercentage: governmentPercentageYes,
-    };
-
-    votesNo = {
-      partyVotes: partyVotesNo,
-      governmentPercentage: 0,
-    };
-  }
-
-  const chartDataYes = votesYes?.partyVotes ?? [];
-  const chartDataNo = votesNo?.partyVotes ?? [];
-  const allParties = Array.from(new Set([
-    ...chartDataYes.map(d => d.party),
-    ...chartDataNo.map(d => d.party),
-  ]));
-  const combinedData = allParties.map(party => ({
-    party: truncatePartyName(party),
-    yes: chartDataYes.find(d => d.party === party)?.percentage || 0,
-    no: chartDataNo.find(d => d.party === party)?.percentage || 0,
-  }));
+   const combinedData = parties
+    ? Object.keys(parties).map(party => ({
+        party: truncatePartyName(party),
+        yes: parties[party].votes.yes,
+        no: parties[party].votes.no,
+      }))
+    : [];
 
   const combinedChartConfig = {
     yes: {
-      label: "Udział w głosach za",
+      label: "Liczba głosów za",
       color: chartConfig.percentageYes.color,
     },
     no: {
-      label: "Udział w głosach przeciw",
+      label: "Liczba głosów przeciw",
       color: chartConfig.percentageNo.color,
     },
   };
 
-  const pieChartData = votesYes
+  const pieChartData = votes?.government?.votesPercentage
     ? [
         {
           name: 'Rządzący',
-          value: votesYes.governmentPercentage,
+          value: votes.government.votesPercentage.yes,
           fill: chartConfig.government.color,
         },
         {
           name: 'Opozycja',
-          value: 100 - votesYes.governmentPercentage,
+          value: 100 - votes.government.votesPercentage.yes,
           fill: chartConfig.opposition.color,
         },
       ]
@@ -183,7 +152,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       <DialogContent className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
         ${
           isImportant
-            ? '!border-red-500/70'
+            ? '!border-red-500/70 shadow-red-500/10'
             : 'border-neutral-200 dark:border-neutral-700'
         }`}>
         <>
@@ -242,13 +211,13 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               {formattedDate}
             </span>
           </div>
-          {votesYes && votesNo && (
+          {votes && (
             <>
               <div className="font-semibold tracking-tight text-xl">
                 Wykres głosów za i przeciw
               </div>
               <div className="text-sm text-muted-foreground">
-                Wykres słupkowy przedstawia procentowy udział każdej partii w głosach za oraz przeciw.
+                Wykres słupkowy przedstawia liczbę głosów za oraz przeciw dla każdej partii.
               </div>
               <div className="flex flex-col space-y-1.5">
                 <div className="flex gap-5 w-full h-auto max-h-80">
@@ -318,7 +287,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {votesYes.governmentPercentage.toFixed(1)}%
+                                    {card.votes.government.votesPercentage.yes.toFixed(1)}%
                                   </tspan>
                                   <tspan
                                     x={viewBox.cx}
