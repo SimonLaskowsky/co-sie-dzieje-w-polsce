@@ -6,7 +6,7 @@ import Card from '@/components/shared/Card';
 import DialogModal from '@/components/shared/DialogModal';
 import useSWR from 'swr';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 type CardGridProps = {
   searchQuery: string;
@@ -28,16 +28,16 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
   };
 
   const toggleFilterOptions = () => {
-    setIsFilterOptionsOpen((prev) => !prev);
+    setIsFilterOptionsOpen(prev => !prev);
   };
 
   const toggleSortOrder = () => {
-    setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
     setSortByTitle(null);
   };
 
   const toggleSortByTitle = () => {
-    setSortByTitle((prev) => {
+    setSortByTitle(prev => {
       if (prev === null) return 'asc';
       if (prev === 'asc') return 'desc';
       return null;
@@ -100,8 +100,10 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
             summary={card.simple_title}
             date={card.announcement_date}
             categories={card.keywords}
-            isImportant={card.item_type === 'Ustawa'} 
-            governmentPercentage={card.votes?.government?.votesPercentage?.yes || 0}
+            isImportant={card.item_type === 'Ustawa'}
+            governmentPercentage={
+              card.votes?.government?.votesPercentage?.yes || 0
+            }
             onClick={() => openModal(card)}
           />
         ))}
@@ -238,11 +240,13 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
           </div>
         )}
       </Masonry>
-      <DialogModal
-        isOpen={selectedCard !== null}
-        onClose={closeModal}
-        card={selectedCard}
-      />
+      {selectedCard && (
+        <DialogModal
+          isOpen={selectedCard !== null}
+          onClose={closeModal}
+          card={selectedCard}
+        />
+      )}
     </div>
   );
 };

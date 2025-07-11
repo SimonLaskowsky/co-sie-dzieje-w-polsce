@@ -90,14 +90,10 @@ const truncatePartyName = (name: string): string => {
 };
 
 const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
-  if (!card) {
-    return null;
-  }
-
   const { votes } = card;
   const parties = votes?.parties;
 
-   const combinedData = parties
+  const combinedData = parties
     ? Object.keys(parties).map(party => ({
         party: truncatePartyName(party),
         yes: parties[party].votes.yes,
@@ -107,11 +103,11 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
   const combinedChartConfig = {
     yes: {
-      label: "Liczba głosów za",
+      label: 'Liczba głosów za',
       color: chartConfig.percentageYes.color,
     },
     no: {
-      label: "Liczba głosów przeciw",
+      label: 'Liczba głosów przeciw',
       color: chartConfig.percentageNo.color,
     },
   };
@@ -147,12 +143,14 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
+      <DialogContent
+        className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
         ${
           isImportant
             ? '!border-red-500/70 shadow-red-500/10'
             : 'border-neutral-200 dark:border-neutral-700'
-        }`}>
+        }`}
+      >
         <>
           <FixedElement />
           <DialogHeader className="h-fit">
@@ -215,11 +213,15 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 Wykres głosów za i przeciw
               </div>
               <div className="text-sm text-muted-foreground">
-                Wykres słupkowy przedstawia liczbę głosów za oraz przeciw dla każdej partii.
+                Wykres słupkowy przedstawia liczbę głosów za oraz przeciw dla
+                każdej partii.
               </div>
               <div className="flex flex-col space-y-1.5">
                 <div className="flex gap-5 w-full h-auto max-h-80">
-                  <ChartContainer config={combinedChartConfig} className="md:w-1/2">
+                  <ChartContainer
+                    config={combinedChartConfig}
+                    className="md:w-1/2"
+                  >
                     <BarChart
                       accessibilityLayer
                       data={combinedData}
@@ -241,8 +243,18 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                         cursor={false}
                         content={<ChartTooltipContent indicator="dashed" />}
                       />
-                      <Bar dataKey="yes" fill="var(--color-yes)" radius={4} minPointSize={2} />
-                      <Bar dataKey="no" fill="var(--color-no)" radius={4} minPointSize={2} />
+                      <Bar
+                        dataKey="yes"
+                        fill="var(--color-yes)"
+                        radius={4}
+                        minPointSize={2}
+                      />
+                      <Bar
+                        dataKey="no"
+                        fill="var(--color-no)"
+                        radius={4}
+                        minPointSize={2}
+                      />
                     </BarChart>
                   </ChartContainer>
                 </div>
@@ -285,7 +297,10 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card.votes.government.votesPercentage.yes.toFixed(1)}%
+                                    {card.votes.government.votesPercentage.yes.toFixed(
+                                      1
+                                    )}
+                                    %
                                   </tspan>
                                   <tspan
                                     x={viewBox.cx}

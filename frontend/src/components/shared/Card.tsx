@@ -26,19 +26,19 @@ const Card = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [totalDots, setTotalDots] = useState(14);
 
-  useEffect(() => {
-    const updateTotalDots = () => {
-      if (containerRef.current) {
-        const width = containerRef.current.offsetWidth;
-        const dotWidth = 8;
-        const desiredGap = 8;
-        const N = Math.round((width + desiredGap) / (desiredGap + dotWidth));
-        setTotalDots(Math.max(10, N));
-      }
-    };
+  const updateTotalDots = () => {
+    if (!containerRef.current) return;
+    const width = containerRef.current.offsetWidth;
+    const dotWidth = 8;
+    const desiredGap = 8;
+    const N = Math.round((width + desiredGap) / (dotWidth + desiredGap));
+    setTotalDots(Math.max(10, N));
+  };
 
-    updateTotalDots();
+  useEffect(() => {
     window.addEventListener('resize', updateTotalDots);
+    updateTotalDots();
+
     return () => window.removeEventListener('resize', updateTotalDots);
   }, []);
 
@@ -59,9 +59,7 @@ const Card = ({
     <div
       onClick={onClick}
       className={`bg-neutral-700/10 dark:bg-neutral-800/40 mx-auto max-w-11/12 sm:max-w-80 rounded-3xl ${
-        isImportant
-          ? 'border-2 border-red-500/70 shadow-red-500/10'
-          : ''
+        isImportant ? 'border-2 border-red-500/70 shadow-red-500/10' : ''
       } flex flex-col gap-3 p-5 rounded-3xl shadow-xl cursor-pointer hover:ring-2 
       dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:!border-transparent transition-all duration-300 h-fit`}
     >
@@ -89,9 +87,7 @@ const Card = ({
           ))}
         </div>
       )}
-      <p className="line-clamp-7 font-light text-sm">
-        {stripHtml(content)}
-      </p>
+      <p className="line-clamp-7 font-light text-sm">{stripHtml(content)}</p>
       {governmentPercentage > 0 && (
         <>
           <div className="dark:text-neutral-600 text-neutral-500 text-xs">
