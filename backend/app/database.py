@@ -6,6 +6,10 @@ from typing import Dict, Any, Optional
 from contextlib import contextmanager
 from dotenv import load_dotenv
 
+import requests
+import random
+import time
+
 load_dotenv()
 
 @contextmanager
@@ -67,7 +71,31 @@ def save_to_database(filtered_item: Dict[str, Any]) -> bool:
             execute_values(cursor, insert_query, [data_tuple])
             conn.commit()
             print("Data saved successfully.")
+
+            keywords = filtered_item.get("keywords", [])
+            if isinstance(keywords, list):
+                for kw in keywords:
+                    if isinstance(kw, str) and kw.strip():
+                        insert_keyword(kw.strip())
+
             return True
     except Exception as e:
         print(f"Error during data save: {e}")
+        return False   
+
+def insert_keyword(keyword: str) -> bool:
+    insert_query = """
+    INSERT INTO keywords (keyword)
+    VALUES (%s)
+    ON CONFLICT DO NOTHING
+    """
+
+    try:
+        with get_db_connection() as (conn, cursor):
+            cursor.execute(insert_query, (keyword,))
+            conn.commit()
+            print(f"Keyword '{keyword}' inserted.")
+            return True
+    except Exception as e:
+        print(f"Error inserting keyword '{keyword}': {e}")
         return False
