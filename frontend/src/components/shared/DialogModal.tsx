@@ -22,6 +22,7 @@ import {
   BarChart,
 } from 'recharts';
 import FixedElement from './FixedElement';
+import { Cagliostro } from 'next/font/google';
 
 type NewVotes = {
   government: {
@@ -56,6 +57,7 @@ type DialogModalProps = {
     title: string;
     content: string;
     announcement_date: string;
+    promulgation: string;
     item_type?: string;
     categories?: string[];
     votes: NewVotes;
@@ -83,8 +85,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const truncatePartyName = (name: string): string => {
-  if (name.length > 3) {
-    return name.slice(0, 3) + '.';
+  if (name.length > 4) {
+    return name.slice(0, 4) + '...';
   }
   return name;
 };
@@ -95,7 +97,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
   const combinedData = parties
     ? Object.keys(parties).map(party => ({
-        party: truncatePartyName(party),
+        party: party,
         yes: parties[party].votes.yes,
         no: parties[party].votes.no,
       }))
@@ -127,13 +129,20 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       ]
     : [];
 
-  const formattedDate = card.announcement_date
-    ? new Date(card.announcement_date).toLocaleDateString('pl-PL', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
-    : 'Brak daty';
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'Brak daty';
+    const date = new Date(dateString);
+    return isNaN(date.getTime())
+      ? 'Brak daty'
+      : date.toLocaleDateString('pl-PL', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+  };
+
+  const formattedDate = formatDate(card.announcement_date);
+  const formattedPromulgationDate = formatDate(card.promulgation);
 
   const stripHtml = (html: string) => {
     return html.replace(/<[^>]*>/g, '');
@@ -207,6 +216,15 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               {formattedDate}
             </span>
           </div>
+          <div className="flex flex-col">
+            <div className="font-semibold tracking-tight text-xl">
+              Data wejścia uchwały w życie
+            </div>
+            <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
+            <span className="text-sm text-muted-foreground">
+              {formattedPromulgationDate}
+            </span>
+          </div>
           {votes && (
             <>
               <div className="font-semibold tracking-tight text-xl">
@@ -238,6 +256,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
+                        tickFormatter={truncatePartyName}
                       />
                       <ChartTooltip
                         cursor={false}

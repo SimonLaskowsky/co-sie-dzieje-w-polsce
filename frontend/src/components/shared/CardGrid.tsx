@@ -10,9 +10,10 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 type CardGridProps = {
   searchQuery: string;
+  selectedTypes: string[];
 };
 
-const CardGrid = ({ searchQuery }: CardGridProps) => {
+const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -20,6 +21,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
 
   const { data, error } = useSWR('/api/acts', fetcher);
 
+  console.log(data);
   const breakpointColumnsObj = {
     default: 4,
     1200: 3,
@@ -50,14 +52,15 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
 
     const filtered = data.filter((card: any) => {
       const query = searchQuery.toLowerCase();
-      return (
+      const matchesQuery =
         card.title.toLowerCase().includes(query) ||
         (card.content && card.content.toLowerCase().includes(query)) ||
         (card.keywords &&
           card.keywords.some((keyword: string) =>
             keyword.toLowerCase().includes(query)
-          ))
-      );
+          ));
+      const matchesType = selectedTypes.includes(card.item_type);
+      return matchesQuery && matchesType;
     });
 
     if (sortByTitle) {
@@ -75,7 +78,7 @@ const CardGrid = ({ searchQuery }: CardGridProps) => {
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
       });
     }
-  }, [data, searchQuery, sortOrder, sortByTitle]);
+  }, [data, searchQuery, sortOrder, sortByTitle, selectedTypes]);
 
   const openModal = (card: any) => {
     setSelectedCard(card);

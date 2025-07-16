@@ -18,7 +18,7 @@ model acts {
   item_type         String?
   announcement_date DateTime? @db.Date
   change_date       DateTime? @db.Date
-  promulgation      String?
+  promulgation      DateTime? @db.Date
   item_status       String?
   comments          String?
   keywords          String[]
