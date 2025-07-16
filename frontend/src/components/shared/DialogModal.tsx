@@ -23,6 +23,32 @@ import {
 } from 'recharts';
 import FixedElement from './FixedElement';
 
+type NewVotes = {
+  government: {
+    parties: string[];
+    votesPercentage: {
+      yes: number;
+      no: number;
+      abstain: number;
+      absent: number;
+    };
+  };
+  parties: {
+    [party: string]: {
+      votes: {
+        yes: number;
+        no: number;
+        abstain: number;
+        absent: number;
+      };
+    };
+  };
+  summary: {
+    yes: number;
+    no: number;
+  };
+};
+
 type DialogModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -32,14 +58,7 @@ type DialogModalProps = {
     announcement_date: string;
     item_type?: string;
     categories?: string[];
-    votesYes?: {
-      partyVotes: { party: string; percentage: number }[];
-      governmentPercentage: number;
-    };
-    votesNo?: {
-      partyVotes: { party: string; percentage: number }[];
-      governmentPercentage: number;
-    };
+    votes: NewVotes;
     url: string;
   } | null;
 };
@@ -63,58 +82,58 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
-  const chartDataYes = card?.votesYes?.partyVotes ?? [];
-  const chartDataNo = card?.votesNo?.partyVotes ?? [];
+const truncatePartyName = (name: string): string => {
+  if (name.length > 3) {
+    return name.slice(0, 3) + '.';
+  }
+  return name;
+};
 
-  const allParties = Array.from(new Set([
-    ...chartDataYes.map(d => d.party),
-    ...chartDataNo.map(d => d.party)
-  ]));
-  const combinedData = allParties.map(party => ({
-    party,
-    yes: chartDataYes.find(d => d.party === party)?.percentage || 0,
-    no: chartDataNo.find(d => d.party === party)?.percentage || 0,
-  }));
+const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
+  const { votes } = card;
+  const parties = votes?.parties;
+
+  const combinedData = parties
+    ? Object.keys(parties).map(party => ({
+        party: truncatePartyName(party),
+        yes: parties[party].votes.yes,
+        no: parties[party].votes.no,
+      }))
+    : [];
 
   const combinedChartConfig = {
     yes: {
-      label: "Udział w głosach za",
+      label: 'Liczba głosów za',
       color: chartConfig.percentageYes.color,
     },
     no: {
-      label: "Udział w głosach przeciw",
+      label: 'Liczba głosów przeciw',
       color: chartConfig.percentageNo.color,
     },
   };
 
-  const pieChartData = card?.votesYes
+  const pieChartData = votes?.government?.votesPercentage
     ? [
         {
           name: 'Rządzący',
-          value: card.votesYes.governmentPercentage,
+          value: votes.government.votesPercentage.yes,
           fill: chartConfig.government.color,
         },
         {
           name: 'Opozycja',
-          value: 100 - card.votesYes.governmentPercentage,
+          value: 100 - votes.government.votesPercentage.yes,
           fill: chartConfig.opposition.color,
         },
       ]
     : [];
 
-
-  const formattedDate = card?.announcement_date
+  const formattedDate = card.announcement_date
     ? new Date(card.announcement_date).toLocaleDateString('pl-PL', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       })
     : 'Brak daty';
-
-  if (!card) {
-    return null;
-  }
 
   const stripHtml = (html: string) => {
     return html.replace(/<[^>]*>/g, '');
@@ -124,12 +143,14 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
+      <DialogContent
+        className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
         ${
           isImportant
-            ? '!border-red-500/70'
+            ? '!border-red-500/70 shadow-red-500/10'
             : 'border-neutral-200 dark:border-neutral-700'
-        }`}>
+        }`}
+      >
         <>
           <FixedElement />
           <DialogHeader className="h-fit">
@@ -186,17 +207,21 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               {formattedDate}
             </span>
           </div>
-          {card.votesYes && card.votesNo && (
+          {votes && (
             <>
               <div className="font-semibold tracking-tight text-xl">
                 Wykres głosów za i przeciw
               </div>
               <div className="text-sm text-muted-foreground">
-                Wykres słupkowy przedstawia procentowy udział każdej partii w głosach za oraz przeciw.
+                Wykres słupkowy przedstawia liczbę głosów za oraz przeciw dla
+                każdej partii.
               </div>
               <div className="flex flex-col space-y-1.5">
                 <div className="flex gap-5 w-full h-auto max-h-80">
-                  <ChartContainer config={combinedChartConfig} className="md:w-1/2">
+                  <ChartContainer
+                    config={combinedChartConfig}
+                    className="md:w-1/2"
+                  >
                     <BarChart
                       accessibilityLayer
                       data={combinedData}
@@ -218,13 +243,23 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                         cursor={false}
                         content={<ChartTooltipContent indicator="dashed" />}
                       />
-                      <Bar dataKey="yes" fill="var(--color-yes)" radius={4} />
-                      <Bar dataKey="no" fill="var(--color-no)" radius={4} />
+                      <Bar
+                        dataKey="yes"
+                        fill="var(--color-yes)"
+                        radius={4}
+                        minPointSize={2}
+                      />
+                      <Bar
+                        dataKey="no"
+                        fill="var(--color-no)"
+                        radius={4}
+                        minPointSize={2}
+                      />
                     </BarChart>
                   </ChartContainer>
                 </div>
                 <div className="font-semibold tracking-tight text-xl">
-                  Rozkład głosów za
+                  Rozkład głosów za przyjęciem ustawy
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Wykres kołowy przedstawia procentowy rozkład głosów za wśród
@@ -262,7 +297,10 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card.votesYes?.governmentPercentage ?? 0}%
+                                    {card.votes.government.votesPercentage.yes.toFixed(
+                                      1
+                                    )}
+                                    %
                                   </tspan>
                                   <tspan
                                     x={viewBox.cx}
@@ -282,7 +320,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 </div>
               </div>
             </>
-            )}
+          )}
         </>
       </DialogContent>
     </Dialog>
