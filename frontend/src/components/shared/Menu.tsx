@@ -82,7 +82,7 @@ const Menu = ({
         ${isOpen && 'opacity-100 !pointer-events-auto translate-x-12 z-0'}`}
         onClick={() => toggleType('Ustawa')}
       >
-        Ustawa
+        Ustawy
       </button>
       <button
         className={`cursor-pointer text-sm leading-3.5 absolute top-6 transition-all duration-300 -z-10 opacity-0 ${
@@ -96,7 +96,7 @@ const Menu = ({
         }`}
         onClick={() => toggleType('Rozporządzenie')}
       >
-        Rozporządzenie
+        Rozporządzenia
       </button>
     </>
   );
