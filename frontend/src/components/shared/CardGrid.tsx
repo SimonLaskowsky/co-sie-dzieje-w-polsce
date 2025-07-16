@@ -21,7 +21,6 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
 
   const { data, error } = useSWR('/api/acts', fetcher);
 
-  console.log(data);
   const breakpointColumnsObj = {
     default: 4,
     1200: 3,
