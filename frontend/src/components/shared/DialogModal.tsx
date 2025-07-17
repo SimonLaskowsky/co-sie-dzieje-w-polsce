@@ -22,7 +22,6 @@ import {
   BarChart,
 } from 'recharts';
 import FixedElement from './FixedElement';
-import { Cagliostro } from 'next/font/google';
 
 type NewVotes = {
   government: {
