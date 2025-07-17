@@ -128,8 +128,9 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       ]
     : [];
 
-  const formatDate = (dateString: string | undefined) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return 'Brak daty';
+    if (dateString == undefined) return 'Brak daty';
     const date = new Date(dateString);
     return isNaN(date.getTime())
       ? 'Brak daty'
