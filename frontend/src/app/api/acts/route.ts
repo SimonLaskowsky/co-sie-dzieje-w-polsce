@@ -12,6 +12,7 @@ export async function GET() {
         simple_title: true,
         content: true,
         announcement_date: true,
+        promulgation: true,
         keywords: true,
         item_type: true,
         votes: true,
@@ -20,6 +21,9 @@ export async function GET() {
     return NextResponse.json(acts);
   } catch (error) {
     console.error('Error while downloading data:', error);
-    return NextResponse.json({ error: 'Failed to download data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to download data' },
+      { status: 500 }
+    );
   }
 }

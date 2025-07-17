@@ -4,7 +4,7 @@ const Logo = () => {
   const [isAnimated, setIsAnimated] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsAnimated(true), 4000);
+    const timer = setTimeout(() => setIsAnimated(true), 3000);
     return () => clearTimeout(timer);
   }, []);
 
