@@ -6,6 +6,7 @@ import Card from '@/components/shared/Card';
 import DialogModal from '@/components/shared/DialogModal';
 import useSWR from 'swr';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -93,22 +94,37 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   return (
     <div className="w-full max-w-screen-xl mx-auto px-2.5">
       {keywords && keywords.length > 0 && (
-        <Swiper
-          spaceBetween={6}
-          slidesPerView="auto"
-          freeMode={true}
-          className="w-[calc(100%-34px)] mb-4 !mx-0 cursor-default relative 
-          after:absolute after:block after:h-full after:w-1/12 after:right-0 after:top-0 after:bg-gradient-to-l after:from-background after:to-transparent after:z-10
-          before:absolute before:block before:h-full before:w-1/12 before:left-0 before:top-0 before:bg-gradient-to-r before:from-background before:to-transparent before:z-10"
-        >
-          {keywords.map(keyword => (
-            <SwiperSlide key={keyword.keyword} className="!w-max">
-              <span className="dark:bg-neutral-700/50 cursor-pointer min-w-max bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full">
-                {keyword.keyword}
-              </span>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <>
+          <div className="relative flex flex-row items-center justify-between mb-2 gap-4 w-max">
+            <button className="swiper-button-prev-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 fill-neutral-400 hover:fill-neutral-600">
+              ←
+            </button>
+            <button className="swiper-button-next-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 fill-neutral-400 hover:fill-neutral-600">
+              →
+            </button>
+          </div>
+          <Swiper
+            modules={[Navigation]}
+            navigation={{
+              nextEl: '.swiper-button-next-custom',
+              prevEl: '.swiper-button-prev-custom',
+            }}
+            spaceBetween={6}
+            slidesPerView="auto"
+            freeMode={true}
+            className="w-[calc(100%-34px)] mb-4 !mx-0 cursor-default relative 
+            after:absolute after:block after:h-full after:w-1/12 after:right-0 after:top-0 after:bg-gradient-to-l after:from-background after:to-transparent after:z-10
+            before:absolute before:block before:h-full before:w-1/12 before:left-0 before:top-0 before:bg-gradient-to-r before:from-background before:to-transparent before:z-10"
+          >
+            {keywords.map(keyword => (
+              <SwiperSlide key={keyword.keyword} className="!w-max">
+                <span className="dark:bg-neutral-700/50 cursor-pointer min-w-max bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full">
+                  {keyword.keyword}
+                </span>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </>
       )}
       <Masonry
         breakpointCols={breakpointColumnsObj}
@@ -131,7 +147,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
           />
         ))}
         {filteredAndSortedCards.length > 0 && (
-          <div className="flex justify-end absolute right-0 -top-11">
+          <div className="flex justify-end absolute right-0 -top-[46px]">
             <button
               onClick={toggleFilterOptions}
               className={`p-2 cursor-pointer transition-all duration-300 ${
