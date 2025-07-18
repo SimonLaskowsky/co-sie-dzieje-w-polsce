@@ -4,7 +4,12 @@ import Menu from '@/components/shared/Menu';
 import Logo from '@/components/shared/Logo';
 import { useState, useEffect } from 'react';
 
-const Navbar = ({ selectedTypes, setSelectedTypes }) => {
+interface NavbarProps {
+  selectedTypes: string[];
+  setSelectedTypes: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ selectedTypes, setSelectedTypes }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
