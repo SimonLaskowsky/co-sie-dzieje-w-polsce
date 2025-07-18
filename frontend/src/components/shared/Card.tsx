@@ -72,7 +72,7 @@ const Card = ({
         W skrócie
       </div>
       <div className="text-sm text-muted-foreground leading-snug line-clamp-4 text-gradient-gloss font-medium -mt-2.5">
-        "{summary}"
+        &quot;{summary}&quot;
       </div>
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
@@ -90,7 +90,7 @@ const Card = ({
       {governmentPercentage > 0 && (
         <>
           <div className="dark:text-neutral-600 text-neutral-500 text-xs">
-            Rozkład głosów "za"
+            Rozkład głosów &quot;za&quot;
           </div>
           <div className="flex flex-col items-center gap-1 -mt-1.5">
             <div ref={containerRef} className="flex justify-between w-full">
