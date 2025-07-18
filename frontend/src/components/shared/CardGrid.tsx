@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -17,7 +18,24 @@ type CardGridProps = {
 };
 
 const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
-  const [selectedCard, setSelectedCard] = useState<any>(null);
+  type CardType = {
+    id: string;
+    title: string;
+    content?: string;
+    simple_title?: string;
+    announcement_date: string;
+    keywords?: string[];
+    item_type: string;
+    votes?: {
+      government?: {
+        votesPercentage?: {
+          yes?: number;
+        };
+      };
+    };
+  };
+
+  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [excludedKeywords, setExcludedKeywords] = useState<string[]>([]);
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -54,7 +72,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   const filteredAndSortedCards = useMemo(() => {
     if (!acts) return [];
 
-    const filtered = acts.filter((card: any) => {
+    const filtered = acts.filter((card: CardType) => {
       const query = searchQuery.toLowerCase();
       const matchesQuery =
         card.title.toLowerCase().includes(query) ||
@@ -67,13 +85,14 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
       const matchesKeywords =
         excludedKeywords.length === 0 ||
         !(
-          card.keywords && card.keywords.some(k => excludedKeywords.includes(k))
+          card.keywords &&
+          card.keywords.some((k: string) => excludedKeywords.includes(k))
         );
       return matchesQuery && matchesType && matchesKeywords;
     });
 
     if (sortByTitle) {
-      return filtered.sort((a: any, b: any) => {
+      return filtered.sort((a: CardType, b: CardType) => {
         const titleA = a.title.toLowerCase();
         const titleB = b.title.toLowerCase();
         return sortByTitle === 'asc'
@@ -81,7 +100,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
           : titleB.localeCompare(titleA);
       });
     } else {
-      return filtered.sort((a: any, b: any) => {
+      return filtered.sort((a: CardType, b: CardType) => {
         const dateA = new Date(a.announcement_date).getTime();
         const dateB = new Date(b.announcement_date).getTime();
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
@@ -96,7 +115,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
     excludedKeywords,
   ]);
 
-  const openModal = (card: any) => {
+  const openModal = (card: CardType) => {
     setSelectedCard(card);
   };
 
@@ -128,7 +147,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             className="w-[calc(100%-34px)] !mx-0 cursor-default relative !pb-4 mask-alpha mask-r-from-black mask-r-from-90% mask-r-to-transparent
             mask-l-from-black mask-l-from-90% mask-l-to-transparent"
           >
-            {keywords.map(keyword => (
+            {keywords.map((keyword: { keyword: string }) => (
               <SwiperSlide key={keyword.keyword} className="!w-max">
                 <span
                   onClick={() => {
@@ -314,7 +333,16 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
         <DialogModal
           isOpen={selectedCard !== null}
           onClose={closeModal}
-          card={selectedCard}
+          card={{
+            title: selectedCard.title,
+            content: selectedCard.content ?? '',
+            announcement_date: selectedCard.announcement_date,
+            promulgation: (selectedCard as any).promulgation ?? '',
+            item_type: selectedCard.item_type,
+            categories: selectedCard.keywords ?? [],
+            votes: (selectedCard as any).votes ?? {},
+            url: (selectedCard as any).url ?? '',
+          }}
         />
       )}
     </div>

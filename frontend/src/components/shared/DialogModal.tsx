@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import {
   Dialog,
@@ -91,7 +92,7 @@ const truncatePartyName = (name: string): string => {
 };
 
 const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
-  const { votes } = card;
+  const votes = card?.votes;
   const parties = votes?.parties;
 
   const combinedData = parties
@@ -141,14 +142,14 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         });
   };
 
-  const formattedDate = formatDate(card.announcement_date);
-  const formattedPromulgationDate = formatDate(card.promulgation);
+  const formattedDate = formatDate(card?.announcement_date ?? '');
+  const formattedPromulgationDate = formatDate(card?.promulgation ?? '');
 
   const stripHtml = (html: string) => {
     return html.replace(/<[^>]*>/g, '');
   };
 
-  const isImportant = card.item_type === 'Ustawa';
+  const isImportant = card?.item_type === 'Ustawa';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -164,11 +165,11 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
           <FixedElement />
           <DialogHeader className="h-fit">
             <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
-              {card.title}
+              {card?.title}
             </DialogTitle>
             <DialogDescription></DialogDescription>
             <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5 text-left">
-              {stripHtml(card.content)}
+              {stripHtml(card?.content ?? '')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col">
@@ -177,7 +178,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
             </div>
             <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
             <a
-              href={card.url}
+              href={card?.url}
               target="_blank"
               rel="noopener noreferrer"
               className="cursor-pointer inline-flex items-center gap-2 rounded-md text-sm font-medium 
@@ -187,10 +188,10 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 hover:underline justify-start w-fit max-w-full truncate relative after:absolute after:block 
                 after:h-full after:w-1/4 after:right-0 after:bg-gradient-to-l after:from-background after:to-transparent"
             >
-              {card.title}
+              {card?.title}
             </a>
           </div>
-          {card.categories && card.categories.length > 0 && (
+          {card?.categories && card.categories.length > 0 && (
             <div className="flex flex-col space-y-1.5">
               <div className="font-semibold tracking-tight text-xl">
                 Uchwała dotyczy
