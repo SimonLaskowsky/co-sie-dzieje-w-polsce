@@ -25,3 +25,7 @@ model acts {
   file              String?
   votes             Json?
 }
+
+model keywords {
+  keyword          String    @id
+}

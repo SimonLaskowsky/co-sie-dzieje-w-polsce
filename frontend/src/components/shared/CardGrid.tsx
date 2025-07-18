@@ -5,6 +5,8 @@ import Masonry from 'react-masonry-css';
 import Card from '@/components/shared/Card';
 import DialogModal from '@/components/shared/DialogModal';
 import useSWR from 'swr';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -19,7 +21,8 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
 
-  const { data, error } = useSWR('/api/acts', fetcher);
+  const { data } = useSWR('/api/acts', fetcher);
+  const { acts, keywords } = data || {};
 
   const breakpointColumnsObj = {
     default: 4,
@@ -47,9 +50,9 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   };
 
   const filteredAndSortedCards = useMemo(() => {
-    if (!data) return [];
+    if (!acts) return [];
 
-    const filtered = data.filter((card: any) => {
+    const filtered = acts.filter((card: any) => {
       const query = searchQuery.toLowerCase();
       const matchesQuery =
         card.title.toLowerCase().includes(query) ||
@@ -77,7 +80,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
       });
     }
-  }, [data, searchQuery, sortOrder, sortByTitle, selectedTypes]);
+  }, [acts, searchQuery, sortOrder, sortByTitle, selectedTypes]);
 
   const openModal = (card: any) => {
     setSelectedCard(card);
@@ -89,6 +92,24 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-2.5">
+      {keywords && keywords.length > 0 && (
+        <Swiper
+          spaceBetween={6}
+          slidesPerView="auto"
+          freeMode={true}
+          className="w-[calc(100%-34px)] mb-4 !mx-0 cursor-default relative 
+          after:absolute after:block after:h-full after:w-1/12 after:right-0 after:top-0 after:bg-gradient-to-l after:from-background after:to-transparent after:z-10
+          before:absolute before:block before:h-full before:w-1/12 before:left-0 before:top-0 before:bg-gradient-to-r before:from-background before:to-transparent before:z-10"
+        >
+          {keywords.map(keyword => (
+            <SwiperSlide key={keyword.keyword} className="!w-max">
+              <span className="dark:bg-neutral-700/50 cursor-pointer min-w-max bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full">
+                {keyword.keyword}
+              </span>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="flex gap-5 w-fit justify-center relative mx-auto"

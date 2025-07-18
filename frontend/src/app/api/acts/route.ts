@@ -18,7 +18,12 @@ export async function GET() {
         votes: true,
       },
     });
-    return NextResponse.json(acts);
+    const keywords = await prisma.keywords.findMany({
+      select: {
+        keyword: true,
+      },
+    });
+    return NextResponse.json({ acts, keywords });
   } catch (error) {
     console.error('Error while downloading data:', error);
     return NextResponse.json(
