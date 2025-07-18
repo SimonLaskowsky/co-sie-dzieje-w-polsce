@@ -18,6 +18,7 @@ type CardGridProps = {
 
 const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [excludedKeywords, setExcludedKeywords] = useState<string[]>([]);
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
@@ -63,7 +64,12 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             keyword.toLowerCase().includes(query)
           ));
       const matchesType = selectedTypes.includes(card.item_type);
-      return matchesQuery && matchesType;
+      const matchesKeywords =
+        excludedKeywords.length === 0 ||
+        !(
+          card.keywords && card.keywords.some(k => excludedKeywords.includes(k))
+        );
+      return matchesQuery && matchesType && matchesKeywords;
     });
 
     if (sortByTitle) {
@@ -81,7 +87,14 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
       });
     }
-  }, [acts, searchQuery, sortOrder, sortByTitle, selectedTypes]);
+  }, [
+    acts,
+    searchQuery,
+    sortOrder,
+    sortByTitle,
+    selectedTypes,
+    excludedKeywords,
+  ]);
 
   const openModal = (card: any) => {
     setSelectedCard(card);
@@ -94,12 +107,12 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   return (
     <div className="w-full max-w-screen-xl mx-auto px-2.5">
       {keywords && keywords.length > 0 && (
-        <>
+        <div className="w-full mx-auto max-[640px]:max-w-full max-[700px]:max-w-[320px] max-[950px]:max-w-[660px] max-[1200px]:max-w-[1000px] max-w-[1260px]">
           <div className="relative flex flex-row items-center justify-between mb-2 gap-4 w-max">
-            <button className="swiper-button-prev-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 fill-neutral-400 hover:fill-neutral-600">
+            <button className="swiper-button-prev-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
               ←
             </button>
-            <button className="swiper-button-next-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 fill-neutral-400 hover:fill-neutral-600">
+            <button className="swiper-button-next-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
               →
             </button>
           </div>
@@ -112,19 +125,36 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             spaceBetween={6}
             slidesPerView="auto"
             freeMode={true}
-            className="w-[calc(100%-34px)] mb-4 !mx-0 cursor-default relative 
-            after:absolute after:block after:h-full after:w-1/12 after:right-0 after:top-0 after:bg-gradient-to-l after:from-background after:to-transparent after:z-10
-            before:absolute before:block before:h-full before:w-1/12 before:left-0 before:top-0 before:bg-gradient-to-r before:from-background before:to-transparent before:z-10"
+            className="w-[calc(100%-34px)] !mx-0 cursor-default relative !pb-4 mask-alpha mask-r-from-black mask-r-from-90% mask-r-to-transparent
+            mask-l-from-black mask-l-from-90% mask-l-to-transparent"
           >
             {keywords.map(keyword => (
               <SwiperSlide key={keyword.keyword} className="!w-max">
-                <span className="dark:bg-neutral-700/50 cursor-pointer min-w-max bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full">
+                <span
+                  onClick={() => {
+                    setExcludedKeywords(prev =>
+                      prev.includes(keyword.keyword)
+                        ? prev.filter(k => k !== keyword.keyword)
+                        : [...prev, keyword.keyword]
+                    );
+                  }}
+                  className={`
+              transition-all duration-300 shadow-none active:!shadow-none 
+              hover:not-focus:shadow-lg cursor-pointer min-w-max 
+              px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full
+              ${
+                !excludedKeywords.includes(keyword.keyword)
+                  ? 'bg-neutral-600/10 hover:bg-neutral-500/10 dark:bg-neutral-700/70 dark:hover:bg-neutral-600/60'
+                  : 'dark:bg-neutral-700/40 dark:opacity-80 opacity-50 bg-neutral-600/10'
+              }
+            `}
+                >
                   {keyword.keyword}
                 </span>
               </SwiperSlide>
             ))}
           </Swiper>
-        </>
+        </div>
       )}
       <Masonry
         breakpointCols={breakpointColumnsObj}
@@ -279,6 +309,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
           </div>
         )}
       </Masonry>
+
       {selectedCard && (
         <DialogModal
           isOpen={selectedCard !== null}
