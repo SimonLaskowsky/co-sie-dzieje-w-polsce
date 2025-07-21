@@ -2,10 +2,6 @@
 
 [Opisz, co ten PR robi.]
 
-## Powód zmian
+## Przedstawienie zmian
 
-[Dlaczego ta zmiana jest konieczna?]
-
-## Jak ta zmiana rozwiązuje problem?
-
-[Opisz, jak ta zmiana adresuje problem.]
+[Zaprezentuj zmiane, zdjęciami bądź nagraniem.]
