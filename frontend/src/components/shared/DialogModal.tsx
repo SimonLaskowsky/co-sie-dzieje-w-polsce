@@ -226,7 +226,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               {formattedPromulgationDate}
             </span>
           </div>
-          {votes && (
+          {votes?.government && (
             <>
               <div className="font-semibold tracking-tight text-xl">
                 Wykres głosów za i przeciw
@@ -317,7 +317,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card.votes.government.votesPercentage.yes.toFixed(
+                                    {card?.votes.government.votesPercentage.yes.toFixed(
                                       1
                                     )}
                                     %

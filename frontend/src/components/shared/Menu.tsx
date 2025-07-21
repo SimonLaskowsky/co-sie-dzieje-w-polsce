@@ -29,7 +29,7 @@ const Menu = ({
   return (
     <>
       <div
-        className={`cursor-pointer absolute top-5 left-5 text-neutral-400 dark:text-neutral-500 transition-colors duration-300 ${
+        className={`cursor-pointer absolute top-5 left-5 max-md:mix-blend-difference text-neutral-400 dark:text-neutral-500 transition-colors duration-300 ${
           isOpen ? 'dark:!text-neutral-100 !text-neutral-600' : ''
         }`}
         onClick={toggleMenu}
