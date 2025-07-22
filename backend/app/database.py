@@ -1,11 +1,16 @@
-from venv import logger
+import logging
 import psycopg2
 from psycopg2.extras import execute_values
 import os
 import json
 from typing import Dict, Any, List, Optional
+
+
 from contextlib import contextmanager
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
@@ -47,7 +52,7 @@ def find_category_by_keywords(keywords):
             result = cursor.fetchone()
             return result[0] if result else None
     except Exception as e:
-        print(f"JSON approach failed: {e}")
+        logger.error(f"JSON approach failed: {e}")
     
     try:
         with get_db_connection() as (conn, cursor):
@@ -61,7 +66,7 @@ def find_category_by_keywords(keywords):
             result = cursor.fetchone()
             return result[0] if result else None
     except Exception as e:
-        print(f"JSONB approach failed: {e}")
+        logger.error(f"JSONB approach failed: {e}")
     
     try:
         with get_db_connection() as (conn, cursor):
@@ -76,7 +81,7 @@ def find_category_by_keywords(keywords):
             result = cursor.fetchone()
             return result[0] if result else None
     except Exception as e:
-        print(f"Text search approach failed: {e}")
+        logger.error(f"Text search approach failed: {e}")
         return None
     
 def get_all_categories_with_keywords():
@@ -98,7 +103,7 @@ def get_all_categories_with_keywords():
             return categories_data
             
     except Exception as e:
-        print(f"Error fetching categories: {e}")
+        logger.error(f"Error fetching categories: {e}")
         return None
 
 def save_to_database(filtered_item: Dict[str, Any]) -> bool:
@@ -155,10 +160,10 @@ def save_to_database(filtered_item: Dict[str, Any]) -> bool:
         with get_db_connection() as (conn, cursor):
             execute_values(cursor, insert_query, [data_tuple])
             conn.commit()
-        print("Data saved successfully.")
+        logger.info("Data saved successfully.")
         return True
     except Exception as e:
-        print(f"Error during data save: {e}")
+        logger.error(f"Error during data save: {e}")
         return False
     
 def extend_category_keywords(category_name: str, new_keywords: List[str], all_categories: List[Dict[str, Any]]) -> Optional[str]:
