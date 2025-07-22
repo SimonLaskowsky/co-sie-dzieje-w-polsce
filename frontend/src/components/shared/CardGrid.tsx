@@ -133,7 +133,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
               →
             </button>
           </div>
-          <div className="flex pb-4 items-center gap-1">
+          <div className="flex items-center gap-1">
             <Swiper
               modules={[Navigation]}
               navigation={{
@@ -144,7 +144,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
               slidesPerView="auto"
               freeMode={true}
               className="!mx-0 cursor-default relative mask-alpha mask-r-from-black mask-r-from-97% mask-r-to-transparent
-            mask-l-from-black mask-l-from-97% mask-l-to-transparent"
+            mask-l-from-black mask-l-from-97% mask-l-to-transparent !pb-4"
             >
               <SwiperSlide key="wszystkie" className="!w-max">
                 <span
@@ -152,11 +152,11 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
                   className={`
                   transition-all duration-300 shadow-none active:!shadow-none 
                   hover:not-focus:shadow-lg cursor-pointer min-w-max 
-                  px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full
+                  px-2 py-1 text-xs font-medium rounded-full
                   ${
                     selectedKeywords.length === 0
-                      ? 'bg-neutral-600/10 hover:bg-neutral-500/10 dark:bg-neutral-700/70 dark:hover:bg-neutral-600/60'
-                      : 'dark:bg-neutral-700/40 dark:opacity-70 opacity-50 bg-neutral-600/10 dark:hover:bg-neutral-700/70'
+                      ? 'bg-neutral-600/10 dark:bg-neutral-700/70 text-neutral-900 dark:text-neutral-100'
+                      : 'dark:hover:bg-neutral-700/70 hover:bg-neutral-600/10 text-neutral-400 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100'
                   }
                 `}
                 >
@@ -176,11 +176,11 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
                     className={`
                     transition-all duration-300 shadow-none active:!shadow-none 
                     hover:not-focus:shadow-lg cursor-pointer min-w-max 
-                    px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full
+                    px-2 py-1 text-xs font-medium rounded-full
                     ${
                       selectedKeywords.includes(keyword.keyword)
-                        ? 'bg-neutral-600/10 hover:bg-neutral-500/10 dark:bg-neutral-700/70 dark:hover:bg-neutral-600/60'
-                        : 'dark:bg-neutral-700/40 dark:hover:bg-neutral-700/70 dark:opacity-80 opacity-50 hover:opacity-100 dark:hover:opacity-100 bg-neutral-600/10'
+                        ? 'bg-neutral-600/10 dark:bg-neutral-700/70 text-neutral-900 dark:text-neutral-100'
+                        : 'dark:hover:bg-neutral-700/70 hover:bg-neutral-600/10 text-neutral-400 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100'
                     }
                   `}
                   >
@@ -190,7 +190,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
               ))}
             </Swiper>
 
-            <div className="flex justify-end relative right-0">
+            <div className="flex justify-end relative right-0 pb-4">
               <button
                 onClick={toggleFilterOptions}
                 className={`p-2 cursor-pointer transition-all duration-300 ${
