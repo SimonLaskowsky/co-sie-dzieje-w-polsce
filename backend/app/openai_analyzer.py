@@ -10,10 +10,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from contextlib import contextmanager
 
+import logging
+
 logging.basicConfig(
+    filename='app.log',
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+
 logger = logging.getLogger(__name__)
 
 load_dotenv()
