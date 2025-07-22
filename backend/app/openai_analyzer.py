@@ -3,6 +3,7 @@ import json
 import time
 import logging
 from typing import Dict, Any, List, Optional, Union
+from database import create_new_category, extend_category_keywords
 from openai import OpenAI, APIError
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -103,3 +104,94 @@ def save_analysis_to_file(analysis: Union[Dict[str, Any], str], filename: str) -
         logger.info(f"Analysis saved to {filename}")
     except Exception as e:
         logger.error(f"Save error: {e}")
+
+def find_or_create_category_with_ai(act_keywords: List[str], all_categories: List[Dict[str, Any]], act_title: str = "", act_content: str = "") -> Optional[str]:
+
+    if not act_keywords or not all_categories:
+        return None
+    
+    categories_info = []
+    for category_data in all_categories:
+        category_name = category_data.get("category")
+        category_keywords = category_data.get("keywords", [])
+        
+        if isinstance(category_keywords, str):
+            try:
+                keywords_list = json.loads(category_keywords)
+            except json.JSONDecodeError:
+                keywords_list = [category_keywords]
+        elif isinstance(category_keywords, list):
+            keywords_list = category_keywords
+        else:
+            keywords_list = []
+            
+        categories_info.append({
+            "category": category_name,
+            "keywords": keywords_list
+        })
+    
+    act_info = {
+        "keywords": act_keywords,
+        "title": act_title[:200] if act_title else "",
+        "content_preview": act_content[:500] if act_content else ""
+    }
+    
+    prompt = f"""
+    Analizujesz akt prawny i musisz zdecydować o kategorii. Masz do wyboru:
+    
+    1. DOPASUJ do istniejącej kategorii - jeśli słowa kluczowe aktu pasują do jednej z istniejących kategorii
+    2. ROZSZERZ istniejącą kategorię - jeśli akt pasuje do kategorii, ale ma nowe słowa kluczowe
+    3. UTWÓRZ nową kategorię - jeśli akt nie pasuje do żadnej istniejącej kategorii
+    
+    ISTNIEJĄCE KATEGORIE:
+    {json.dumps(categories_info, ensure_ascii=False, indent=2)}
+    
+    AKT DO KATEGORYZACJI:
+    {json.dumps(act_info, ensure_ascii=False, indent=2)}
+    
+    Zwróć JSON w formacie:
+    {{
+        "action": "match|extend|create",
+        "category_name": "nazwa_kategorii",
+        "new_keywords": ["lista", "nowych", "słów", "kluczowych"],
+        "reasoning": "krótkie uzasadnienie decyzji"
+    }}
+    
+    ZASADY:
+    - Dla "match": zwróć istniejącą nazwę kategorii, new_keywords może być puste
+    - Dla "extend": zwróć istniejącą nazwę kategorii + nowe keywords do dodania
+    - Dla "create": wymyśl nową nazwę kategorii + wszystkie keywords
+    - Nazwy kategorii po polsku, krótkie, opisowe
+    - Keywords to kluczowe terminy prawne, nie całe frazy
+    """
+    
+    try:
+        ai_decision = analyze_text_with_openai("", prompt, max_tokens=500)
+        
+        if isinstance(ai_decision, dict) and "action" in ai_decision:
+            action = ai_decision.get("action")
+            category_name = ai_decision.get("category_name")
+            new_keywords = ai_decision.get("new_keywords", [])
+            
+            logger.info(f"AI decision: {ai_decision.get('reasoning', 'No reasoning provided')}")
+            
+            if action == "match":
+                if any(cat.get("category") == category_name for cat in all_categories):
+                    return category_name
+                else:
+                    logger.warning(f"AI suggested non-existent category: {category_name}")
+                    return None
+                    
+            elif action == "extend":
+                return extend_category_keywords(category_name, new_keywords, all_categories)
+                
+            elif action == "create":
+                return create_new_category(category_name, new_keywords + act_keywords)
+                
+        else:
+            logger.error(f"Invalid AI response format: {ai_decision}")
+            return None
+            
+    except Exception as e:
+        logger.error(f"Error in AI categorization: {e}")
+        return None
