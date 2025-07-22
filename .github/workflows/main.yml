@@ -1,0 +1,39 @@
+name: Deploy to FTP
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy-backend:
+    if: contains(github.event.head_commit.message, 'backend') || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy backend
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Upload backend to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./backend
+
+  deploy-frontend:
+    if: contains(github.event.head_commit.message, 'frontend') || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy frontend
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Upload frontend to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./frontend
