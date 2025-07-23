@@ -15,6 +15,7 @@ export async function GET() {
         promulgation: true,
         keywords: true,
         item_type: true,
+        file: true,
         votes: true,
       },
     });

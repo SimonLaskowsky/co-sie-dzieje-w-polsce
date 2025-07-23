@@ -174,7 +174,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
           </DialogHeader>
           <div className="flex flex-col">
             <div className="font-semibold tracking-tight text-xl">
-              Odnośnik do pełnej treści uchwały
+              Odnośnik do pełnej treści aktu
             </div>
             <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
             <a
@@ -186,7 +186,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none 
                 [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground hover:bg-transparent 
                 hover:underline justify-start w-fit max-w-full truncate relative after:absolute after:block 
-                after:h-full after:w-1/4 after:right-0 after:bg-gradient-to-l after:from-background after:to-transparent"
+                after:h-full after:w-1/6 after:right-0 after:bg-gradient-to-l after:from-background after:to-transparent"
             >
               {card?.title}
             </a>
@@ -194,7 +194,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
           {card?.categories && card.categories.length > 0 && (
             <div className="flex flex-col space-y-1.5">
               <div className="font-semibold tracking-tight text-xl">
-                Uchwała dotyczy
+                Akt dotyczy
               </div>
               <div className="flex flex-wrap gap-1.5 mt-1 h-fit">
                 {card.categories.map((category: string, index: number) => (
@@ -208,23 +208,25 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
               </div>
             </div>
           )}
-          <div className="flex flex-col">
-            <div className="font-semibold tracking-tight text-xl">
-              Data ogłoszenia uchwały
+          <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+            <div className="flex flex-col">
+              <div className="font-semibold tracking-tight text-xl">
+                Data ogłoszenia aktu
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
+              <span className="text-sm text-muted-foreground">
+                {formattedDate}
+              </span>
             </div>
-            <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
-            <span className="text-sm text-muted-foreground">
-              {formattedDate}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <div className="font-semibold tracking-tight text-xl">
-              Data wejścia uchwały w życie
+            <div className="flex flex-col">
+              <div className="font-semibold tracking-tight text-xl">
+                Data wejścia aktu w życie
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
+              <span className="text-sm text-muted-foreground">
+                {formattedPromulgationDate}
+              </span>
             </div>
-            <div className="flex flex-wrap gap-1.5 mt-1 h-fit"></div>
-            <span className="text-sm text-muted-foreground">
-              {formattedPromulgationDate}
-            </span>
           </div>
           {votes?.government && (
             <>

@@ -26,6 +26,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
     announcement_date: string;
     keywords?: string[];
     item_type: string;
+    file: string;
     votes?: {
       government?: {
         votesPercentage?: {
@@ -42,6 +43,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
 
   const { data } = useSWR('/api/acts', fetcher);
+
   const { acts, keywords } = data || {};
 
   const breakpointColumnsObj = {
@@ -357,7 +359,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             item_type: selectedCard.item_type,
             categories: selectedCard.keywords ?? [],
             votes: (selectedCard as any).votes ?? {},
-            url: (selectedCard as any).url ?? '',
+            url: (selectedCard as any).file ?? '',
           }}
         />
       )}
