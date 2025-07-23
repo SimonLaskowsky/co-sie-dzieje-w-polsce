@@ -33,6 +33,10 @@ def create_empty_result() -> Dict[str, Any]:
             "percentages": {
                 "yes": 0, "no": 0, "abstain": 0, "absent": 0
             }
+        },
+        "votesSupportByGroup": {
+            "government": {"yesVotes": 0, "yesPercentage": 0},
+            "opposition": {"yesVotes": 0, "yesPercentage": 0}
         }
     }
 
@@ -52,6 +56,7 @@ def process_voting_data(data: Dict[str, Any], term: int) -> Dict[str, Any]:
     
     calculate_summary_percentages(result)
     calculate_government_percentages(result, party_votes, government_parties)
+    calculate_votes_support_by_group(result, party_votes, government_parties)
     
     return result
 
@@ -139,3 +144,32 @@ def calculate_government_percentages(
             "abstain": round((gov_votes["abstain"] / gov_votes["total"]) * 100, 1),
             "absent": round((gov_votes["absent"] / gov_votes["total"]) * 100, 1)
         }
+        
+def calculate_votes_support_by_group(
+    result: Dict[str, Any],
+    party_votes: Dict[str, Dict[str, int]],
+    government_parties: List[str]
+) -> None:
+    total_yes = result["summary"]["yes"]
+    if total_yes == 0:
+        return
+
+    gov_yes = 0
+    opp_yes = 0
+
+    for party, votes in party_votes.items():
+        if party in government_parties:
+            gov_yes += votes["yes"]
+        else:
+            opp_yes += votes["yes"]
+
+    result["votesSupportByGroup"] = {
+        "government": {
+            "yesVotes": gov_yes,
+            "yesPercentage": round((gov_yes / total_yes) * 100, 1)
+        },
+        "opposition": {
+            "yesVotes": opp_yes,
+            "yesPercentage": round((opp_yes / total_yes) * 100, 1)
+        }
+    }
