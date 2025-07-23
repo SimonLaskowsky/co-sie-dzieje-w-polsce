@@ -9,6 +9,9 @@ from typing import Dict, Any, List, Optional
 from contextlib import contextmanager
 from dotenv import load_dotenv
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 load_dotenv()
 
 @contextmanager
@@ -67,7 +70,6 @@ def find_category_by_keywords(keywords):
     
     try:
         with get_db_connection() as (conn, cursor):
-            keywords_json = json.dumps(keywords)
             cursor.execute("""
                 SELECT category FROM category 
                 WHERE keywords::text LIKE ANY(
