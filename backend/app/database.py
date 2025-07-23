@@ -9,9 +9,6 @@ from typing import Dict, Any, List, Optional
 from contextlib import contextmanager
 from dotenv import load_dotenv
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-
 load_dotenv()
 
 @contextmanager
@@ -120,10 +117,10 @@ def save_to_database(filtered_item: Dict[str, Any]) -> bool:
     if not category_name:
         all_categories = get_all_categories_with_keywords()
         if all_categories:
-            print("Available categories with keywords:")
-            print(json.dumps(all_categories, indent=2, ensure_ascii=False))
+            logger.info("Available categories with keywords:")
+            logger.info(json.dumps(all_categories, indent=2, ensure_ascii=False))
         else:
-            print("No categories found or error occurred")
+            logger.info("No categories found or error occurred")
     
     insert_query = """
     INSERT INTO acts (

@@ -63,7 +63,18 @@
           "absent": 0,
           "abstain": 0
         }
+      },
+      "votesSupportByGroup": {
+        "government": {
+          "yesVotes": 0,
+          "yesPercentage": 0
+        },
+        "opposition": {
+          "yesVotes": 0,
+          "yesPercentage": 0
+        }
       }
-    }
+    },
+    "category": ""
   }
 ]
