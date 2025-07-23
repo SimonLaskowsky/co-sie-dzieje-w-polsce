@@ -1,27 +1,22 @@
 name: Deploy Backend App to FTP
-
 on:
   push:
     branches:
       - main
     paths:
       - 'backend/app/**'
-
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
       - name: Deploy backend/app to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.x
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
-          local-dir: backend/app
-          server-dir: /public_html/csdwp
+          local-dir: backend/app/
+          server-dir: /public_html/csdwp/
           dangerous-clean-slate: false
-
