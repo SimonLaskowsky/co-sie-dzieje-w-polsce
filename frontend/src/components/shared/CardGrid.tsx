@@ -1,48 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useMemo } from 'react';
 import Masonry from 'react-masonry-css';
 import Card from '@/components/shared/Card';
 import DialogModal from '@/components/shared/DialogModal';
-import useSWR from 'swr';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
-
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+import { ActsAndKeywordsResponse, Act } from '@/app/lib/types';
 
 type CardGridProps = {
   searchQuery: string;
   selectedTypes: string[];
+  data: ActsAndKeywordsResponse;
 };
 
-const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
-  type CardType = {
-    id: string;
-    title: string;
-    content?: string;
-    simple_title?: string;
-    announcement_date: string;
-    keywords?: string[];
-    item_type: string;
-    file: string;
-    votes?: {
-      government?: {
-        votesPercentage?: {
-          yes?: number;
-        };
-      };
-    };
-  };
-
-  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
+const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
+  const [selectedCard, setSelectedCard] = useState<Act | null>(null);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
-
-  const { data } = useSWR('/api/acts', fetcher);
 
   const { acts, keywords } = data || {};
 
@@ -74,7 +52,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   const filteredAndSortedCards = useMemo(() => {
     if (!acts) return [];
 
-    const filtered = acts.filter((card: CardType) => {
+    const filtered = acts.filter((card: Act) => {
       const query = searchQuery.toLowerCase();
       const matchesQuery =
         card.title.toLowerCase().includes(query) ||
@@ -92,7 +70,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
     });
 
     if (sortByTitle) {
-      return filtered.sort((a: CardType, b: CardType) => {
+      return filtered.sort((a: Act, b: Act) => {
         const titleA = a.title.toLowerCase();
         const titleB = b.title.toLowerCase();
         return sortByTitle === 'asc'
@@ -100,7 +78,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
           : titleB.localeCompare(titleA);
       });
     } else {
-      return filtered.sort((a: CardType, b: CardType) => {
+      return filtered.sort((a: Act, b: Act) => {
         const dateA = new Date(a.announcement_date).getTime();
         const dateB = new Date(b.announcement_date).getTime();
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
@@ -115,7 +93,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
     selectedKeywords,
   ]);
 
-  const openModal = (card: CardType) => {
+  const openModal = (card: Act) => {
     setSelectedCard(card);
   };
 
@@ -330,7 +308,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
         className="flex gap-5 w-fit justify-center relative mx-auto"
         columnClassName="flex flex-col gap-5 !w-fit"
       >
-        {filteredAndSortedCards.map((card: any) => (
+        {filteredAndSortedCards.map((card: Act) => (
           <Card
             key={card.id}
             title={card.title}
@@ -338,7 +316,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             summary={card.simple_title}
             date={card.announcement_date}
             categories={card.keywords}
-            isImportant={card.votes?.government?.votesPercentage?.yes}
+            isImportant={!!card.votes?.government?.votesPercentage?.yes}
             governmentPercentage={
               card.votes?.government?.votesPercentage?.yes || 0
             }
@@ -355,11 +333,11 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             title: selectedCard.title,
             content: selectedCard.content ?? '',
             announcement_date: selectedCard.announcement_date,
-            promulgation: (selectedCard as any).promulgation ?? '',
+            promulgation: (selectedCard as Act).promulgation ?? '',
             item_type: selectedCard.item_type,
             categories: selectedCard.keywords ?? [],
-            votes: (selectedCard as any).votes ?? {},
-            url: (selectedCard as any).file ?? '',
+            votes: (selectedCard as Act).votes ?? {},
+            url: (selectedCard as Act).file ?? '',
           }}
         />
       )}

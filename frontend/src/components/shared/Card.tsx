@@ -4,8 +4,8 @@ import { useRef, useState, useEffect } from 'react';
 
 type InfoTileProps = {
   title: string;
-  content: string;
-  summary: string;
+  content?: string;
+  summary?: string;
   date: string;
   isImportant?: boolean;
   onClick: () => void;
@@ -86,7 +86,9 @@ const Card = ({
           ))}
         </div>
       )}
-      <p className="line-clamp-7 font-light text-sm">{stripHtml(content)}</p>
+      <p className="line-clamp-7 font-light text-sm">
+        {content && stripHtml(content)}
+      </p>
       {governmentPercentage > 0 && (
         <>
           <div className="dark:text-neutral-600 text-neutral-500 text-xs">
