@@ -1,28 +1,11 @@
-'use client';
+import ClientWrapper from '@/components/ClientWrapper';
+import { getActsAndKeywords } from '@/app/lib/acts';
+import type { ActsAndKeywordsResponse } from '@/app/lib/types';
 
-import SearchBar from '@/components/shared/SearchBar';
-import CardGrid from '@/components/shared/CardGrid';
-import Navbar from '@/components/layout/Navbar';
-import { useState } from 'react';
+const Home = async () => {
+  const data: ActsAndKeywordsResponse = await getActsAndKeywords();
 
-const Home = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(['Ustawa']);
-
-  return (
-    <>
-      <Navbar
-        selectedTypes={selectedTypes}
-        setSelectedTypes={setSelectedTypes}
-      />
-      <div className="overflow-hidden flex flex-col gap-20 items-center justify-items-center w-full min-h-screen pt-[110px] py-8 pb-20 font-[family-name:var(--font-geist-sans)]">
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <main className="w-full h-full after:pointer-events-none after:block after:fixed after:bottom-0 after:w-full after:h-1/3 after:bg-gradient-to-t after:from-background after:to-transparent">
-          <CardGrid searchQuery={searchQuery} selectedTypes={selectedTypes} />
-        </main>
-      </div>
-    </>
-  );
+  return <ClientWrapper data={data} />;
 };
 
 export default Home;
