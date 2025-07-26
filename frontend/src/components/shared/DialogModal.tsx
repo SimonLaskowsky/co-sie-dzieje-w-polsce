@@ -60,7 +60,7 @@ type DialogModalProps = {
     promulgation: string;
     item_type?: string;
     categories?: string[];
-    votes: NewVotes;
+    votes?: NewVotes;
     url: string;
   } | null;
 };
@@ -319,7 +319,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card?.votes.government.votesPercentage.yes.toFixed(
+                                    {card?.votes?.government.votesPercentage.yes.toFixed(
                                       1
                                     )}
                                     %
