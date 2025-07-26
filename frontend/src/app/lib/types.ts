@@ -14,39 +14,41 @@ export interface Act {
   comments?: string | null;
   keywords?: string[];
   file: string;
-  votes?: {
-    parties?: Record<
-      string,
-      {
-        votes: { no: number; yes: number; absent: number; abstain: number };
-        percentages: {
-          no: number;
-          yes: number;
-          absent: number;
-          abstain: number;
-        };
-        totalMembers: number;
-      }
-    >;
-    summary?: {
-      no: number;
-      yes: number;
-      total: number;
-      absent: number;
-      abstain: number;
-      percentages: { no: number; yes: number; absent: number; abstain: number };
-    };
-    government?: {
-      parties?: string[];
-      votesPercentage?: {
-        no?: number;
-        yes?: number;
-        absent?: number;
-        abstain?: number;
-      };
-    };
-  } | null;
+  votes?: Votes | null;
   category?: string | null;
+}
+
+export interface Votes {
+  parties?: Record<
+    string,
+    {
+      votes: { no: number; yes: number; absent: number; abstain: number };
+      percentages: {
+        no: number;
+        yes: number;
+        absent: number;
+        abstain: number;
+      };
+      totalMembers: number;
+    }
+  >;
+  summary?: {
+    no: number;
+    yes: number;
+    total: number;
+    absent: number;
+    abstain: number;
+    percentages: { no: number; yes: number; absent: number; abstain: number };
+  };
+  government?: {
+    parties?: string[];
+    votesPercentage?: {
+      no?: number;
+      yes?: number;
+      absent?: number;
+      abstain?: number;
+    };
+  };
 }
 
 export interface Keyword {
