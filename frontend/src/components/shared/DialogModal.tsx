@@ -23,32 +23,7 @@ import {
   BarChart,
 } from 'recharts';
 import FixedElement from './FixedElement';
-
-type NewVotes = {
-  government: {
-    parties: string[];
-    votesPercentage: {
-      yes: number;
-      no: number;
-      abstain: number;
-      absent: number;
-    };
-  };
-  parties: {
-    [party: string]: {
-      votes: {
-        yes: number;
-        no: number;
-        abstain: number;
-        absent: number;
-      };
-    };
-  };
-  summary: {
-    yes: number;
-    no: number;
-  };
-};
+import { Votes } from '@/app/lib/types';
 
 type DialogModalProps = {
   isOpen: boolean;
@@ -60,7 +35,7 @@ type DialogModalProps = {
     promulgation: string;
     item_type?: string;
     categories?: string[];
-    votes: NewVotes;
+    votes?: Votes;
     url: string;
   } | null;
 };
@@ -123,7 +98,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         },
         {
           name: 'Opozycja',
-          value: 100 - votes.government.votesPercentage.yes,
+          value: 100 - (votes.government.votesPercentage.yes ?? 0),
           fill: chartConfig.opposition.color,
         },
       ]
@@ -319,7 +294,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card?.votes.government.votesPercentage.yes.toFixed(
+                                    {card?.votes?.government?.votesPercentage?.yes?.toFixed(
                                       1
                                     )}
                                     %
