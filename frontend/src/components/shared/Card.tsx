@@ -23,6 +23,7 @@ const Card = ({
   categories = [],
   governmentPercentage,
 }: InfoTileProps) => {
+  console.log(categories);
   const containerRef = useRef<HTMLDivElement>(null);
   const [totalDots, setTotalDots] = useState(14);
 
@@ -74,12 +75,12 @@ const Card = ({
       <div className="text-sm text-muted-foreground leading-snug line-clamp-4 text-gradient-gloss font-medium -mt-2.5">
         &quot;{summary}&quot;
       </div>
-      {categories.length > 0 && (
+      {categories?.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {categories.slice(0, 4).map((category, index) => (
             <span
               key={index}
-              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full"
+              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full w-max"
             >
               {category}
             </span>

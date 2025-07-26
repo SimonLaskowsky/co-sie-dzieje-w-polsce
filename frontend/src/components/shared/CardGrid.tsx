@@ -24,7 +24,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
     content?: string;
     simple_title?: string;
     announcement_date: string;
-    keywords?: string[];
+    category?: string;
     item_type: string;
     file: string;
     votes?: {
@@ -37,14 +37,13 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
   };
 
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
-  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
 
   const { data } = useSWR('/api/acts', fetcher);
-
-  const { acts, keywords } = data || {};
+  const { acts, category } = data || {};
 
   const breakpointColumnsObj = {
     default: 4,
@@ -79,16 +78,12 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
       const matchesQuery =
         card.title.toLowerCase().includes(query) ||
         (card.content && card.content.toLowerCase().includes(query)) ||
-        (card.keywords &&
-          card.keywords.some((keyword: string) =>
-            keyword.toLowerCase().includes(query)
-          ));
+        (card.category && card.category.toLowerCase().includes(query));
       const matchesType = selectedTypes.includes(card.item_type);
-      const matchesKeywords =
-        selectedKeywords.length === 0 ||
-        (card.keywords &&
-          card.keywords.some(k => selectedKeywords.includes(k)));
-      return matchesQuery && matchesType && matchesKeywords;
+      const matchesCategory =
+        selectedCategory.length === 0 ||
+        (card.category && selectedCategory.includes(card.category));
+      return matchesQuery && matchesType && matchesCategory;
     });
 
     if (sortByTitle) {
@@ -97,7 +92,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
         const titleB = b.title.toLowerCase();
         return sortByTitle === 'asc'
           ? titleA.localeCompare(titleB)
-          : titleB.localeCompare(titleA);
+          : titleB.localeCompare(titleB);
       });
     } else {
       return filtered.sort((a: CardType, b: CardType) => {
@@ -112,7 +107,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
     sortOrder,
     sortByTitle,
     selectedTypes,
-    selectedKeywords,
+    selectedCategory,
   ]);
 
   const openModal = (card: CardType) => {
@@ -125,7 +120,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-2.5">
-      {keywords && keywords.length > 0 && (
+      {category && category.length > 0 && (
         <div className="w-full mx-auto max-[640px]:max-w-11/12 max-[700px]:max-w-[320px] max-[950px]:max-w-[660px] max-[1200px]:max-w-[1000px] max-w-[1260px]">
           <div className="text-xl relative flex flex-row items-center justify-between mb-1 gap-5 w-max">
             <button className="swiper-button-prev-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
@@ -150,13 +145,13 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             >
               <SwiperSlide key="wszystkie" className="!w-max">
                 <span
-                  onClick={() => setSelectedKeywords([])}
+                  onClick={() => setSelectedCategory([])}
                   className={`
                   transition-all duration-300 shadow-none active:!shadow-none 
                   hover:not-focus:shadow-lg cursor-pointer min-w-max 
                   px-2 py-1 text-xs font-medium rounded-full
                   ${
-                    selectedKeywords.length === 0
+                    selectedCategory.length === 0
                       ? 'bg-neutral-600/10 dark:bg-neutral-700/70 text-neutral-900 dark:text-neutral-100'
                       : 'dark:hover:bg-neutral-700/70 hover:bg-neutral-600/10 text-neutral-400 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100'
                   }
@@ -165,14 +160,14 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
                   wszystkie
                 </span>
               </SwiperSlide>
-              {keywords.map((keyword: { keyword: string }) => (
-                <SwiperSlide key={keyword.keyword} className="!w-max">
+              {category.map((cat: { category: string }) => (
+                <SwiperSlide key={cat.category} className="!w-max">
                   <span
                     onClick={() => {
-                      setSelectedKeywords(prev =>
-                        prev.includes(keyword.keyword)
-                          ? prev.filter(k => k !== keyword.keyword)
-                          : [...prev, keyword.keyword]
+                      setSelectedCategory(prev =>
+                        prev.includes(cat.category)
+                          ? prev.filter(k => k !== cat.category)
+                          : [...prev, cat.category]
                       );
                     }}
                     className={`
@@ -180,13 +175,13 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
                     hover:not-focus:shadow-lg cursor-pointer min-w-max 
                     px-2 py-1 text-xs font-medium rounded-full
                     ${
-                      selectedKeywords.includes(keyword.keyword)
+                      selectedCategory.includes(cat.category)
                         ? 'bg-neutral-600/10 dark:bg-neutral-700/70 text-neutral-900 dark:text-neutral-100'
                         : 'dark:hover:bg-neutral-700/70 hover:bg-neutral-600/10 text-neutral-400 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100'
                     }
                   `}
                   >
-                    {keyword.keyword}
+                    {cat.category}
                   </span>
                 </SwiperSlide>
               ))}
@@ -337,7 +332,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             content={card.content}
             summary={card.simple_title}
             date={card.announcement_date}
-            categories={card.keywords}
+            categories={card.category ? [card.category] : []}
             isImportant={card.votes?.government?.votesPercentage?.yes}
             governmentPercentage={
               card.votes?.government?.votesPercentage?.yes || 0
@@ -357,7 +352,7 @@ const CardGrid = ({ searchQuery, selectedTypes }: CardGridProps) => {
             announcement_date: selectedCard.announcement_date,
             promulgation: (selectedCard as any).promulgation ?? '',
             item_type: selectedCard.item_type,
-            categories: selectedCard.keywords ?? [],
+            categories: selectedCard.category ? [selectedCard.category] : [],
             votes: (selectedCard as any).votes ?? {},
             url: (selectedCard as any).file ?? '',
           }}

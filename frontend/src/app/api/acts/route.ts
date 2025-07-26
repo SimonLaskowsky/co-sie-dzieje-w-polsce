@@ -17,14 +17,15 @@ export async function GET() {
         item_type: true,
         file: true,
         votes: true,
+        category: true,
       },
     });
-    const keywords = await prisma.keywords.findMany({
+    const category = await prisma.category.findMany({
       select: {
-        keyword: true,
+        category: true,
       },
     });
-    return NextResponse.json({ acts, keywords });
+    return NextResponse.json({ acts, category });
   } catch (error) {
     console.error('Error while downloading data:', error);
     return NextResponse.json(
