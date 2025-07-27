@@ -89,7 +89,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     },
   };
 
-  const pieChartData = votes?.government?.votesPercentage
+  const pieChartData = votes?.votesSupportByGroup?.government.yesPercentage
     ? [
         {
           name: 'Rządzący',
@@ -295,7 +295,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card?.votes?.government?.votesPercentage?.yes?.toFixed(
+                                    {card?.votes?.votesSupportByGroup?.government.yesPercentage.toFixed(
                                       1
                                     )}
                                     %
