@@ -89,16 +89,17 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     },
   };
 
-  const pieChartData = votes?.government?.votesPercentage
+  const pieChartData = votes?.votesSupportByGroup?.government.yesPercentage
     ? [
         {
           name: 'Rządzący',
-          value: votes.government.votesPercentage.yes,
+          value: votes?.votesSupportByGroup?.government.yesPercentage,
           fill: chartConfig.government.color,
         },
         {
           name: 'Opozycja',
-          value: 100 - (votes.government.votesPercentage.yes ?? 0),
+          value:
+            100 - (votes?.votesSupportByGroup?.government.yesPercentage ?? 0),
           fill: chartConfig.opposition.color,
         },
       ]
@@ -294,7 +295,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                                     y={viewBox.cy}
                                     className="fill-foreground text-3xl font-bold"
                                   >
-                                    {card?.votes?.government?.votesPercentage?.yes?.toFixed(
+                                    {card?.votes?.votesSupportByGroup?.government.yesPercentage.toFixed(
                                       1
                                     )}
                                     %

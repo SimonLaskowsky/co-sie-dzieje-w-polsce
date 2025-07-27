@@ -49,13 +49,19 @@ export interface Votes {
       abstain?: number;
     };
   };
+  votesSupportByGroup?: {
+    [government: string]: {
+      yesVotes: number;
+      yesPercentage: number;
+    };
+  };
 }
 
-export interface Keyword {
-  keyword: string;
+export interface Category {
+  category: string;
 }
 
 export interface ActsAndKeywordsResponse {
   acts: Act[];
-  keywords: Keyword[];
+  categories: { category: string }[];
 }
