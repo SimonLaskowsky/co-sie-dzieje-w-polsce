@@ -79,7 +79,7 @@ const Card = ({
           {categories.slice(0, 4).map((category, index) => (
             <span
               key={index}
-              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full"
+              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full w-max"
             >
               {category}
             </span>

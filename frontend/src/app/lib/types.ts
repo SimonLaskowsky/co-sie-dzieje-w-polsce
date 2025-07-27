@@ -51,11 +51,11 @@ export interface Votes {
   };
 }
 
-export interface Keyword {
-  keyword: string;
+export interface Category {
+  category: string;
 }
 
 export interface ActsAndKeywordsResponse {
   acts: Act[];
-  keywords: Keyword[];
+  categories: { category: string }[];
 }

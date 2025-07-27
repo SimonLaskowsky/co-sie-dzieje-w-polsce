@@ -24,8 +24,10 @@ model acts {
   keywords          String[]
   file              String?
   votes             Json?
+  category          String?
 }
 
-model keywords {
-  keyword          String    @id
+model category {
+  category          String    @id
+  keywords          String[]  @default([])
 }

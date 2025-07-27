@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import type { ActsAndKeywordsResponse, Act, Keyword } from '@/app/lib/types';
+import type { ActsAndKeywordsResponse, Act, Category } from '@/app/lib/types';
 
 const prisma = new PrismaClient();
 
 export const getActsAndKeywords =
   async (): Promise<ActsAndKeywordsResponse> => {
     try {
-      const [acts, keywords] = await Promise.all([
+      const [acts, category] = await Promise.all([
         prisma.acts.findMany({
           select: {
             id: true,
@@ -19,16 +19,17 @@ export const getActsAndKeywords =
             item_type: true,
             file: true,
             votes: true,
+            category: true,
           },
         }) as unknown as Promise<Act[]>,
-        prisma.keywords.findMany({
+        prisma.category.findMany({
           select: {
-            keyword: true,
+            category: true,
           },
-        }) as Promise<Keyword[]>,
+        }) as Promise<Category[]>,
       ]);
 
-      return { acts, keywords };
+      return { acts, categories: category };
     } catch (error) {
       console.error('Error while downloading data:', error);
       throw new Error('Failed to download data');
