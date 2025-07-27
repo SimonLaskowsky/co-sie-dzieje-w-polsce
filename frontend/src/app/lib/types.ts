@@ -49,6 +49,12 @@ export interface Votes {
       abstain?: number;
     };
   };
+  votesSupportByGroup?: {
+    [government: string]: {
+      yesVotes: number;
+      yesPercentage: number;
+    };
+  };
 }
 
 export interface Category {

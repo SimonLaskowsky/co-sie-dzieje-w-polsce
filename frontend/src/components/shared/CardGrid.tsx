@@ -331,9 +331,11 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
             summary={card.simple_title}
             date={card.announcement_date}
             categories={card.category ? [card.category] : []}
-            isImportant={!!card.votes?.government?.votesPercentage?.yes}
+            isImportant={
+              !!card.votes?.votesSupportByGroup?.government.yesPercentage
+            }
             governmentPercentage={
-              card.votes?.government?.votesPercentage?.yes || 0
+              card.votes?.votesSupportByGroup?.government.yesPercentage || 0
             }
             onClick={() => openModal(card)}
           />
