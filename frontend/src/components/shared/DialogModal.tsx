@@ -51,11 +51,11 @@ const chartConfig = {
   },
   percentageYes: {
     label: 'Procent głosów za',
-    color: '#f1f1f1',
+    color: '#f8d3d4',
   },
   government: {
     label: 'Rządzący',
-    color: '#f1f1f1',
+    color: '#f8d3d4',
   },
   opposition: {
     label: 'Opozycja',
@@ -376,9 +376,9 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                       <Radar
                         name="Głosy za"
                         dataKey="yes"
-                        stroke="var(--color-yes)"
-                        fill="var(--color-yes)"
                         fillOpacity={0.6}
+                        fill="#f8d3d4"
+                        stroke="#f8d3d4"
                       />
                       <ChartTooltip content={<ChartTooltipContent />} />
                     </RadarChart>
@@ -455,8 +455,8 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                       <Radar
                         name="Głosy przeciw"
                         dataKey="no"
-                        stroke="var(--color-yes)"
-                        fill="var(--color-yes)"
+                        fill="#f8d3d4"
+                        stroke="#f8d3d4"
                         fillOpacity={0.6}
                       />
                       <ChartTooltip content={<ChartTooltipContent />} />
