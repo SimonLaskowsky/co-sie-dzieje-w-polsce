@@ -263,7 +263,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                   głosów za i przeciw.
                 </div>
                 {/* Wykresy "za" i "przeciw" */}
-                <div className="flex gap-5 w-full h-auto max-h-80">
+                <div className="flex flex-col md:flex-row gap-5 w-full h-auto md:max-h-80">
                   <ChartContainer
                     config={combinedChartConfig}
                     className="md:w-1/2"
@@ -362,7 +362,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                   partie. Wykres kołowy przedstawia procentowy rozkład głosów za
                   wśród partii rządzących i opozycyjnych.
                 </div>
-                <div className="flex gap-5 w-full h-auto max-h-80">
+                <div className="flex flex-col md:flex-row gap-5 w-full h-auto md:max-h-80">
                   <ChartContainer
                     config={combinedChartConfig}
                     className="md:w-1/2 aspect-square"
@@ -441,7 +441,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                   na partie. Wykres kołowy przedstawia procentowy rozkład głosów
                   przeciw wśród partii rządzących i opozycyjnych.
                 </div>
-                <div className="flex gap-5 w-full h-auto max-h-80">
+                <div className="flex flex-col md:flex-row gap-5 w-full h-auto md:max-h-80">
                   <ChartContainer
                     config={combinedChartConfig}
                     className="md:w-1/2 aspect-square"
