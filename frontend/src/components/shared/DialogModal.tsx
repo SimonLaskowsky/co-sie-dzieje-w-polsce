@@ -455,8 +455,8 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                       <Radar
                         name="Głosy przeciw"
                         dataKey="no"
-                        stroke="var(--color-no)"
-                        fill="var(--color-no)"
+                        stroke="var(--color-yes)"
+                        fill="var(--color-yes)"
                         fillOpacity={0.6}
                       />
                       <ChartTooltip content={<ChartTooltipContent />} />
