@@ -1,4 +1,5 @@
 import React from 'react';
+import { useUser } from '@clerk/nextjs';
 
 type DarkModeProps = {
   isDarkMode: boolean;
@@ -6,13 +7,15 @@ type DarkModeProps = {
 };
 
 const DarkMode = ({ isDarkMode, toggleDarkMode }: DarkModeProps) => {
+  const { isSignedIn } = useUser();
+
   return (
     <div
-      className={`absolute top-5 right-5 cursor-pointer max-sm:mix-blend-color-dodge  ${
+      className={`cursor-pointer max-sm:mix-blend-color-dodge transition-all duration-300  ${
         isDarkMode
           ? 'fill-neutral-500 hover:fill-neutral-100'
           : 'fill-neutral-400 hover:fill-neutral-600'
-      } transition-all duration-300`}
+      } ${isSignedIn && 'mb-px'}`}
       onClick={toggleDarkMode}
     >
       {isDarkMode ? (
