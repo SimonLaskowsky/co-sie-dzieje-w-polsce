@@ -30,8 +30,8 @@ export const useModalLimit = (limit = 5) => {
         body: JSON.stringify({ userId: user?.id }),
       });
     } catch (err) {
-      setCount(count);
-      localStorage.setItem('modalOpens', count.toString());
+      setCount(newCount - 1);
+      localStorage.setItem('modalOpens', (newCount - 1).toString());
       console.error(err);
     }
   }, [canOpen, count, user?.id]);

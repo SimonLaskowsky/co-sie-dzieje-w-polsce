@@ -134,7 +134,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
         <div
           className={`bg-neutral-700/10 dark:bg-neutral-800/40 mx-auto max-w-96 flex flex-col gap-3 p-5 rounded-3xl shadow-xl h-fit border-2 border-red-500/70 shadow-red-500/10 text-2xl text-center font-bold`}
         >
-          Zaloguj się, żeby móc przeglądać akty akty prawne i ich kategorie.
+          Zaloguj się, żeby móc przeglądać akty prawne i ich kategorie.
         </div>
       </SignedOut>
       <SignedIn>
