@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Libre_Bodoni } from 'next/font/google';
 import './globals.css';
+import { ClerkProvider } from '@clerk/nextjs';
+import { plPL } from '@clerk/localizations';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,13 +32,15 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="pl">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${libreBodoni.variable} antialiased dark`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider localization={plPL}>
+      <html lang="pl">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${libreBodoni.variable} antialiased dark`}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 };
 export default RootLayout;

@@ -1,4 +1,5 @@
 import React from 'react';
+import AuthButtons from './AuthButtons';
 
 type MenuProps = {
   isOpen: boolean;
@@ -21,8 +22,8 @@ const Menu = ({
       return shouldRemove
         ? prev.filter(t => t !== type)
         : includesType
-        ? prev
-        : [...prev, type];
+          ? prev
+          : [...prev, type];
     });
   };
 
@@ -98,6 +99,7 @@ const Menu = ({
       >
         Rozporządzenia
       </button>
+      <AuthButtons isOpen={isOpen} />
     </>
   );
 };

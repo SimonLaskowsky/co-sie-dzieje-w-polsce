@@ -3,6 +3,7 @@ import DarkMode from '@/components/shared/DarkMode';
 import Menu from '@/components/shared/Menu';
 import Logo from '@/components/shared/Logo';
 import { useState, useEffect } from 'react';
+import { SignedIn, UserButton } from '@clerk/nextjs';
 
 interface NavbarProps {
   selectedTypes: string[];
@@ -35,6 +36,9 @@ const Navbar: React.FC<NavbarProps> = ({ selectedTypes, setSelectedTypes }) => {
       />
       <Logo />
       <DarkMode isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
     </div>
   );
 };
