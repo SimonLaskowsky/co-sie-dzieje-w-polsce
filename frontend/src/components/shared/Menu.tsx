@@ -1,5 +1,4 @@
 import React from 'react';
-import AuthButtons from './AuthButtons';
 
 type MenuProps = {
   isOpen: boolean;
@@ -99,7 +98,6 @@ const Menu = ({
       >
         Rozporządzenia
       </button>
-      <AuthButtons isOpen={isOpen} />
     </>
   );
 };
