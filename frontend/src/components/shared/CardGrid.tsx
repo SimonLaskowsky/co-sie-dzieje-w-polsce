@@ -29,8 +29,6 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
 
   const { acts } = data || {};
 
-  // console.log(acts);
-
   const breakpointColumnsObj = {
     default: 4,
     1200: 3,
