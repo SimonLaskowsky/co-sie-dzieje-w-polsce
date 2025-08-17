@@ -21,8 +21,8 @@ const Menu = ({
       return shouldRemove
         ? prev.filter(t => t !== type)
         : includesType
-        ? prev
-        : [...prev, type];
+          ? prev
+          : [...prev, type];
     });
   };
 

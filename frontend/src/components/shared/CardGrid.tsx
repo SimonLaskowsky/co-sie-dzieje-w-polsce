@@ -8,6 +8,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import { ActsAndKeywordsResponse, Act } from '@/app/lib/types';
+import { useModalLimit } from '@/app/hooks/useModalLimit';
+import { useUser } from '@clerk/nextjs';
 
 type CardGridProps = {
   searchQuery: string;
@@ -21,6 +23,8 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
+  const { user } = useUser();
+  const { canOpen, registerOpen } = useModalLimit(user ? 5 : 3);
 
   const { acts } = data || {};
 
@@ -107,7 +111,10 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   }, [baseFilteredActs, sortOrder, sortByTitle, selectedCategories]);
 
   const openModal = (card: Act) => {
+    if (!canOpen) return;
+
     setSelectedCard(card);
+    if (user?.unsafeMetadata.subscription_status !== 'active') registerOpen();
   };
 
   const closeModal = () => {

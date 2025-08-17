@@ -2,6 +2,7 @@ import React from 'react';
 import DarkMode from '@/components/shared/DarkMode';
 import Menu from '@/components/shared/Menu';
 import Logo from '@/components/shared/Logo';
+import AuthButtons from '@/components/shared/AuthButtons';
 import { useState, useEffect } from 'react';
 
 interface NavbarProps {
@@ -34,7 +35,10 @@ const Navbar: React.FC<NavbarProps> = ({ selectedTypes, setSelectedTypes }) => {
         setSelectedTypes={setSelectedTypes}
       />
       <Logo />
-      <DarkMode isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="h-[26px] absolute top-5 right-5 flex gap-5 items-center justify-center">
+        <AuthButtons isDarkMode={isDarkMode} />
+        <DarkMode isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      </div>
     </div>
   );
 };
