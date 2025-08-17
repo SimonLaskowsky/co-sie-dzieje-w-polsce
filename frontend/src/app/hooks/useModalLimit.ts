@@ -23,18 +23,18 @@ export const useModalLimit = (limit = 5) => {
     setCount(newCount);
     localStorage.setItem('modalOpens', newCount.toString());
 
-    try {
-      await fetch('/api/update-modal-limit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id }),
-      });
-    } catch (err) {
-      setCount(newCount - 1);
-      localStorage.setItem('modalOpens', (newCount - 1).toString());
-      console.error(err);
-    }
-  }, [canOpen, count, user?.id]);
+    // try {
+    //   await fetch('/api/update-modal-limit', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ userId: user?.id }),
+    //   });
+    // } catch (err) {
+    //   setCount(newCount - 1);
+    //   localStorage.setItem('modalOpens', (newCount - 1).toString());
+    //   console.error(err);
+    // }
+  }, [canOpen, count]);
 
   return { canOpen, count, registerOpen };
 };
