@@ -10,6 +10,7 @@ import 'swiper/css';
 import { ActsAndKeywordsResponse, Act } from '@/app/lib/types';
 import { useModalLimit } from '@/app/hooks/useModalLimit';
 import { useUser } from '@clerk/nextjs';
+import SubscriptionModal from './SubscriptionModal';
 
 type CardGridProps = {
   searchQuery: string;
@@ -23,6 +24,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortByTitle, setSortByTitle] = useState<'asc' | 'desc' | null>(null);
+  const [subscriptionModal, setSubscriptionModal] = useState<boolean>(false);
   const { user } = useUser();
   const { canOpen, registerOpen } = useModalLimit(user ? 5 : 3);
 
@@ -111,7 +113,10 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   }, [baseFilteredActs, sortOrder, sortByTitle, selectedCategories]);
 
   const openModal = (card: Act) => {
-    if (!canOpen) return;
+    if (!canOpen) {
+      setSubscriptionModal(true);
+      return;
+    }
 
     setSelectedCard(card);
     if (user?.unsafeMetadata.subscription_status !== 'active') registerOpen();
@@ -119,6 +124,10 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
 
   const closeModal = () => {
     setSelectedCard(null);
+  };
+
+  const handleCloseSubscriptionModal = () => {
+    setSubscriptionModal(false);
   };
 
   return (
@@ -362,6 +371,9 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
             url: (selectedCard as Act).file ?? '',
           }}
         />
+      )}
+      {subscriptionModal && (
+        <SubscriptionModal onClose={handleCloseSubscriptionModal} />
       )}
     </div>
   );
