@@ -39,7 +39,7 @@ const AuthButtons = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 '!bg-neutral-700/10 dark:!bg-neutral-800/40 backdrop-blur-sm dark:!text-neutral-100 !text-neutral-900',
               userButtonPopoverFooter: '!hidden',
               userButtonPopoverActionButton:
-                'dark:!text-neutral-100 !text-neutral-900',
+                '!text-neutral-600 hover:!text-neutral-900 dark:!text-neutral-500 dark:hover:!text-neutral-100 !transition-all !duration-300',
             },
           }}
         />
