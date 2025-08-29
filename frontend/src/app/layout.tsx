@@ -32,7 +32,21 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <ClerkProvider localization={plPL}>
+    <ClerkProvider
+      appearance={{
+        elements: {
+          navbar:
+            '!bg-none !bg-neutral-100/90 dark:!bg-neutral-800/80 backdrop-blur-sm [&_p]:dark:!text-neutral-100 [&_p]:!text-neutral-900 [&_h1]:dark:!text-neutral-100 [&_h1]:!text-neutral-900 [&_button]:dark:!text-neutral-100 [&_button]:!text-neutral-900',
+          scrollBox:
+            '!bg-neutral-100/90 dark:!bg-neutral-800/80 backdrop-blur-sm [&_p]:dark:!text-neutral-100 [&_p]:!text-neutral-900 [&_h1]:dark:!text-neutral-100 [&_h1]:!text-neutral-900 [&_button]:dark:!text-neutral-100 [&_button]:!text-neutral-900',
+          modalCloseButton: 'dark:!text-neutral-100 !text-neutral-900',
+          badge:
+            '!dark:bg-neutral-700/50 !bg-neutral-600/10 !text-neutral-900 dark:!text-neutral-100 !rounded-full',
+          profileSection: '!border-t-neutral-100 dark:!border-t-neutral-900',
+        },
+      }}
+      localization={plPL}
+    >
       <html lang="pl">
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${libreBodoni.variable} antialiased dark`}
