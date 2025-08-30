@@ -326,7 +326,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="flex gap-5 w-fit justify-center relative mx-auto"
-        columnClassName="flex flex-col gap-5 w-fit"
+        columnClassName="flex flex-col gap-5 !w-fit"
       >
         {filteredAndSortedCards.map((card: Act) => (
           <Card
