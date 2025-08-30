@@ -146,7 +146,7 @@
 }
 
 .dark .text-gradient-gloss {
-  background-image: linear-gradient(to right, #6b7280, #afb2b7, #6b7280);
+  background-image: linear-gradient(to right, #6b7280, #d3d7df, #6b7280);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -167,7 +167,7 @@
 }
 
 .text-gradient-gloss {
-  background-image: linear-gradient(to right, #6b7280, #323335, #6b7280);
+  background-image: linear-gradient(to right, #838c9c, #1c1d1e, #838c9c);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
