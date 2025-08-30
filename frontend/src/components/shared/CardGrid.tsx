@@ -122,7 +122,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto px-2.5">
+    <div className="w-full max-w-screen-xl mx-auto px-2.5 lg:px-0">
       {availableCategories && availableCategories.length > 0 && (
         <div className="w-full mx-auto max-[640px]:max-w-11/12 max-[700px]:max-w-[320px] max-[950px]:max-w-[660px] max-[1200px]:max-w-[1000px] max-w-[1260px]">
           <div className="text-xl relative flex flex-row items-center justify-between mb-1 gap-5 w-max">
@@ -325,8 +325,8 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
       )}
       <Masonry
         breakpointCols={breakpointColumnsObj}
-        className="flex gap-5 w-fit justify-center relative mx-auto"
-        columnClassName="flex flex-col gap-5 !w-fit"
+        className="flex w-fit justify-center relative mx-auto"
+        columnClassName="flex flex-col gap-y-5 px-2.5 first:pl-0 last:pr-0 w-fit"
       >
         {filteredAndSortedCards.map((card: Act) => (
           <Card
