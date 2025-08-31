@@ -32,7 +32,33 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <ClerkProvider localization={plPL}>
+    <ClerkProvider
+      appearance={{
+        elements: {
+          navbar:
+            '!bg-none !bg-neutral-700/20 dark:!bg-neutral-800/60 backdrop-blur-sm [&_p]:dark:!text-neutral-100 [&_p]:!text-neutral-900 [&_h1]:dark:!text-neutral-100 [&_h1]:!text-neutral-900 [&_.cl-active]:!text-neutral-900 [&_.cl-active]:dark:!text-neutral-100',
+          navbarButton:
+            '!text-neutral-600 hover:!text-neutral-900 dark:!text-neutral-500 dark:hover:!text-neutral-100 !transition-all !duration-300',
+          scrollBox:
+            '!bg-neutral-700/20 dark:!bg-neutral-800/60 backdrop-blur-sm [&_p]:dark:!text-neutral-100 [&_p]:!text-neutral-900 [&_h1]:dark:!text-neutral-100 [&_h1]:!text-neutral-900',
+          modalCloseButton:
+            '!text-neutral-600 hover:!text-neutral-900 dark:!text-neutral-500 dark:hover:!text-neutral-100 dark:hover:!bg-transparent hover:!bg-transparent !shadow-none active:!shadow-none focus:!shadow-none !transition-all !duration-300',
+          badge:
+            '!dark:bg-neutral-700/50 !bg-neutral-600/40 !text-neutral-900 dark:!text-neutral-100 !rounded-full !shadow-none',
+          userPreviewTextContainer: 'dark:!text-neutral-100 !text-neutral-900',
+          actionCard: '!bg-neutral-100/90 dark:!bg-neutral-800/60 !shadow-none',
+          avatarImageActionsUpload:
+            '!border !border-neutral-100/90 dark:!border-neutral-700/60 !shadow-none !text-neutral-600 hover:!text-neutral-900 dark:!text-neutral-500 dark:hover:!text-neutral-100 !transition-all !duration-300',
+          profileSectionPrimaryButton:
+            '!text-neutral-600 hover:!text-neutral-900 dark:!text-neutral-500 dark:hover:!text-neutral-100 !transition-all !duration-300',
+          formButtonReset:
+            '!text-neutral-600 hover:!text-neutral-900 dark:!text-neutral-500 dark:hover:!text-neutral-100 !transition-all !duration-300',
+          modalBackdrop:
+            '!backdrop-blur-lg !bg-neutral-900/0 dark:!bg-neutral-900/0',
+        },
+      }}
+      localization={plPL}
+    >
       <html lang="pl">
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${libreBodoni.variable} antialiased dark`}

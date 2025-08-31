@@ -26,7 +26,6 @@ import {
   PolarAngleAxis,
   Radar,
 } from 'recharts';
-import FixedElement from './FixedElement';
 import { Votes } from '@/app/lib/types';
 
 type DialogModalProps = {
@@ -172,20 +171,13 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     return html.replace(/<[^>]*>/g, '');
   };
 
-  const isImportant = card?.item_type === 'Ustawa';
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6
-        ${
-          isImportant
-            ? '!border-red-500/70 shadow-red-500/10'
-            : 'border-neutral-200 dark:border-neutral-700'
-        }`}
+        className={`overflow-auto w-11/12 h-11/12 sm:w-4/5 sm:h-4/5 !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 border-none`}
       >
         <>
-          <FixedElement />
+          {/* <FixedElement /> */}
           <DialogHeader className="h-fit">
             <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
               {card?.title}
@@ -208,8 +200,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 transition-colors focus-visible:outline-none focus-visible:ring-1 
                 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none 
                 [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground hover:bg-transparent 
-                hover:underline justify-start w-fit max-w-full truncate relative after:absolute after:block 
-                after:h-full after:w-1/6 after:right-0 after:bg-gradient-to-l after:from-background after:to-transparent"
+                  hover:underline justify-start w-fit max-w-full truncate relative mask-alpha mask-r-from-black mask-r-from-97% mask-r-to-transparent"
             >
               {card?.title}
             </a>
