@@ -29,7 +29,7 @@ const Menu = ({
   return (
     <>
       <div
-        className={`cursor-pointer absolute top-5 left-5 text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400 transition-colors duration-300 ${
+        className={`cursor-pointer absolute top-5 left-4 text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400 transition-colors duration-300 ${
           isOpen ? 'dark:!text-neutral-100 !text-neutral-600' : ''
         }`}
         onClick={toggleMenu}
@@ -79,7 +79,7 @@ const Menu = ({
             ? 'text-neutral-600 dark:text-neutral-100'
             : 'text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400'
         }
-        ${isOpen && 'opacity-100 !pointer-events-auto translate-x-12 z-0'}`}
+        ${isOpen && 'opacity-100 !pointer-events-auto translate-x-11 z-0'}`}
         onClick={() => toggleType('Ustawa')}
       >
         Ustawy
@@ -92,7 +92,7 @@ const Menu = ({
         }
         ${
           isOpen &&
-          'opacity-100 !pointer-events-auto translate-x-12 translate-y-5 z-0'
+          'opacity-100 !pointer-events-auto translate-x-11 translate-y-5 z-0'
         }`}
         onClick={() => toggleType('Rozporządzenie')}
       >
