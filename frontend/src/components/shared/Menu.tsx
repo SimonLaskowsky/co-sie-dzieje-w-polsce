@@ -21,15 +21,15 @@ const Menu = ({
       return shouldRemove
         ? prev.filter(t => t !== type)
         : includesType
-          ? prev
-          : [...prev, type];
+        ? prev
+        : [...prev, type];
     });
   };
 
   return (
     <>
       <div
-        className={`cursor-pointer absolute top-5 left-5 max-sm:mix-blend-color-dodge text-neutral-400 dark:text-neutral-500 transition-colors duration-300 ${
+        className={`cursor-pointer absolute top-5 left-5 text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400 transition-colors duration-300 ${
           isOpen ? 'dark:!text-neutral-100 !text-neutral-600' : ''
         }`}
         onClick={toggleMenu}
@@ -74,10 +74,10 @@ const Menu = ({
       </div>
 
       <button
-        className={`cursor-pointer text-sm leading-3.5 absolute top-6 transition-all duration-300 -z-10 opacity-0 ${
+        className={`cursor-pointer text-sm leading-3.5 absolute top-6 ease-out transition-all duration-300 -z-10 opacity-0 ${
           selectedTypes.includes('Ustawa')
             ? 'text-neutral-600 dark:text-neutral-100'
-            : 'text-neutral-400 dark:text-neutral-500'
+            : 'text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400'
         }
         ${isOpen && 'opacity-100 !pointer-events-auto translate-x-12 z-0'}`}
         onClick={() => toggleType('Ustawa')}
@@ -85,10 +85,10 @@ const Menu = ({
         Ustawy
       </button>
       <button
-        className={`cursor-pointer text-sm leading-3.5 absolute top-6 transition-all duration-300 -z-10 opacity-0 ${
+        className={`cursor-pointer text-sm leading-3.5 absolute top-6 ease-out transition-all duration-300 -z-10 opacity-0 ${
           selectedTypes.includes('Rozporządzenie')
             ? 'text-neutral-600 dark:text-neutral-100'
-            : 'text-neutral-400 dark:text-neutral-500'
+            : 'text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400'
         }
         ${
           isOpen &&

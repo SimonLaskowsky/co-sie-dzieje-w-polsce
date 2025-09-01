@@ -179,7 +179,7 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
         <>
           {/* <FixedElement /> */}
           <DialogHeader className="h-fit">
-            <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
+            <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left max-sm: w-11/12">
               {card?.title}
             </DialogTitle>
             <DialogDescription></DialogDescription>
