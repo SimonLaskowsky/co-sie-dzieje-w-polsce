@@ -178,11 +178,11 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       >
         <>
           <DialogHeader className="h-fit">
-            <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left max-sm: w-11/12">
+            <DialogTitle className="text-2xl font-bold leading-tight text-left max-sm: w-11/12">
               {card?.title}
             </DialogTitle>
             <DialogDescription></DialogDescription>
-            <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5 text-left">
+            <DialogDescription className="text-base tracking-wide text-neutral-900 font-light dark:text-neutral-100 md:max-w-4/5 text-left">
               {stripHtml(card?.content ?? '')}
             </DialogDescription>
           </DialogHeader>
