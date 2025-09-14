@@ -11,32 +11,136 @@ const DarkMode = ({ isDarkMode, toggleDarkMode }: DarkModeProps) => {
 
   return (
     <div
-      className={`cursor-pointer max-sm:mix-blend-color-dodge transition-all duration-300  ${
+      className={`cursor-pointer transition-all duration-300  ${
         isDarkMode
-          ? 'fill-neutral-500 hover:fill-neutral-100'
-          : 'fill-neutral-400 hover:fill-neutral-600'
+          ? 'text-neutral-500 max-sm:text-neutral-400 hover:text-neutral-100 max-sm:fill-neutral-100 fill-neutral-500 hover:fill-neutral-100'
+          : 'text-neutral-400 hover:text-neutral-600 fill-neutral-400 hover:fill-neutral-600'
       } ${isSignedIn && 'mb-px'}`}
       onClick={toggleDarkMode}
     >
       {isDarkMode ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          width="24"
-          height="24"
-          className="scale-100"
+          height={24}
+          width={24}
+          viewBox="0 0 256 256"
         >
-          <path d="M256 144c-61.75 0-112 50.25-112 112s50.25 112 112 112 112-50.25 112-112-50.25-112-112-112zm0 192c-44.188 0-80-35.812-80-80s35.812-80 80-80 80 35.812 80 80-35.812 80-80 80zm0-224c8.833 0 16-7.167 16-16V64c0-8.833-7.167-16-16-16s-16 7.167-16 16v32c0 8.833 7.167 16 16 16zm0 288c-8.833 0-16 7.167-16 16v32c0 8.833 7.167 16 16 16s16-7.167 16-16v-32c0-8.833-7.167-16-16-16zm124.438-245.833l22.625-22.625c6.25-6.25 6.25-16.375 0-22.625s-16.375-6.25-22.625 0l-22.625 22.625c-6.25 6.25-6.25 16.375 0 22.625s16.375 6.25 22.625 0zm-248.876 203.667l-22.625 22.625c-6.25 6.249-6.25 16.374 0 22.624s16.375 6.25 22.625 0l22.625-22.624c6.25-6.271 6.25-16.376 0-22.625s-16.375-6.25-22.625 0zm-20.562-101.834c0-8.833-7.167-16-16-16H64c-8.833 0-16 7.167-16 16s7.167 16 16 16h32c8.833 0 16-7.167 16-16zm336 0h-32c-8.833 0-16 7.167-16 16s7.167 16 16 16h32c8.833 0 16-7.167 16-16s-7.167-16-16-16zm-304.438-85.833c6.251 6.25 16.376 6.25 22.625 0s6.251-16.375 0-22.625l-22.625-22.625c-6.25-6.25-16.374-6.25-22.625 0s-6.25 16.375 0 22.625l22.625 22.625zm248.876 203.667c-6.271-6.25-16.376-6.25-22.625 0s-6.271 16.375 0 22.625l22.625 22.625c6.249 6.25 16.374 6.25 22.624 0s6.25-16.375 0-22.625l-22.625-22.625z" />
+          <rect fill="none" height="24" width="24" />
+          <circle
+            cx="128"
+            cy="128"
+            fill="none"
+            r="60"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="128"
+            x2="128"
+            y1="36"
+            y2="28"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="62.9"
+            x2="57.3"
+            y1="62.9"
+            y2="57.3"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="36"
+            x2="28"
+            y1="128"
+            y2="128"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="62.9"
+            x2="57.3"
+            y1="193.1"
+            y2="198.7"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="128"
+            x2="128"
+            y1="220"
+            y2="228"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="193.1"
+            x2="198.7"
+            y1="193.1"
+            y2="198.7"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="220"
+            x2="228"
+            y1="128"
+            y2="128"
+          />
+          <line
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="12"
+            x1="193.1"
+            x2="198.7"
+            y1="62.9"
+            y2="57.3"
+          />
         </svg>
       ) : (
         <svg
+          height={24}
+          width={24}
+          id="레이어_1"
+          version="1.1"
+          viewBox="0 0 100 100"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          width="24"
-          height="24"
-          className="scale-125"
         >
-          <path d="M349.852,343.15c-49.875,49.916-131.083,49.916-181,0c-49.916-49.918-49.916-131.125,0-181.021c13.209-13.187,29.312-23.25,47.832-29.812c5.834-2.042,12.293-0.562,16.625,3.792c4.376,4.375,5.855,10.833,3.793,16.625c-12.542,35.375-4,73.666,22.25,99.917c26.209,26.228,64.5,34.75,99.916,22.25c5.792-2.062,12.271-0.582,16.625,3.793c4.376,4.332,5.834,10.812,3.771,16.625C373.143,313.838,363.06,329.941,349.852,343.15z M191.477,184.754c-37.438,37.438-37.438,98.354,0,135.771c40,40.021,108.125,36.416,143-8.168c-35.959,2.25-71.375-10.729-97.75-37.084c-26.375-26.354-39.333-61.771-37.084-97.729C196.769,179.796,194.039,182.192,191.477,184.754z" />
+          <g id="레이어_7">
+            <path
+              stroke="currentColor"
+              strokeWidth="0.1"
+              d="M51.6,82c-17.7,0-32-14.3-32.1-31.9S33.8,18,51.4,18c3.8,0,7.6,0.7,11.2,2c0.6,0.2,1.2,0.7,1.4,1.4c0.3,0.6,0.2,1.4-0.1,2   c-1.9,3.7-2.8,7.9-2.8,12c0,11.4,7.1,21.5,17.8,25.5c0.6,0.2,1.1,0.7,1.4,1.4c0.3,0.6,0.2,1.3-0.1,2C74.9,75.1,63.7,82,51.6,82z    M51.6,22.8c-15,0-27.2,12.2-27.2,27.2c0,15,12.2,27.2,27.2,27.2c9.4,0,18.2-4.9,23.1-12.9C63.5,59,56.3,47.8,56.3,35.4   c0-4,0.8-7.9,2.2-11.6C56.3,23.1,53.9,22.8,51.6,22.8z"
+            />
+          </g>
         </svg>
       )}
     </div>

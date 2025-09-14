@@ -59,7 +59,7 @@ const Card = ({
     <div
       onClick={onClick}
       className={`bg-neutral-700/10 dark:bg-neutral-800/40 mx-auto max-w-11/12 sm:max-w-80 flex flex-col gap-3 p-5 rounded-3xl shadow-xl cursor-pointer hover:ring-2 
-      dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:!border-transparent transition-all duration-300 h-fit
+      dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:!border-transparent transition-all duration-300 h-fit w-full
       ${isImportant && 'border-2 border-red-500/70 shadow-red-500/10'}`}
     >
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
@@ -79,7 +79,7 @@ const Card = ({
           {categories.slice(0, 4).map((category, index) => (
             <span
               key={index}
-              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full w-max"
+              className="dark:bg-neutral-700/50 bg-neutral-600/10 px-2 py-1 text-xs font-medium text-neutral-900 dark:text-neutral-100 rounded-full w-max overflow-ellipsis overflow-hidden max-w-full whitespace-nowrap"
             >
               {category}
             </span>

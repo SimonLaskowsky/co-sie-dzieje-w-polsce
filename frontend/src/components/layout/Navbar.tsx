@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ selectedTypes, setSelectedTypes }) => {
         setSelectedTypes={setSelectedTypes}
       />
       <Logo />
-      <div className="h-[26px] absolute top-5 right-5 flex gap-5 items-center justify-center">
+      <div className="h-[26px] absolute top-5 right-5 flex items-end gap-5 sm:items-center justify-center">
         <AuthButtons isDarkMode={isDarkMode} />
         <DarkMode isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       </div>

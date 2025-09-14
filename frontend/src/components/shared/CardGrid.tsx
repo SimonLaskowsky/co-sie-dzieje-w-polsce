@@ -131,14 +131,14 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto px-2.5">
+    <div className="w-full max-w-screen-xl mx-auto">
       {availableCategories && availableCategories.length > 0 && (
         <div className="w-full mx-auto max-[640px]:max-w-11/12 max-[700px]:max-w-[320px] max-[950px]:max-w-[660px] max-[1200px]:max-w-[1000px] max-w-[1260px]">
           <div className="text-xl relative flex flex-row items-center justify-between mb-1 gap-5 w-max">
-            <button className="swiper-button-prev-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
+            <button className="swiper-button-prev-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 max-sm:dark:text-neutral-400 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
               ←
             </button>
-            <button className="swiper-button-next-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
+            <button className="swiper-button-next-custom cursor-pointer transition-all duration-300 dark:text-neutral-500 max-sm:dark:text-neutral-400 dark:hover:text-neutral-100 dark:active:text-neutral-100 text-neutral-400 hover:text-neutral-600 active:text-neutral-600">
               →
             </button>
           </div>
@@ -205,7 +205,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
                 className={`p-2 cursor-pointer transition-all duration-300 ${
                   isFilterOptionsOpen
                     ? 'text-neutral-600 dark:text-neutral-100'
-                    : 'text-neutral-400 dark:text-neutral-500'
+                    : 'text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400'
                 }`}
               >
                 <svg
@@ -228,15 +228,15 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
                 <button
                   onClick={toggleSortOrder}
                   className={`
-                  p-2 absolute top-0 right-0 opacity-0 pointer-events-none transition-all duration-300 cursor-pointer
+                  p-2 absolute top-0 right-0 ease-out opacity-0 pointer-events-none transition-all duration-300 cursor-pointer
                   ${
                     isFilterOptionsOpen &&
-                    'opacity-100 !pointer-events-auto -translate-y-7 -translate-x-5'
+                    'opacity-100 !pointer-events-auto -translate-y-7 -translate-x-5 max-sm:-translate-x-7'
                   }
                   ${
                     sortOrder === 'asc'
                       ? 'text-neutral-600 dark:text-neutral-100'
-                      : 'text-neutral-400 dark:text-neutral-500'
+                      : 'text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400'
                   }
                 `}
                 >
@@ -284,15 +284,15 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
                 <button
                   onClick={toggleSortByTitle}
                   className={`
-                  p-2 absolute top-0 right-0 opacity-0 pointer-events-none transition-all duration-300 cursor-pointer
+                  p-2 absolute top-0 right-0 opacity-0 ease-out pointer-events-none transition-all duration-300 cursor-pointer
                   ${
                     isFilterOptionsOpen &&
-                    'opacity-100 !pointer-events-auto -translate-y-7 translate-x-6'
+                    'opacity-100 !pointer-events-auto -translate-y-7 translate-x-6 max-sm:translate-x-1'
                   }
                   ${
                     sortByTitle !== null
                       ? 'text-neutral-600 dark:text-neutral-100'
-                      : 'text-neutral-400 dark:text-neutral-500'
+                      : 'text-neutral-400 dark:text-neutral-500 max-sm:dark:text-neutral-400'
                   }
                 `}
                 >
@@ -334,8 +334,8 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
       )}
       <Masonry
         breakpointCols={breakpointColumnsObj}
-        className="flex gap-5 w-fit justify-center relative mx-auto"
-        columnClassName="flex flex-col gap-5 !w-fit"
+        className="flex w-fit justify-center relative max-w-full min-w-full"
+        columnClassName="flex flex-col gap-y-5 sm:px-2.5 max-[1201px]:!w-fit"
       >
         {filteredAndSortedCards.map((card: Act) => (
           <Card
