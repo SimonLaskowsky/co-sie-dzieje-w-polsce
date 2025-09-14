@@ -1,4 +1,3 @@
-import os
 import json
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
@@ -9,7 +8,7 @@ from storage import get_last_known, save_last_known
 from api import fetch_api_data, fetch_one_law, get_voting_data
 from votes_calculator import get_sejm_voting_data
 from database import save_to_database
-from config import BASIC_URL, MAX_ACTS_TO_PROCESS, ACT_CONTENT_FILE, ACT_ANALYSIS_FILE, check_environment
+from config import BASIC_URL, MAX_ACTS_TO_PROCESS, ACT_CONTENT_FILE, ACT_ANALYSIS_FILE, ELI_FOR_LATER, check_environment
 
 def extract_last_vote_info(process_data: Dict[str, Any]) -> Tuple[Optional[int], Optional[int]]:
     stages = process_data.get("stages", [])
@@ -36,6 +35,34 @@ def get_new_acts(items: List[Dict[str, Any]], last_known: Dict[str, Any]) -> Lis
             break
         new_acts.append(act)
     return new_acts
+
+def save_eli_to_check_later(act_eli):
+    try:
+        with open(ELI_FOR_LATER, "r") as f:
+            existing_eli = [line.strip() for line in f.readlines()]
+    except FileNotFoundError:
+        existing_eli = []
+
+    if act_eli not in existing_eli:
+        existing_eli.append(act_eli)
+        with open(ELI_FOR_LATER, "w") as f:
+            for eli in existing_eli:
+                f.write(f"{eli}\n")
+
+def check_voting_details(act_eli: str ):
+    act_details = fetch_one_law(act_eli)
+
+    if not act_details:
+        print(f"Error: Could not fetch details for act {act_eli}")
+        return False
+
+    voting_details = get_voting_details(act_details)
+    if not voting_details:
+        print(f"Error: Could not fetch voting details for act {act_eli}")
+        save_eli_to_check_later(act_eli)
+        return False
+
+    return True
 
 def process_and_save_act(latest: Dict[str, Any], text: str) -> bool:
     if not text:
@@ -94,6 +121,7 @@ def get_voting_details(act_details: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     
     return voting_details
 
+# Function to fetch and filters acts. Filter it by type, only "Ustawa" and "Rozporządzenie" are allowed. Sort it by promulgation date descending (most recent at the top).
 def fetch_and_filter_acts() -> List[Dict[str, Any]]:
     items = fetch_api_data()
     if not items:
@@ -104,7 +132,7 @@ def fetch_and_filter_acts() -> List[Dict[str, Any]]:
     if not filtered_items:
         print("No legal acts meeting the criteria")
         return []
-    
+
     filtered_items.sort(
         key=lambda x: datetime.strptime(x["promulgation"], "%Y-%m-%d"),
         reverse=True
@@ -112,6 +140,7 @@ def fetch_and_filter_acts() -> List[Dict[str, Any]]:
     
     return filtered_items
 
+# Checking if file with last known act exists. If not, process all available acts. If exists, process only new acts until the last known one.
 def identify_new_acts(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     last_known = get_last_known()
 
@@ -120,13 +149,22 @@ def identify_new_acts(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         return items
     
     new_acts = []
+
     for act in items:
         if act["ELI"] == last_known.get("ELI"):
             break
-        new_acts.append(act)
+
+        print(act['type'], act['ELI'])
+
+        if act['type'] in ["Ustawa"]:
+            if check_voting_details(act["ELI"]):
+                new_acts.append(act)
+        else:
+            new_acts.append(act)
     
     return new_acts
 
+# Checking if single_act has text, if not, skip it. If yes, process it and save to database.
 def process_single_act(act: Dict[str, Any]) -> bool:
     print(f"➡️ Processing act: {act.get('title', 'unknown')}")
     
@@ -152,6 +190,7 @@ def check_for_new_acts() -> None:
         return
     
     items = fetch_and_filter_acts()
+
     if not items:
         return
     
@@ -170,5 +209,50 @@ def check_for_new_acts() -> None:
     else:
         print("No new legal acts.")
 
+def check_old_eli() -> None:
+    try:
+        with open(ELI_FOR_LATER, "r") as f:
+            elis = [line.strip() for line in f.readlines()]
+    except FileNotFoundError:
+        elis = []
+
+    if not elis:
+        print("No ELI to check later.")
+        return
+
+    print(f"🔔 Found {len(elis)} ELI to check voting details later!")
+
+    remaining_eli = []
+
+    for eli in elis:
+        if not save_eli_to_check_later(eli):
+            return
+
+        if check_voting_details(eli):
+            act_details = fetch_one_law(eli)
+            if act_details:
+                pdf_url = f"{BASIC_URL}{eli}/text.pdf"
+                pdf_text = pdf_to_text(pdf_url)
+                if pdf_text:
+                    process_and_save_act(act_details, pdf_text)
+                else:
+                    print(f"❌ Failed to fetch PDF text for act: {act_details.get('title')}")
+                    remaining_eli.append(eli)
+            else:
+                print(f"❌ Could not fetch details for act {eli}")
+                remaining_eli.append(eli)
+        else:
+            remaining_eli.append(eli)
+
+    if remaining_eli:
+        with open(ELI_FOR_LATER, "w") as f:
+            for eli in remaining_eli:
+                f.write(f"{eli}\n")
+    else:
+        import os
+        os.remove(ELI_FOR_LATER)
+        print("All ELI processed successfully, removed the file.")
+
 if __name__ == "__main__":
     check_for_new_acts()
+    check_old_eli()
