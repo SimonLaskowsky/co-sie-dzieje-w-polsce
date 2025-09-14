@@ -1,3 +1,4 @@
+import os
 import json
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
@@ -249,7 +250,6 @@ def check_old_eli() -> None:
             for eli in remaining_eli:
                 f.write(f"{eli}\n")
     else:
-        import os
         os.remove(ELI_FOR_LATER)
         print("All ELI processed successfully, removed the file.")
 
