@@ -16,6 +16,7 @@ CURRENT_YEAR = datetime.now().year
 
 LAST_KNOWN_FILE = Path("last_known.json")
 ACT_CONTENT_FILE = Path("act_content.txt")
+ELI_FOR_LATER = Path("eli_for_later.json")
 ACT_ANALYSIS_FILE = Path("act_analysis.json")
 
 MAX_ACTS_TO_PROCESS = 10
