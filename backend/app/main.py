@@ -226,9 +226,6 @@ def check_old_eli() -> None:
     remaining_eli = []
 
     for eli in elis:
-        if not save_eli_to_check_later(eli):
-            return
-
         if check_voting_details(eli):
             act_details = fetch_one_law(eli)
             if act_details:
