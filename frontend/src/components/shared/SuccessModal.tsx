@@ -9,103 +9,60 @@ import {
 } from '@/components/ui/dialog';
 import FixedElement from './FixedElement';
 import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { Stripe } from 'stripe';
 
 const SubscriptionModal = () => {
-  const [status, setStatus] = useState('loading');
-  const [isOpen, setIsOpen] = useState(false);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const sessionId = searchParams.get('session_id');
+  const [session, setSession] = useState<Stripe.Checkout.Session | null>(null);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
     if (sessionId) {
-      setIsOpen(true);
-      fetchSessionStatus();
-    } else {
-      setIsOpen(false);
+      fetch(`/api/checkout-session?session_id=${sessionId}`)
+        .then(res => res.json())
+        .then(data => setSession(data));
     }
-  }, [sessionId]);
+  }, []);
+
+  if (!session) return null;
 
   const onClose = () => {
-    setIsOpen(false);
-    router.replace('/', { scroll: false });
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setSession(null);
   };
 
-  const fetchSessionStatus = async () => {
-    try {
-      const response = await fetch('/api/check-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ sessionId }),
-      });
+  const isPaid = session.payment_status === 'paid';
 
-      console.log('Response:', response);
-      const { session, error } = await response.json();
+  const title = isPaid ? 'Udało się! Masz subskrypcję! 🎉' : 'Wystąpił błąd';
 
-      if (error) {
-        setStatus('failed');
-        console.error(error);
-        return;
-      }
+  const description = isPaid
+    ? 'Lecisz z tematem i patrz co możesz zobaczyć!'
+    : 'Nie udało się przetworzyć subskrypcji. Spróbuj ponownie lub skontaktuj się z pomocą.';
 
-      setStatus(session.status);
-    } catch (error) {
-      console.error('Error fetching session:', error);
-      setStatus('failed');
-    }
-  };
+  const titleClass = isPaid
+    ? 'text-2xl font-bold leading-tight tracking-tighter text-left'
+    : 'text-2xl font-bold leading-tight tracking-tighter text-left text-red-600';
 
-  if (!isOpen) return null;
+  const buttonLabel = isPaid ? 'Rozpocznij korzystanie' : 'Zamknij';
 
-  if (status === 'failed') {
-    return (
-      <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent className="overflow-auto w-6/12 h-fit !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 shadow-red-500/10">
-          <DialogHeader className="h-fit">
-            <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left text-red-600">
-              Wystąpił błąd
-            </DialogTitle>
-            <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5 text-left">
-              Nie udało się przetworzyć subskrypcji. Spróbuj ponownie lub
-              skontaktuj się z pomocą.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-3 mt-4">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-            >
-              Zamknij
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const buttonClass = isPaid
+    ? 'px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors'
+    : 'px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors';
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="overflow-auto w-6/12 h-fit !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 shadow-red-500/10">
-        <FixedElement />
+        {isPaid && <FixedElement />}
         <DialogHeader className="h-fit">
-          <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
-            Udało się! Masz subskrypcję! 🎉
-          </DialogTitle>
+          <DialogTitle className={titleClass}>{title}</DialogTitle>
           <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5 text-left">
-            Lecisz z tematem i patrz co możesz zobaczyć!
+            {description}
           </DialogDescription>
         </DialogHeader>
-
         <div className="flex justify-end gap-3 mt-4">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Rozpocznij korzystanie
+          <button onClick={onClose} className={buttonClass}>
+            {buttonLabel}
           </button>
         </div>
       </DialogContent>
