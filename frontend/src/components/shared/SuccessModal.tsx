@@ -43,6 +43,7 @@ const SubscriptionModal = () => {
         body: JSON.stringify({ sessionId }),
       });
 
+      console.log('Response:', response);
       const { session, error } = await response.json();
 
       if (error) {

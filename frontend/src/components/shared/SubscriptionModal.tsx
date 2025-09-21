@@ -23,11 +23,34 @@ interface SubscriptionPlan {
   price: number;
   interval: string;
   price_id: string;
+  currency?: string;
 }
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
+
+const getPolishInterval = (interval: string): string => {
+  const intervals: { [key: string]: string } = {
+    day: 'dzień',
+    week: 'tydzień',
+    month: 'miesiąc',
+    year: 'rok',
+  };
+
+  return intervals[interval.toLowerCase()] || interval;
+};
+
+const formatCurrency = (currency: string): string => {
+  const currencies: { [key: string]: string } = {
+    usd: '$',
+    eur: '€',
+    pln: 'zł',
+    gbp: '£',
+  };
+
+  return currencies[currency?.toLowerCase()] || currency?.toUpperCase() || 'zł';
+};
 
 const SubscriptionModal = ({ onClose }: { onClose: () => void }) => {
   const [plans, setPlans] = useState([]);
@@ -91,15 +114,6 @@ const ProductsWrapper = ({
 }) => {
   return (
     <div className="flex flex-col gap-4 text-left text-sm">
-      <label className="flex items-start gap-2">
-        <input type="checkbox" required className="mt-1" />
-        <span>
-          Wyrażam zgodę na rozpoczęcie świadczenia usługi przed upływem terminu
-          odstąpienia i przyjmuję do wiadomości, że tracę prawo do odstąpienia
-          od umowy.
-        </span>
-      </label>
-
       <div className="flex gap-4">
         {plans.map(plan => (
           <Product
@@ -109,6 +123,15 @@ const ProductsWrapper = ({
           />
         ))}
       </div>
+
+      <label className="flex items-start gap-2">
+        <input type="checkbox" required className="mt-1" />
+        <span>
+          Wyrażam zgodę na rozpoczęcie świadczenia usługi przed upływem terminu
+          odstąpienia i przyjmuję do wiadomości, że tracę prawo do odstąpienia
+          od umowy.
+        </span>
+      </label>
 
       <p className="text-xs text-neutral-500">
         Subskrypcja odnawia się automatycznie co miesiąc. Możesz anulować w
@@ -132,19 +155,25 @@ const Product = ({
   plan: SubscriptionPlan;
   handleSubscribe: (priceId: string) => void;
 }) => {
+  const polishInterval = getPolishInterval(plan.interval);
+  const currencySymbol = formatCurrency(plan.currency || 'pln');
+
   return (
     <div
       key={plan.id}
-      className="w-fit text-lg px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+      className="w-fit text-lg px-6 py-3 border-2 text-white rounded-lg hover:border-red-500/70 transition-colors"
     >
       <div className="description Box-root">
         <h3>{plan.name}</h3>
         <p>{plan.description}</p>
         <p>
-          Price: ${plan.price / 100} / {plan.interval}
+          Cena: {plan.price / 100} {currencySymbol} / {polishInterval}
         </p>
-        <button onClick={() => handleSubscribe(plan.price_id)}>
-          Subscribe
+        <button
+          onClick={() => handleSubscribe(plan.price_id)}
+          className="mt-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+        >
+          Subskrybuj
         </button>
       </div>
     </div>
