@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import FixedElement from './FixedElement';
 import { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useUser } from '@clerk/nextjs';
@@ -66,8 +65,7 @@ const SubscriptionModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="overflow-auto w-6/12 h-fit !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 shadow-red-500/10">
-        <FixedElement />
+      <DialogContent className="overflow-auto w-6/12 h-fit !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 border-none">
         <DialogHeader className="h-fit">
           <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
             Chcesz przeglądać więcej aktów prawnych?
@@ -91,8 +89,21 @@ const ProductsWrapper = ({
 }) => {
   return (
     <div className="flex flex-col gap-4 text-left text-sm">
-      <label className="flex items-start gap-2">
-        <input type="checkbox" required className="mt-1" />
+      <label className="flex items-start gap-2 cursor-pointer group">
+        <input type="checkbox" required className="hidden peer mt-1" />
+        <svg
+          className="w-4.5 h-4.5 flex-shrink-0 mt-px text-neutral-600 group-hover:text-neutral-900 peer-checked:text-neutral-900 peer-checked:group-hover:text-neutral-900 dark:text-neutral-500 dark:group-hover:text-neutral-100 dark:peer-checked:text-neutral-100 dark:peer-checked:group-hover:text-neutral-100 opacity-50 peer-checked:opacity-100 group-hover:opacity-100 duration-300 transition-all"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
         <span>
           Wyrażam zgodę na rozpoczęcie świadczenia usługi przed upływem terminu
           odstąpienia i przyjmuję do wiadomości, że tracę prawo do odstąpienia
@@ -133,21 +144,19 @@ const Product = ({
   handleSubscribe: (priceId: string) => void;
 }) => {
   return (
-    <div
+    <button
       key={plan.id}
-      className="w-fit text-lg px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+      className="w-fit text-lg px-6 py-3 red-background-gloss font-semibold text-white rounded-lg shadow-none hover:shadow-2xl hover:shadow-red-500/60 focus:shadow-none active:shadow-none transition-shadow duration-300 cursor-pointer"
+      onClick={() => handleSubscribe(plan.price_id)}
     >
-      <div className="description Box-root">
+      <div className="description Box-root text-start">
         <h3>{plan.name}</h3>
         <p>{plan.description}</p>
         <p>
-          Price: ${plan.price / 100} / {plan.interval}
+          Cena: ${plan.price / 100} / {plan.interval}
         </p>
-        <button onClick={() => handleSubscribe(plan.price_id)}>
-          Subscribe
-        </button>
       </div>
-    </div>
+    </button>
   );
 };
 

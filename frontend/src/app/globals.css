@@ -145,15 +145,6 @@
   @apply p-8 border-neutral-200 dark:border-neutral-700 border-2;
 }
 
-.dark .text-gradient-gloss {
-  background-image: linear-gradient(to right, #6b7280, #d3d7df, #6b7280);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gloss 5s ease-in-out infinite;
-}
-
 @keyframes gloss {
   0% {
     background-position: 0% 50%;
@@ -166,6 +157,15 @@
   }
 }
 
+.dark .text-gradient-gloss {
+  background-image: linear-gradient(to right, #6b7280, #d3d7df, #6b7280);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gloss 5s ease-in-out infinite;
+}
+
 .text-gradient-gloss {
   background-image: linear-gradient(to right, #838c9c, #1c1d1e, #838c9c);
   background-size: 200% 100%;
@@ -173,4 +173,10 @@
   background-clip: text;
   color: transparent;
   animation: gloss 3s ease-in-out infinite;
+}
+
+.red-background-gloss {
+  background: linear-gradient(410deg, #b91c1c, #f35757, #b91c1c);
+  background-size: 300% 100%;
+  animation: gloss 5s ease-in-out infinite;
 }
