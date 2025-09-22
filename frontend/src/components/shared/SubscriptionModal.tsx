@@ -65,13 +65,15 @@ const SubscriptionModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="overflow-auto w-6/12 h-fit !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 border-none">
+      <DialogContent className="overflow-auto w-11/12 h-fit lg:w-5/12 lg:h-fit !max-w-[1000px] !max-h-[800px] rounded-3xl flex flex-col gap-6 border-none">
         <DialogHeader className="h-fit">
           <DialogTitle className="text-2xl font-bold leading-tight tracking-tighter text-left">
-            Chcesz przeglądać więcej aktów prawnych?
+            Odblokuj pełny dostęp do aktów prawnych – bez ograniczeń!
           </DialogTitle>
           <DialogDescription className="text-base font-light dark:text-neutral-100 md:max-w-4/5 text-left">
-            Kup subskrypcję i zyskaj dostęp do pełnej treści aktów prawnych.
+            Z subskrypcją zyskasz nielimitowany dostęp do pełnych i skróconych
+            aktów prawnych, statystyk, kategorii oraz cennych informacji – bez
+            limitu 3 aktów dziennie. Oszczędzaj czas i bądź na bieżąco z prawem!
           </DialogDescription>
         </DialogHeader>
         <ProductsWrapper plans={plans} handleSubscribe={handleSubscribe} />
@@ -89,6 +91,16 @@ const ProductsWrapper = ({
 }) => {
   return (
     <div className="flex flex-col gap-4 text-left text-sm">
+      <div className="flex gap-4">
+        {plans.map(plan => (
+          <Product
+            key={plan.id}
+            plan={plan}
+            handleSubscribe={handleSubscribe}
+          />
+        ))}
+      </div>
+
       <label className="flex items-start gap-2 cursor-pointer group">
         <input type="checkbox" required className="hidden peer mt-1" />
         <svg
@@ -110,16 +122,6 @@ const ProductsWrapper = ({
           od umowy.
         </span>
       </label>
-
-      <div className="flex gap-4">
-        {plans.map(plan => (
-          <Product
-            key={plan.id}
-            plan={plan}
-            handleSubscribe={handleSubscribe}
-          />
-        ))}
-      </div>
 
       <p className="text-xs text-neutral-500">
         Subskrypcja odnawia się automatycznie co miesiąc. Możesz anulować w
