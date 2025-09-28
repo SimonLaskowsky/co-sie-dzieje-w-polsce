@@ -55,6 +55,13 @@ const Card = ({
     return html.replace(/<[^>]*>/g, '');
   };
 
+  const stripDateFromTitle = (title: string) => {
+    const titleWithoutDate = title
+      .replace(/z dnia \d{1,2} \w+ \d{4}\s*r\.\s*/i, '')
+      .trim();
+    return titleWithoutDate;
+  };
+
   return (
     <div
       onClick={onClick}
@@ -66,7 +73,7 @@ const Card = ({
         {formattedDate}
       </div>
       <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3 -mt-2.5">
-        {title}
+        {stripDateFromTitle(title)}
       </h3>
       <div className="dark:text-neutral-600 text-neutral-500 text-xs">
         W skrócie
