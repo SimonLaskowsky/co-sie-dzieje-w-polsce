@@ -1,6 +1,5 @@
 import logging
-import psycopg2
-from psycopg2.extras import execute_values
+import pg8000
 import os
 import json
 from typing import Dict, Any, List, Optional
@@ -19,11 +18,11 @@ def get_db_connection():
     connection_string = os.getenv("DATABASE_URL")
     if not connection_string:
         raise ValueError("DATABASE_URL is not set in environment variables")
-    
+
     conn = None
     cursor = None
     try:
-        conn = psycopg2.connect(connection_string)
+        conn = pg8000.connect(connection_string)
         cursor = conn.cursor()
         yield conn, cursor
     except Exception as e:
@@ -157,7 +156,7 @@ def save_to_database(filtered_item: Dict[str, Any]) -> bool:
     
     try:
         with get_db_connection() as (conn, cursor):
-            execute_values(cursor, insert_query, [data_tuple])
+            cursor.execute(insert_query, data_tuple)
             conn.commit()
         logger.info("Data saved successfully.")
         return True
@@ -215,7 +214,7 @@ def create_new_category(category_name: str, keywords: List[str]) -> Optional[str
         return None
 
 def smart_find_category_by_keywords(keywords: List[str], title: str = "", content: str = "") -> Optional[str]:
-    from openai_analyzer import find_or_create_category_with_ai
+    from ..services.analyze_service import find_or_create_category_with_ai
     if not keywords:
         return None
     

@@ -1,7 +1,7 @@
 import json
 from typing import Dict, Any, Optional
 from pathlib import Path
-from config import LAST_KNOWN_FILE
+from ..core.config import LAST_KNOWN_FILE
 
 def get_last_known() -> Optional[Dict[str, Any]]:
     try:

@@ -3,7 +3,7 @@ import json
 import time
 import logging
 from typing import Dict, Any, List, Optional, Union
-from database import create_new_category, extend_category_keywords
+from ..db.database import create_new_category, extend_category_keywords
 from openai import OpenAI, APIError
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter

@@ -2,7 +2,7 @@ import os
 import requests
 import fitz
 from typing import Optional
-from config import PDF_DOWNLOAD_TIMEOUT
+from ..core.config import PDF_DOWNLOAD_TIMEOUT
 
 def download_pdf(url: str, filename: str = "temp.pdf") -> Optional[str]:
     try:
