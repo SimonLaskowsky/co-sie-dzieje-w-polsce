@@ -10,12 +10,13 @@ użytkownikom wraz z linkiem do oryginalnego PDF-a.
 
 Cel MVP: Udostępnić działającą, stabilną aplikację umożliwiającą przeglądanie i
 czytanie uproszczonych streszczeń aktów prawnych, z prostą kontrolą dostępu
-(limit odczytów dla anonimów), panelem administracyjnym do weryfikacji i edycji
-treści oraz zapleczem operacyjnym do ponownego przetwarzania brakujących danych.
+(limit odczytów dla anonimów w localStorage), edycją treści przez admina oraz
+zapleczem operacyjnym do ponownego przetwarzania brakujących danych.
 
 Zakres czasowy MVP: podstawowa funkcjonalność produkcyjna z ingestem 2×
-dziennie, workflow admina (draft/review/publish), oraz limitami dostępu (anonim
-3 odczyty). Priorytet na stabilność backendu i mechanizmy reprocessingu.
+dziennie, prostą edycją dla admina (textarea + API), oraz limitami dostępu
+(anonim 3 odczyty w localStorage - łatwe do obejścia, akceptowane w MVP).
+Priorytet na stabilność backendu i mechanizmy reprocessingu kolejkowego.
 
 ## 2. Problem użytkownika
 
@@ -53,12 +54,15 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 - Parsowanie metadanych i wysłanie tekstu (lub fragmentów) do LLM z parametrem
   verbosity (TL;DR / punkty / rozbudowane). (NF-004)
 - Zapisywanie outputu LLM jako streszczenie + pole confidence/score. (NF-005)
-- Routowanie właściwości: jeśli confidence < prog (konfigurowalny), wpis
-  otrzymuje status "podejrzana" i trafia do kolejki admina. (NF-006)
+- Oznaczanie niskiej pewności: jeśli confidence < prog (konfigurowalny), wpis
+  otrzymuje flagę low_confidence i jest publikowany z widocznym ostrzeżeniem dla
+  użytkowników. Admin może edytować wszystkie akty niezależnie od confidence.
+  (NF-006)
 - Retry/backoff i alerty operacyjne przy błędach ingestu; metryki błędów i
   logowanie. (NF-007)
-- Job do ponownego pobrania brakujących PDFów lub brakujących danych
-  (reprocess). (NF-008)
+- Kolejka reprocessingu: akty wymagające ponownego przetworzenia (brakujące
+  PDFy, błędy LLM) są oznaczane flagą needs_reprocess i przetwarzane
+  priorytetowo przy kolejnych uruchomieniach crona. (NF-008)
 
   3.2 Backend i przechowywanie
 
@@ -78,28 +82,35 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
   "Jak to wpływa na obywatela", informacja o wynikach głosowania i stanowiskach
   partii (jeśli dostępne), link do oryginalnego PDF. (NF-013)
 - Limit odczytów dla anonima: po przeczytaniu 3 pełnych streszczeń przeglądanie
-  zostaje zablokowane (UI informuje o limicie i opcji zalogowania). (NF-014)
+  zostaje zablokowane (zliczanie w localStorage, łatwe do obejścia -
+  akceptowalne w MVP). UI informuje o limicie, opcji zalogowania i komunikacie
+  że pełna ochrona będzie w wersji premium. Po zalogowaniu (Clerk) licznik nie
+  jest sprawdzany. (NF-014)
 - Zalogowani użytkownicy: opcjonalne logowanie (Clerk) — role: user i admin;
   zalogowani użytkownicy mają zwiększony dostęp (w MVP: brak limitu lub
   konfigurowalny zwiększony limit). (NF-015)
 
   3.4 Panel admina
 
-- Widok kolejki: nowe ingestowane wpisy, wpisy oznaczone jako
-  "podejrzane"(NF-017)
-- Edycja treści streszczenia: interfejs edycji WYSIWYG/markdown z możliwością
-  zapisu publish. (NF-018)
-- Mechanizm powiadomień (email/webhook) o nowych wpisach i elementach w kolejce
-  "podejrzana". (NF-020)
+- Oznaczanie aktów niskiej pewności: akty z low_confidence mają widoczny badge
+  na liście dla admina (NF-017)
+- Edycja treści streszczenia: admin otwierając akt widzi textarea zamiast
+  zwykłego tekstu, może edytować i zapisać. Zapis wywołuje Next.js API route
+  (POST /api/admin/update-act) która aktualizuje bazę danych i triggeruje Vercel
+  rebuild webhook. (NF-018)
+- Mechanizm powiadomień email o aktach niskiej pewności: Python script wysyła
+  email do admina dla aktów z confidence < threshold podczas ingestu. (NF-020)
 
   3.5 Operacje i utrzymanie
 
-- Mechanizm reprocessingu: automatyczne triggerowanie re-ingestu dla
-  pojedynczych rekordów. (NF-021)
+- Mechanizm reprocessingu: kolejka aktów z flagą needs_reprocess, przetwarzane
+  priorytetowo przy kolejnych uruchomieniach crona (każde 12h). Brak on-demand
+  API - reprocessing automatyczny. (NF-021)
 - Dashboard operacyjny: liczba ingestów, procent błędów, ostatnie nieudane
   próby, liczba rekordów z missing_pdf lub missing_vote_data. (NF-022)
-- Prosty mechanizm zgłaszania problemu pod streszczeniem — mailto lub webhook
-  zapisujący metadane zgłoszenia. (NF-023)
+- Prosty mechanizm zgłaszania problemu pod streszczeniem — przycisk "Zgłoś
+  problem" otwierający pre-wypełnioną wiadomość mailto z ID aktu i linkiem.
+  (NF-023)
 
   3.6 Bezpieczeństwo i zgodność
 
@@ -119,15 +130,16 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 
 Co jest w MVP (zwięzłe):
 
-- Rejestracja i logowanie (opcjonalne); role user/admin. (B-001)
+- Rejestracja i logowanie (opcjonalne, Clerk); role user/admin. (B-001)
 - Lista aktów z krótkimi podsumowaniami. (B-002)
-- Limit dostępu: anonimowy użytkownik 3 odczyty. (B-003)
-- Konto superadmina z możliwościami edycji i zatwierdzania. (B-004)
+- Limit dostępu: anonimowy użytkownik 3 odczyty (localStorage - łatwe do
+  obejścia, akceptowane w MVP). (B-003)
+- Konto admina z możliwością edycji przez textarea + API route. (B-004)
 - Ingest 2× dziennie, dane + link do PDF. (B-005)
-- Ukrywanie aktów dla niskiego confidence; potrzebne zatwierdzenie admina do
-  edycji i publikacji. (B-006)
+- Wszystkie akty publikowane od razu; akty z niskim confidence mają badge
+  ostrzegawczy. Admin może edytować dowolny akt. (B-006)
 - Brak przechowywania pełnych tekstów/PDFów w MVP — tylko linki. (B-007)
-- Prosty mechanizm zgłoszeń (mailto/webhook). (B-008)
+- Prosty mechanizm zgłoszeń (mailto z pre-wypełnionym tematem). (B-008)
 
 Co nie wchodzi do MVP:
 
@@ -147,28 +159,33 @@ Ograniczenia techniczne:
 
 Decyzja architektoniczna dla MVP opiera się na optymalizacji kosztów hostingu:
 
-- **Frontend**: Generowany statycznie (SSG - Static Site Generation) 2×
-  dziennie, synchronicznie z jobem cron backendu. Statyczne pliki są hostowane
-  na tanim hostingu statycznym (np. Vercel, Netlify, S3+CloudFront). (ARCH-001)
-- **Backend**: Osobna aplikacja Pythonowa odpowiedzialna za ingest,
-  przetwarzanie LLM, API i obsługę bazy danych. Może być hostowana na tanszej
-  infrastrukturze dedykowanej dla cron jobów i API (np. Railway, Render, VPS).
-  (ARCH-002)
+- **Frontend**: Next.js 15 w trybie hybrydowym - większość stron generowana
+  statycznie (SSG) 2× dziennie po zakończeniu ingestu, z dodatkowymi API routes
+  dla dynamicznych funkcji admina. Statyczne strony hostowane na Vercel CDN, API
+  routes jako serverless functions. (ARCH-001)
+- **Backend**: Python script uruchamiany przez cron na Seohost, odpowiedzialny
+  za ingest, przetwarzanie LLM i zapis do bazy danych. Po zakończeniu
+  triggerjuje Vercel webhook dla rebuildu frontendu. (ARCH-002)
+- **Admin API**: Next.js API Routes (serverless) dla edycji treści przez
+  admina - minimalna powierzchnia API, tylko update aktów + trigger rebuildu.
+  (ARCH-003)
 
 Korzyści tego podejścia:
 
-- Znacząco niższe koszty hostingu frontendu (statyczny hosting jest
-  tani/darmowy).
-- Oddzielenie odpowiedzialności: backend odpowiada za logikę biznesową i
-  przetwarzanie, frontend za prezentację.
-- Lepsza wydajność frontendu (statyczne pliki serwowane z CDN).
-- Możliwość skalowania komponentów niezależnie.
+- Znacząco niższe koszty hostingu - 95% ruchu to statyczne pliki z CDN
+  (tanie/darmowe).
+- Oddzielenie odpowiedzialności: Python script odpowiada za ingest i
+  przetwarzanie, frontend Next.js za prezentację i proste API admina.
+- Lepsza wydajność - statyczne pliki serwowane z CDN.
+- Brak konieczności osobnego backendu API - Next.js API routes wystarczają dla
+  MVP.
+- Wszystko w jednym repozytorium frontendu (łatwiejsze w utrzymaniu).
 
 Ograniczenia:
 
 - Dane na frontendzie są odświeżane tylko 2× dziennie (akceptowalne dla MVP).
-- Interakcje wymagające real-time (np. edycja admina) muszą komunikować się
-  bezpośrednio z backendem poprzez API.
+- Edycja admina wymaga rebuildu frontendu (2-5 min) - akceptowalne dla MVP.
+- Limit odczytów w localStorage można łatwo ominąć - akceptowalne dla MVP.
 
 ## 5. Historyjki użytkowników
 
@@ -186,9 +203,10 @@ szybko ocenić, co jest nowe. Kryteria akceptacji:
 
 - Po wejściu na stronę główną wyświetla się lista kafelków uporządkowana
   malejąco według daty publikacji.
-- Każdy kafelek zawiera tytuł i datę.
-- Testowalne: zapytanie GET /api/acts zwraca listę z paginacją i polami
-  wymaganymi.
+- Każdy kafelek zawiera tytuł, datę, krótki snippet.
+- Lista generowana statycznie podczas build (SSG, dane z Prisma).
+- Testowalne: otworzyć stronę główną, sprawdzić czy lista jest widoczna i
+  posortowana malejąco po dacie.
 
 US-002 Tytuł: Otwieranie widoku szczegółowego aktu (anonim) Opis: Jako anonimowy
 użytkownik chcę otworzyć widok szczegółowy aktu, zobaczyć streszczenie i link do
@@ -201,19 +219,24 @@ oryginału. Kryteria akceptacji:
 
 US-003 Tytuł: Limit odczytów dla anonimów Opis: Jako anonimowy użytkownik mogę
 przeczytać 3 pełne streszczenia; po przekroczeniu limitu nie mogę otwierać
-kolejnych i widzę komunikat z możliwością zalogowania. Kryteria akceptacji:
+kolejnych i widzę komunikat z możliwością zalogowania oraz informację o pełnej
+wersji premium. Kryteria akceptacji:
 
-- System zlicza odczyty pełnych widoków szczegółowych na sesję/ip/ciasteczko.
-- Testowalne: wykonać 4 zapytania GET /acts/{id} i otrzymać bład na stronie.
+- System zlicza odczyty w localStorage (client-side, łatwe do obejścia).
+- Po przekroczeniu limitu UI pokazuje komunikat: "Wykorzystano limit 3
+  bezpłatnych odczytów. Zaloguj się lub wyczyść localStorage aby kontynuować.
+  Pełna ochrona dostępna w wersji premium."
+- Testowalne: otworzyć 4 akty i na 4. zobaczyć komunikat blokujący.
 
 US-004 Tytuł: Zgłoszenie problemu (anonim) Opis: Jako anonimowy użytkownik chcę
-móc zgłosić problem z danym streszczeniem (mailto/webhook), aby administratorzy
-mogli to sprawdzić. Kryteria akceptacji:
+móc zgłosić problem z danym streszczeniem, aby administratorzy mogli to
+sprawdzić. Kryteria akceptacji:
 
 - Pod każdym streszczeniem jest przycisk "Zgłoś problem" otwierający
-  pre-wypełnioną wiadomość mailto lub wywołujący webhook z ID aktu i metadanymi.
-- Testowalne: kliknięcie uruchamia mailto z poprawnymi polami lub generuje POST
-  na webhook (symulacja).
+  pre-wypełnioną wiadomość mailto z tematem zawierającym ID aktu i tytuł.
+- Format: mailto:admin@cosiedziejepolsce.pl?subject=Problem z aktem [ID] -
+  [tytuł]&body=Opis problemu:
+- Testowalne: kliknięcie uruchamia klienta email z poprawnymi polami.
 
 ---
 
@@ -223,39 +246,66 @@ US-005 Tytuł: Rejestracja i logowanie (opcjonalne) Opis: Jako użytkownik chcę
 się zarejestrować i zalogować (Clerk), aby uzyskać rozszerzony dostęp do treści.
 Kryteria akceptacji:
 
-- Możliwość rejestracji/loginu przez zewnętrznego providera (SSO) lub email; po
-  zalogowaniu otrzymuję token sesyjny.
-- Testowalne: przeprowadzić logowanie i sprawdzić endpoint GET /me zwracający
-  dane użytkownika i rolę.
+- Możliwość rejestracji/loginu przez Clerk (SSO/email); po zalogowaniu otrzymuję
+  sesję zarządzaną przez Clerk (client-side).
+- Testowalne: przeprowadzić logowanie i sprawdzić że Clerk zwraca
+  user.isSignedIn=true oraz rolę w metadanych.
 
 US-006 Tytuł: Zwiększony dostęp dla zalogowanych Opis: Jako zalogowany
-użytkownik chcę mieć zwiększony limit odczytów (w MVP: brak limitu), aby czytać
-więcej streszczeń. Kryteria akceptacji:
+użytkownik chcę mieć brak limitu odczytów, aby czytać więcej streszczeń.
+Kryteria akceptacji:
 
-- Po zalogowaniu limit odczytów anonimów nie jest stosowany dla tego konta.
-- Testowalne: zalogowany użytkownik wykonuje > 10 zapytań GET /acts/{id} bez
-  otrzymania błędu.
+- Po zalogowaniu przez Clerk licznik localStorage nie jest sprawdzany
+  (sprawdzenie po stronie client-side czy user.isSignedIn).
+- Testowalne: zalogowany użytkownik otwiera > 10 aktów bez komunikatu
+  blokującego.
 
 ---
 
 ### Rola: Administrator / Superadmin
 
-US-008 Tytuł: Przegląd kolejek ingestowych (admin) Opis: Jako admin chcę widzieć
-listę nowych ingestów oraz wpisów oznaczonych jako "podejrzane", aby je
-zweryfikować. Kryteria akceptacji:
+US-008 Tytuł: Edycja aktów przez admina Opis: Jako admin chcę móc edytować treść
+streszczeń bezpośrednio na stronie aktu, aby poprawiać błędy i niedokładności.
+Kryteria akceptacji:
 
-- Podejrzane akty są specjalnie oznaczone na stronie głównej. Admin moze w nie
-  wejść i je edytować.
-- Testowalne: uytkownik z rolą admin moze zmienić treść aktu (inne dane przed i
-  po edycji zwracane przez ten sam endpoint).
+- Admin (rola w Clerk) otwierając akt widzi textarea z edytowalną treścią
+  zamiast statycznego tekstu.
+- Przycisk "Zapisz" wywołuje POST /api/admin/update-act z nową treścią.
+- API route waliduje rolę admin (Clerk), aktualizuje bazę danych (Prisma/raw
+  SQL) i triggeruje Vercel rebuild webhook.
+- Po zapisie admin widzi komunikat "Zapisano. Rebuild w toku (~2-5 min)".
+- Testowalne: admin zmienia treść, zapisuje, sprawdza DB że zaktualizowane.
+
+US-009 Tytuł: Next.js API route dla edycji admina Opis: Jako system chcę
+udostępnić API endpoint dla aktualizacji aktów przez admina, zabezpieczony
+autoryzacją Clerk. Kryteria akceptacji:
+
+- Endpoint POST /api/admin/update-act przyjmuje { actId, content }.
+- Walidacja: sprawdzenie roli admin w Clerk (auth() helper z @clerk/nextjs).
+- Aktualizacja bazy: użycie Prisma lub raw SQL do update contentu.
+- Trigger rebuildu: wywołanie Vercel Deploy Hook webhook.
+- Zwrot: { success: true, message: "Updated, rebuild triggered" }.
+- Testowalne: POST z tokenem admina → success, POST bez tokena → 401, POST z
+  user (nie admin) → 403.
+
+US-012 Tytuł: Badge dla aktów niskiej pewności Opis: Jako użytkownik chcę
+widzieć ostrzeżenie przy aktach o niskiej pewności AI, aby wiedzieć że
+streszczenie może być niedokładne. Kryteria akceptacji:
+
+- Akty z confidence < threshold (np. 0.5) mają widoczny badge "⚠️ Weryfikacja w
+  toku - może zawierać nieścisłości".
+- Badge wyświetlany zarówno na liście (kafelek) jak i na stronie szczegółowej.
+- Testowalne: utworzyć akt z confidence 0.3, sprawdzić że badge jest widoczny.
 
 US-013 Tytuł: Powiadomienia o niskim confidence (admin) Opis: Jako admin chcę
-otrzymywać powiadomienia (email/webhook) o wpisach z confidence < threshold, aby
-szybszej weryfikacji. Kryteria akceptacji:
+otrzymywać powiadomienia (email) o wpisach z confidence < threshold, aby móc je
+szybko zweryfikować. Kryteria akceptacji:
 
-- System wysyła powiadomienie dla każdego rekordu spełniającego warunek; można
-  konfigurować threshold.
-- Testowalne: utwórz wpis z confidence 0.2 i potwierdź wysłanie powiadomienia.
+- Python script wysyła email (SMTP/SendGrid) dla każdego rekordu z confidence <
+  threshold podczas ingestu.
+- Email zawiera: ID aktu, tytuł, confidence score, link do edycji.
+- Threshold konfigurowalny w .env (domyślnie 0.5).
+- Testowalne: utwórz wpis z confidence 0.2 i potwierdź wysłanie email.
 
 ---
 
@@ -296,14 +346,17 @@ akceptacji:
   ręczne uzupełnienie.
 - Testowalne: ingest bez danych głosowania ustawia flaga i widoczne w UI.
 
-US-021 Tytuł: Ochrona przed nadużyciem limitu (anonim) Opis: Jako inżynier chcę
-mechanizm ograniczający obejścia limitu (ciasteczka, IP, fingerprint), aby
-ograniczyć nadużycia. Kryteria akceptacji:
+US-021 Tytuł: Kolejkowy reprocessing aktów Opis: Jako system chcę automatycznie
+ponownie przetwarzać akty z błędami przy kolejnych uruchomieniach crona, aby
+zapewnić kompletność danych. Kryteria akceptacji:
 
-- System używa kombinacji cookie + IP + fingerprint do identyfikacji anonimów;
-  wielokrotne próby obejścia blokowane i logowane.
-- Testowalne: symulacja zmiany cookie i potwierdzenie, że system wykrywa i
-  blokuje obejścia.
+- Akty z błędami (missing_pdf, failed_llm, missing_votes) otrzymują flagę
+  needs_reprocess=true.
+- Przy każdym uruchomieniu crona (2×/dzień) najpierw przetwarzane są akty z
+  needs_reprocess, potem nowe.
+- Po udanym reprocessingu flaga needs_reprocess ustawiana na false.
+- Testowalne: utwórz akt z needs_reprocess=true, uruchom cron, sprawdź czy
+  został przetworzony.
 
 US-023 Tytuł: Fallback LLM i retry Opis: Jako system chcę mechanizm fallbacku
 gdy model LLM nie odpowiada (inny model / ponowna próba), aby pipeline był
@@ -331,8 +384,10 @@ Metryki techniczne i biznesowe do monitorowania w MVP:
 - Success rate ingestów (procent poprawnie przetworzonych rekordów) — cel: > 95%
   (do potwierdzenia).
 - % rekordów z missing_pdf lub missing_vote_data — monitorować tygodniowo.
-- Średni czas reprocessingu dla brakujących PDF (target: reprocess job w oknie
-  24–48h). (Mierzalne metryki: avg_time_to_reprocess)
+- Średni czas reprocessingu dla brakujących danych (target: automatyczny
+  reprocessing przy następnym cronie, max 12h). (Mierzalne metryki:
+  avg_time_to_reprocess)
+- Liczba aktów w kolejce reprocessingu (needs_reprocess=true).
 
 3. Jakość streszczeń (produktowa):
 
@@ -377,3 +432,49 @@ backlogu):
 - Dokładne godziny cronów i parametry retry/backoff.
 - Konkretne KPI liczbowe (DAU, retention) do celów biznesowych.
 - Polityka prawna / disclaimer za streszczenia (treść i odpowiedzialność).
+
+---
+
+## 7. Stos technologiczny (Tech Stack)
+
+### Frontend:
+
+- **Next.js 15** - framework, tryb hybrydowy (SSG + API routes)
+- **TypeScript 5** - typowanie
+- **React 19** - UI library
+- **Tailwind CSS 4** - stylowanie
+- **Shadcn UI** - komponenty UI
+- **Clerk** - autentykacja i autoryzacja (role: user, admin)
+- **Prisma 6** - ORM do odczytu danych podczas build time (SSG)
+
+### Backend (Python Script):
+
+- **Python 3.x** - język
+- **Requests/httpx** - HTTP client do API rządowego
+- **OpenAI SDK** - integracja z OpenAI API
+- **SQLAlchemy / raw SQL** - zapis do bazy danych
+- **SMTP/SendGrid** - email notyfikacje dla admina
+
+### Baza danych:
+
+- **Neon DB** - serverless PostgreSQL
+
+### CI/CD i Hosting:
+
+- **GitHub Actions** - CI/CD
+- **Seohost** - hosting Python script + cron (2×/dzień)
+- **Vercel** - hosting Next.js (SSG + serverless functions)
+
+### Komunikacja między komponentami:
+
+- Python script → Neon DB (zapis aktów po ingestcie)
+- Python script → Vercel Webhook (trigger rebuildu)
+- Next.js build time → Neon DB (Prisma odczyt dla SSG)
+- Next.js API routes → Neon DB (admin edycja)
+- Next.js API routes → Vercel Webhook (trigger rebuildu po edycji)
+
+### Ograniczenia MVP:
+
+- Limit odczytów tylko w localStorage (łatwe obejście - akceptowalne)
+- Rebuild frontendu po edycji admina trwa 2-5 min (akceptowalne)
+- Brak real-time updates (aktualizacja co 12h przez cron - akceptowalne)
