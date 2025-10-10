@@ -68,8 +68,11 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 
   3.3 Frontend i prezentacja
 
+- Frontend generowany statycznie (SSG) 2× dziennie, synchronicznie z cronem
+  ingestu backendu; build tworzy statyczne HTML/CSS/JS hostowane na CDN.
+  (NF-011)
 - Strona główna z listą kafelków aktów (chronologicznie/od najnowszych). Każdy
-  kafelek: tytuł, data, krótki snippet, tagi (np. sektor), status jezeli
+  kafelek: tytuł, data, krótki snippet, tagi (np. sektor), status jeżeli
   podejrzany. (NF-012)
 - Widok szczegółowy aktu: streszczenie (format zależny od verbosity), sekcja
   "Jak to wpływa na obywatela", informacja o wynikach głosowania i stanowiskach
@@ -139,6 +142,33 @@ Ograniczenia techniczne:
 - Model LLM i jego parametry są do wyboru po PoC; w MVP należy zaimplementować
   abstrakcję i fallback. (B-014)
 - SLA ręcznej weryfikacji nie jest ustalony (do decyzji produktowej). (B-015)
+
+## 4.1 Architektura techniczna
+
+Decyzja architektoniczna dla MVP opiera się na optymalizacji kosztów hostingu:
+
+- **Frontend**: Generowany statycznie (SSG - Static Site Generation) 2×
+  dziennie, synchronicznie z jobem cron backendu. Statyczne pliki są hostowane
+  na tanim hostingu statycznym (np. Vercel, Netlify, S3+CloudFront). (ARCH-001)
+- **Backend**: Osobna aplikacja Pythonowa odpowiedzialna za ingest,
+  przetwarzanie LLM, API i obsługę bazy danych. Może być hostowana na tanszej
+  infrastrukturze dedykowanej dla cron jobów i API (np. Railway, Render, VPS).
+  (ARCH-002)
+
+Korzyści tego podejścia:
+
+- Znacząco niższe koszty hostingu frontendu (statyczny hosting jest
+  tani/darmowy).
+- Oddzielenie odpowiedzialności: backend odpowiada za logikę biznesową i
+  przetwarzanie, frontend za prezentację.
+- Lepsza wydajność frontendu (statyczne pliki serwowane z CDN).
+- Możliwość skalowania komponentów niezależnie.
+
+Ograniczenia:
+
+- Dane na frontendzie są odświeżane tylko 2× dziennie (akceptowalne dla MVP).
+- Interakcje wymagające real-time (np. edycja admina) muszą komunikować się
+  bezpośrednio z backendem poprzez API.
 
 ## 5. Historyjki użytkowników
 
@@ -250,7 +280,7 @@ Kryteria akceptacji:
 
 ### Scenariusze alternatywne i skrajne (edge cases)
 
-US-018 Tytuł: Brak linku do PDF w danytch Opis: Jako system chcę oznaczyć rekord
+US-018 Tytuł: Brak linku do PDF w danych Opis: Jako system chcę oznaczyć rekord
 z brakującym url_pdf i skierować go do reprocessingu oraz admina. Kryteria
 akceptacji:
 
@@ -335,8 +365,7 @@ Kontrola jakości PRD (lista kontrolna):
 - Każda historyjka ma kryteria akceptacji testowalne: TAK (opisane powyżej).
 - Kryteria akceptacji są konkretne i mierzalne: TAK (HTTP status, pola API,
   progi, liczby, czas).
-- Historia uwzględnia uwierzytelnianie/autoryzację: TAK (US-005, US-022,
-  US-012).
+- Historia uwzględnia uwierzytelnianie/autoryzację: TAK (US-005, US-008).
 - Czy wystarczająca liczba historyjek, aby zbudować MVP: TAK (ingest,
   prezentacja, admin, auth, operacje, edge cases).
 
