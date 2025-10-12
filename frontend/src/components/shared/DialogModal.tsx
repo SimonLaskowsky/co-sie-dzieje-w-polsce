@@ -25,22 +25,7 @@ import {
   PolarAngleAxis,
   Radar,
 } from 'recharts';
-import { Votes } from '@/app/lib/types';
-
-type DialogModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  card: {
-    title: string;
-    content: string;
-    announcement_date: string;
-    promulgation: string;
-    item_type?: string;
-    categories?: string[];
-    votes?: Votes;
-    url: string;
-  } | null;
-};
+import { Votes, DialogModalProps } from '@/types';
 
 const chartConfig = {
   percentageNo: {

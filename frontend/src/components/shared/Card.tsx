@@ -1,17 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-
-type InfoTileProps = {
-  title: string;
-  content?: string;
-  summary?: string;
-  date: string;
-  isImportant?: boolean;
-  onClick: () => void;
-  categories?: string[];
-  governmentPercentage: number;
-};
+import { CardProps } from '@/types';
 
 const Card = ({
   title,
@@ -22,7 +12,7 @@ const Card = ({
   onClick,
   categories = [],
   governmentPercentage,
-}: InfoTileProps) => {
+}: CardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [totalDots, setTotalDots] = useState(14);
 
