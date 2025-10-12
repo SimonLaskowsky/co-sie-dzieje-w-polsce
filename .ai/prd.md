@@ -46,18 +46,23 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 3.1 Ingest i przetwarzanie danych
 
 - Ingest job uruchamiany 2× dziennie (cron). (NF-001)
-- Pobranie metadanych i linku do PDF z rządowego API; zapis minimalnych
-  metadanych: title, act_number, refsm texts, item_type, announcment_data,
-  change_date, promulgation, item_status, comment, keywords, file, (NF-002)
+- Pobranie metadanych i linku do PDF z rządowego API; zapis metadanych: title,
+  act_number, simple_title, content, refs, texts, item_type, announcement_date,
+  change_date, promulgation, item_status, comments, keywords, file, votes
+  (JSON), category, impact_section, idempotency_key. Dodatkowe pola techniczne:
+  confidence_score (Decimal 3,2), needs_reprocess (Boolean), created_at,
+  updated_at, ingested_at. (NF-002)
 - Idempotentny pipeline: każdy rekord ma idempotency_key; ponowne uruchomienie
   nie powiela wpisów. (NF-003)
 - Parsowanie metadanych i wysłanie tekstu (lub fragmentów) do LLM z parametrem
   verbosity (TL;DR / punkty / rozbudowane). (NF-004)
-- Zapisywanie outputu LLM jako streszczenie + pole confidence/score. (NF-005)
-- Oznaczanie niskiej pewności: jeśli confidence < prog (konfigurowalny), wpis
-  otrzymuje flagę low_confidence i jest publikowany z widocznym ostrzeżeniem dla
-  użytkowników. Admin może edytować wszystkie akty niezależnie od confidence.
-  (NF-006)
+- Zapisywanie outputu LLM w polach: content (pełne streszczenie), simple_title
+  (uproszczony tytuł), impact_section (wpływ na obywatela) oraz confidence_score
+  (Decimal 3,2 - wartość od 0.00 do 9.99 wskazująca pewność modelu). (NF-005)
+- Oznaczanie niskiej pewności: jeśli confidence_score < prog (konfigurowalny,
+  domyślnie 0.50), akt jest publikowany z widocznym ostrzeżeniem dla
+  użytkowników. Admin może edytować wszystkie akty niezależnie od
+  confidence_score. (NF-006)
 - Retry/backoff i alerty operacyjne przy błędach ingestu; metryki błędów i
   logowanie. (NF-007)
 - Kolejka reprocessingu: akty wymagające ponownego przetworzenia (brakujące
@@ -66,9 +71,20 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 
   3.2 Backend i przechowywanie
 
-- Baza danych relacyjna (MVP): tabela dla aktów, streszczeń, metadanych ingest,
-  użytkowników. (NF-009)
-- Nie przechowujemy pełnych tekstów i PDF-ów w MVP (tylko linki). (NF-010)
+- Baza danych relacyjna (MVP):
+  - Tabela `acts`: przechowuje wszystkie akty prawne z metadanymi (title,
+    act_number, dates), streszczeniami LLM (content, simple_title,
+    impact_section), danymi operacyjnymi (confidence_score, needs_reprocess,
+    created_at, updated_at, ingested_at), oraz dodatkowymi informacjami (refs[],
+    texts[], keywords[], votes JSON, file, category).
+  - Tabela `category`: słownik kategorii z przypisanymi słowami kluczowymi
+    (category jako PK, keywords[] jako tablica stringów) - używana do
+    automatycznej kategoryzacji aktów.
+  - Uwierzytelnianie użytkowników zarządzane przez Clerk (bez dedykowanej tabeli
+    w bazie). (NF-009)
+- Przechowujemy: metadane, streszczenia generowane przez LLM (pola: content,
+  simple_title, impact_section), linki do PDF (pole file). Nie przechowujemy
+  surowych plików PDF w bazie. (NF-010)
 
   3.3 Frontend i prezentacja
 
@@ -92,8 +108,8 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 
   3.4 Panel admina
 
-- Oznaczanie aktów niskiej pewności: akty z low_confidence mają widoczny badge
-  na liście dla admina (NF-017)
+- Oznaczanie aktów niskiej pewności: akty z confidence_score < threshold (np.
+  0.50) mają widoczny badge na liście dla admina (NF-017)
 - Edycja treści streszczenia: admin otwierając akt widzi textarea zamiast
   zwykłego tekstu, może edytować i zapisać. Zapis wywołuje Next.js API route
   (POST /api/admin/update-act) która aktualizuje bazę danych i triggeruje Vercel
@@ -103,11 +119,13 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
 
   3.5 Operacje i utrzymanie
 
-- Mechanizm reprocessingu: kolejka aktów z flagą needs_reprocess, przetwarzane
-  priorytetowo przy kolejnych uruchomieniach crona (każde 12h). Brak on-demand
-  API - reprocessing automatyczny. (NF-021)
+- Mechanizm reprocessingu: kolejka aktów z flagą needs_reprocess=true,
+  przetwarzane priorytetowo przy kolejnych uruchomieniach crona (każde 12h).
+  Brak on-demand API - reprocessing automatyczny. (NF-021)
 - Dashboard operacyjny: liczba ingestów, procent błędów, ostatnie nieudane
-  próby, liczba rekordów z missing_pdf lub missing_vote_data. (NF-022)
+  próby, liczba rekordów wymagających reprocessingu (needs_reprocess=true),
+  liczba rekordów z brakującymi danymi (file IS NULL dla brakującego PDF, votes
+  IS NULL dla brakujących danych o głosowaniu). (NF-022)
 - Prosty mechanizm zgłaszania problemu pod streszczeniem — przycisk "Zgłoś
   problem" otwierający pre-wypełnioną wiadomość mailto z ID aktu i linkiem.
   (NF-023)
@@ -123,8 +141,9 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
   3.7 Konfiguracja LLM i monitoring jakości
 
 - Parametr verbosity dostępny podczas generowania summary. (NF-027)
-- Pole confidence/score w metadanych; metric routing gdy confidence < threshold
-  (threshold konfigurowalny). (NF-028)
+- Pole confidence_score (Decimal 3,2) w metadanych; metryki i powiadomienia gdy
+  confidence_score < threshold (threshold konfigurowalny, domyślnie 0.50).
+  (NF-028)
 
 ## 4. Granice produktu
 
@@ -136,9 +155,10 @@ Co jest w MVP (zwięzłe):
   obejścia, akceptowane w MVP). (B-003)
 - Konto admina z możliwością edycji przez textarea + API route. (B-004)
 - Ingest 2× dziennie, dane + link do PDF. (B-005)
-- Wszystkie akty publikowane od razu; akty z niskim confidence mają badge
-  ostrzegawczy. Admin może edytować dowolny akt. (B-006)
-- Brak przechowywania pełnych tekstów/PDFów w MVP — tylko linki. (B-007)
+- Wszystkie akty publikowane od razu; akty z niskim confidence_score (<
+  threshold) mają badge ostrzegawczy. Admin może edytować dowolny akt. (B-006)
+- Przechowujemy metadane i streszczenia LLM w bazie; PDFy tylko jako linki (pole
+  file). (B-007)
 - Prosty mechanizm zgłoszeń (mailto z pre-wypełnionym tematem). (B-008)
 
 Co nie wchodzi do MVP:
@@ -146,7 +166,7 @@ Co nie wchodzi do MVP:
 - System płatności / subskrypcji. (B-009)
 - Generowanie contentu na platformy społecznościowe. (B-010)
 - Zaawansowane rekomendacje/personalizacja. (B-011)
-- Przechowywanie surowych tekstów / baza wektorowa. (B-012)
+- Przechowywanie surowych plików PDF / baza wektorowa. (B-012)
 - Rozbudowany formularz zgłaszania błędów (tylko mailto/webhook). (B-013)
 
 Ograniczenia techniczne:
@@ -292,20 +312,21 @@ US-012 Tytuł: Badge dla aktów niskiej pewności Opis: Jako użytkownik chcę
 widzieć ostrzeżenie przy aktach o niskiej pewności AI, aby wiedzieć że
 streszczenie może być niedokładne. Kryteria akceptacji:
 
-- Akty z confidence < threshold (np. 0.5) mają widoczny badge "⚠️ Weryfikacja w
-  toku - może zawierać nieścisłości".
+- Akty z confidence_score < threshold (np. 0.50) mają widoczny badge informujący
+  o niskim zaufaniuxw.
 - Badge wyświetlany zarówno na liście (kafelek) jak i na stronie szczegółowej.
-- Testowalne: utworzyć akt z confidence 0.3, sprawdzić że badge jest widoczny.
+- Testowalne: utworzyć akt z confidence_score 0.30, sprawdzić że badge jest
+  widoczny.
 
 US-013 Tytuł: Powiadomienia o niskim confidence (admin) Opis: Jako admin chcę
-otrzymywać powiadomienia (email) o wpisach z confidence < threshold, aby móc je
-szybko zweryfikować. Kryteria akceptacji:
+otrzymywać powiadomienia (email) o wpisach z confidence_score < threshold, aby
+móc je szybko zweryfikować. Kryteria akceptacji:
 
-- Python script wysyła email (SMTP/SendGrid) dla każdego rekordu z confidence <
-  threshold podczas ingestu.
-- Email zawiera: ID aktu, tytuł, confidence score, link do edycji.
-- Threshold konfigurowalny w .env (domyślnie 0.5).
-- Testowalne: utwórz wpis z confidence 0.2 i potwierdź wysłanie email.
+- Python script wysyła email (SMTP/SendGrid) dla każdego rekordu z
+  confidence_score < threshold podczas ingestu.
+- Email zawiera: ID aktu, tytuł, confidence_score, link do edycji.
+- Threshold konfigurowalny w .env (domyślnie 0.50).
+- Testowalne: utwórz wpis z confidence_score 0.20 i potwierdź wysłanie email.
 
 ---
 
@@ -331,40 +352,44 @@ Kryteria akceptacji:
 ### Scenariusze alternatywne i skrajne (edge cases)
 
 US-018 Tytuł: Brak linku do PDF w danych Opis: Jako system chcę oznaczyć rekord
-z brakującym url_pdf i skierować go do reprocessingu oraz admina. Kryteria
-akceptacji:
+z brakującym linkiem do PDF i skierować go do reprocessingu oraz admina.
+Kryteria akceptacji:
 
-- Status rekordu = missing_pdf; widoczny w kolejce admina; możliwość ręcznego
-  triggera reprocess.
-- Testowalne: ingest z pustym url_pdf tworzy rekord z status missing_pdf.
+- Rekord z file IS NULL otrzymuje flagę needs_reprocess=true; widoczny w kolejce
+  admina; automatyczny reprocessing przy kolejnym uruchomieniu crona.
+- Testowalne: ingest z pustym file tworzy rekord z needs_reprocess=true.
 
 US-019 Tytuł: Brak danych o głosowaniu Opis: Jako system chcę oznaczyć rekord,
 dla którego brak danych o głosowaniu, aby admin mógł podjąć decyzję. Kryteria
 akceptacji:
 
-- Pole missing_vote_data = true; UI pokazuje komunikat i umożliwia reprocess lub
-  ręczne uzupełnienie.
-- Testowalne: ingest bez danych głosowania ustawia flaga i widoczne w UI.
+- Rekord z votes IS NULL otrzymuje flagę needs_reprocess=true; UI pokazuje
+  komunikat "dane o głosowaniu niedostępne" oraz umożliwia automatyczny
+  reprocessing przy kolejnym cronie.
+- Testowalne: ingest bez danych głosowania (votes IS NULL) ustawia
+  needs_reprocess=true i widoczne w UI.
 
 US-021 Tytuł: Kolejkowy reprocessing aktów Opis: Jako system chcę automatycznie
 ponownie przetwarzać akty z błędami przy kolejnych uruchomieniach crona, aby
 zapewnić kompletność danych. Kryteria akceptacji:
 
-- Akty z błędami (missing_pdf, failed_llm, missing_votes) otrzymują flagę
-  needs_reprocess=true.
+- Akty z błędami (brakujące dane: file IS NULL, votes IS NULL, content IS NULL,
+  lub błędy LLM) otrzymują flagę needs_reprocess=true.
 - Przy każdym uruchomieniu crona (2×/dzień) najpierw przetwarzane są akty z
-  needs_reprocess, potem nowe.
+  needs_reprocess=true, potem nowe.
 - Po udanym reprocessingu flaga needs_reprocess ustawiana na false.
 - Testowalne: utwórz akt z needs_reprocess=true, uruchom cron, sprawdź czy
-  został przetworzony.
+  został przetworzony i flaga ustawiona na false.
 
 US-023 Tytuł: Fallback LLM i retry Opis: Jako system chcę mechanizm fallbacku
 gdy model LLM nie odpowiada (inny model / ponowna próba), aby pipeline był
 bardziej odporny. Kryteria akceptacji:
 
 - W przypadku błędu modelu, pipeline próbuje fallback_model lub retry; jeśli
-  nadal nieudane, wpis oznaczany jako failed_llm i admin powiadamiany.
-- Testowalne: symulacja błędu LLM i potwierdzenie przebiegu procedury.
+  nadal nieudane, wpis oznaczany flagą needs_reprocess=true, zapisywany w bazie
+  z NULL w polach content/simple_title/impact_section, i admin powiadamiany.
+- Testowalne: symulacja błędu LLM i potwierdzenie needs_reprocess=true oraz
+  email do admina.
 
 ---
 
@@ -383,18 +408,22 @@ Metryki techniczne i biznesowe do monitorowania w MVP:
 
 - Success rate ingestów (procent poprawnie przetworzonych rekordów) — cel: > 95%
   (do potwierdzenia).
-- % rekordów z missing_pdf lub missing_vote_data — monitorować tygodniowo.
+- % rekordów z brakującymi danymi (file IS NULL, votes IS NULL, content IS NULL)
+  — monitorować tygodniowo.
 - Średni czas reprocessingu dla brakujących danych (target: automatyczny
   reprocessing przy następnym cronie, max 12h). (Mierzalne metryki:
-  avg_time_to_reprocess)
+  avg_time_to_reprocess = różnica między created_at a ingested_at dla rekordów
+  gdzie needs_reprocess został ustawiony na false)
 - Liczba aktów w kolejce reprocessingu (needs_reprocess=true).
 
 3. Jakość streszczeń (produktowa):
 
-- % summary z confidence < threshold (np. 0.5) → trafiło do ręcznej weryfikacji.
-  (Monitorować trend spadkowy.)
-- Liczba cofkniętych/edytowanych opublikowanych summary (jako wskaźnik
-  hallucination/ błędów).
+- % streszczeń z confidence_score < threshold (np. 0.50) → wyświetlanych z badge
+  ostrzegawczym i objętych powiadomieniami email do admina. (Monitorować trend
+  spadkowy - cel: < 10% aktów)
+- Liczba cofkniętych/edytowanych opublikowanych streszczeń przez admina (jako
+  wskaźnik hallucination/błędów LLM) - mierzone przez porównanie updated_at >
+  created_at + 1h.
 
 4. Bezpieczeństwo i zgodność:
 
@@ -478,3 +507,78 @@ backlogu):
 - Limit odczytów tylko w localStorage (łatwe obejście - akceptowalne)
 - Rebuild frontendu po edycji admina trwa 2-5 min (akceptowalne)
 - Brak real-time updates (aktualizacja co 12h przez cron - akceptowalne)
+
+---
+
+## 8. Szczegóły struktury bazy danych
+
+### Tabela: acts
+
+Główna tabela przechowująca akty prawne i ich streszczenia.
+
+**Pola metadanych (z API rządowego):**
+
+- `id` (Integer, PK, auto-increment) - unikalny identyfikator
+- `title` (String) - oryginalny tytuł aktu
+- `act_number` (String, nullable) - numer aktu
+- `item_type` (String, nullable) - typ dokumentu (ustawa, rozporządzenie, etc.)
+- `announcement_date` (Date, nullable) - data ogłoszenia
+- `change_date` (Date, nullable) - data zmiany
+- `promulgation` (Date, nullable) - data promulgacji
+- `item_status` (String, nullable) - status aktu
+- `comments` (String, nullable) - komentarze
+- `keywords` (String[], array) - słowa kluczowe
+- `refs` (String[], array) - referencje do innych aktów
+- `texts` (String[], array) - teksty/fragmenty
+- `file` (String, nullable) - URL do pliku PDF
+
+**Pola generowane przez LLM:**
+
+- `content` (String, nullable) - pełne streszczenie wygenerowane przez LLM
+- `simple_title` (String, nullable) - uproszczony tytuł
+- `impact_section` (String, nullable) - sekcja "Jak to wpływa na obywatela"
+- `confidence_score` (Decimal(3,2), nullable) - wartość 0.00-9.99 wskazująca
+  pewność modelu
+
+**Pola dodatkowe:**
+
+- `votes` (JSON, nullable) - dane o głosowaniu w formacie JSON
+- `category` (String, nullable) - przypisana kategoria
+
+**Pola operacyjne/techniczne:**
+
+- `idempotency_key` (String, unique, nullable, max 255 chars) - klucz
+  idempotentności dla pipeline
+- `needs_reprocess` (Boolean, default false) - flaga oznaczająca że rekord
+  wymaga ponownego przetworzenia
+- `created_at` (Timestamptz, default now()) - data utworzenia rekordu
+- `updated_at` (Timestamptz, auto-update) - data ostatniej aktualizacji
+- `ingested_at` (Timestamptz, nullable) - data pomyślnego przetworzenia przez
+  pipeline
+
+**Warunki biznesowe:**
+
+- Rekord z `confidence_score < 0.50` wyświetla badge ostrzegawczy użytkownikom
+- Rekord z `needs_reprocess = true` jest przetwarzany priorytetowo przy kolejnym
+  cronie
+- Rekord z `file IS NULL` lub `votes IS NULL` lub `content IS NULL` powinien
+  otrzymać `needs_reprocess = true`
+- `ingested_at` jest ustawiane po pomyślnym przetworzeniu (wszystkie wymagane
+  pola wypełnione, `needs_reprocess = false`)
+
+### Tabela: category
+
+Słownik kategorii używany do automatycznej kategoryzacji aktów.
+
+**Struktura:**
+
+- `category` (String, PK) - nazwa kategorii (np. "Zdrowie", "Transport",
+  "Edukacja")
+- `keywords` (String[], array, default []) - lista słów kluczowych powiązanych z
+  kategorią
+
+**Użycie:**
+
+- Backend podczas ingestu dopasowuje kategorie do aktów na podstawie słów
+  kluczowych
+- Kategoria jest zapisywana w polu `category` w tabeli `acts`
