@@ -1,7 +1,6 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -25,9 +24,16 @@ model acts {
   file              String?
   votes             Json?
   category          String?
+  idempotency_key   String?   @unique @db.VarChar(255)
+  impact_section    String?
+  confidence_score  Decimal?  @db.Decimal(3,2)
+  needs_reprocess   Boolean   @default(false)
+  created_at        DateTime  @default(now()) @db.Timestamptz
+  updated_at        DateTime  @updatedAt @db.Timestamptz
+  ingested_at       DateTime? @db.Timestamptz
 }
 
 model category {
-  category          String    @id
-  keywords          String[]  @default([])
+  category  String   @id
+  keywords  String[] @default([])
 }
