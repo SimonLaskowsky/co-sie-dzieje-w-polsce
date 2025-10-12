@@ -516,69 +516,67 @@ backlogu):
 
 Główna tabela przechowująca akty prawne i ich streszczenia.
 
-**Pola metadanych (z API rządowego):**
+**Metadane aktów:**
 
-- `id` (Integer, PK, auto-increment) - unikalny identyfikator
-- `title` (String) - oryginalny tytuł aktu
-- `act_number` (String, nullable) - numer aktu
-- `item_type` (String, nullable) - typ dokumentu (ustawa, rozporządzenie, etc.)
-- `announcement_date` (Date, nullable) - data ogłoszenia
-- `change_date` (Date, nullable) - data zmiany
-- `promulgation` (Date, nullable) - data promulgacji
-- `item_status` (String, nullable) - status aktu
-- `comments` (String, nullable) - komentarze
-- `keywords` (String[], array) - słowa kluczowe
-- `refs` (String[], array) - referencje do innych aktów
-- `texts` (String[], array) - teksty/fragmenty
-- `file` (String, nullable) - URL do pliku PDF
+- `id` - unikalny identyfikator (auto-increment)
+- `title` - oryginalny tytuł aktu
+- `act_number` - numer aktu
+- `simple_title` - uproszczony tytuł
+- `item_type` - typ dokumentu (ustawa, rozporządzenie, etc.)
+- `announcement_date` - data ogłoszenia
+- `change_date` - data zmiany
+- `promulgation` - data promulgacji
+- `item_status` - status aktu
+- `comments` - komentarze
+- `keywords` - słowa kluczowe (array)
+- `refs` - referencje do innych aktów (JSON)
+- `texts` - teksty/fragmenty (JSON)
+- `file` - URL do pliku PDF
 
-**Pola generowane przez LLM:**
+**Streszczenia generowane przez LLM:**
 
-- `content` (String, nullable) - pełne streszczenie wygenerowane przez LLM
-- `simple_title` (String, nullable) - uproszczony tytuł
-- `impact_section` (String, nullable) - sekcja "Jak to wpływa na obywatela"
-- `confidence_score` (Decimal(3,2), nullable) - wartość 0.00-9.99 wskazująca
-  pewność modelu
+- `content` - pełne streszczenie
+- `impact_section` - sekcja "Jak to wpływa na obywatela"
+- `confidence_score` - pewność modelu (0.00-9.99)
 
-**Pola dodatkowe:**
+**Dane dodatkowe:**
 
-- `votes` (JSON, nullable) - dane o głosowaniu w formacie JSON
-- `category` (String, nullable) - przypisana kategoria
+- `votes` - informacje o głosowaniu (JSON)
+- `category` - przypisana kategoria
 
-**Pola operacyjne/techniczne:**
+**Pola operacyjne:**
 
-- `idempotency_key` (String, unique, nullable, max 255 chars) - klucz
-  idempotentności dla pipeline
-- `needs_reprocess` (Boolean, default false) - flaga oznaczająca że rekord
-  wymaga ponownego przetworzenia
-- `created_at` (Timestamptz, default now()) - data utworzenia rekordu
-- `updated_at` (Timestamptz, auto-update) - data ostatniej aktualizacji
-- `ingested_at` (Timestamptz, nullable) - data pomyślnego przetworzenia przez
-  pipeline
+- `idempotency_key` - klucz zapobiegający duplikatom
+- `needs_reprocess` - flaga wymagająca ponownego przetworzenia
+- `created_at` - data utworzenia
+- `updated_at` - data ostatniej aktualizacji
+- `ingested_at` - data pomyślnego przetworzenia
 
-**Warunki biznesowe:**
+**Reguły biznesowe:**
 
-- Rekord z `confidence_score < 0.50` wyświetla badge ostrzegawczy użytkownikom
-- Rekord z `needs_reprocess = true` jest przetwarzany priorytetowo przy kolejnym
-  cronie
-- Rekord z `file IS NULL` lub `votes IS NULL` lub `content IS NULL` powinien
-  otrzymać `needs_reprocess = true`
-- `ingested_at` jest ustawiane po pomyślnym przetworzeniu (wszystkie wymagane
-  pola wypełnione, `needs_reprocess = false`)
+- Akty z `confidence_score < 0.50` wyświetlają ostrzeżenie
+- Akty z `needs_reprocess = true` są przetwarzane priorytetowo
+- Brakujące dane (file, votes, content) triggerują reprocessing
 
 ### Tabela: category
 
-Słownik kategorii używany do automatycznej kategoryzacji aktów.
+Słownik kategorii do automatycznej kategoryzacji aktów.
 
 **Struktura:**
 
-- `category` (String, PK) - nazwa kategorii (np. "Zdrowie", "Transport",
-  "Edukacja")
-- `keywords` (String[], array, default []) - lista słów kluczowych powiązanych z
-  kategorią
+- `id` - unikalny identyfikator (auto-increment, PK)
+- `category` - nazwa kategorii
+- `keywords` - słowa kluczowe powiązane z kategorią (JSON)
 
 **Użycie:**
 
-- Backend podczas ingestu dopasowuje kategorie do aktów na podstawie słów
-  kluczowych
-- Kategoria jest zapisywana w polu `category` w tabeli `acts`
+- Backend dopasowuje kategorie na podstawie słów kluczowych
+- Kategoria zapisywana w polu `category` tabeli acts
+
+### Tabela: keywords
+
+Słownik słów kluczowych.
+
+**Struktura:**
+
+- `keyword` - słowo kluczowe (PK)
