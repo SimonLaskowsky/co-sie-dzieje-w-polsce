@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-
-type SearchBarProps = {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-};
+import { SearchBarProps } from '@/types';
 
 const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
   useEffect(() => {

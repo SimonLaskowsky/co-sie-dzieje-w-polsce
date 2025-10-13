@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { ActsAndKeywordsResponse, Act, Category } from '@/app/lib/types';
+import type { ActsAndKeywordsResponse, Act, Category } from '@/types';
 
 const prisma = new PrismaClient();
 

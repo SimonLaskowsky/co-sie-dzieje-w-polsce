@@ -1,6 +1,8 @@
+from typing import Any, Optional
+
 import requests
-from typing import Optional, Any
-from config import BASIC_URL, API_URL, CURRENT_YEAR
+from config import API_URL, BASIC_URL, CURRENT_YEAR
+
 
 def fetch_json(url: str, error_prefix: str = "API") -> Optional[Any]:
     if not url:
@@ -16,14 +18,17 @@ def fetch_json(url: str, error_prefix: str = "API") -> Optional[Any]:
         print(f"{error_prefix} connection error:", e)
     return None
 
+
 def fetch_one_law(eli: str) -> Optional[dict]:
     if not BASIC_URL:
         print("Error: BASIC_URL is not set in .env file")
         return None
     return fetch_json(f"{BASIC_URL}//{eli}", error_prefix="Law")
 
+
 def get_voting_data(url: str) -> Optional[dict]:
     return fetch_json(url, error_prefix="Voting")
+
 
 def fetch_api_data() -> Optional[list[dict]]:
     if not API_URL:

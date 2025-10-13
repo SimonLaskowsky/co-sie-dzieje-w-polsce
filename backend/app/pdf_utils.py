@@ -1,18 +1,20 @@
 import os
-import requests
-import fitz
 from typing import Optional
+
+import fitz
+import requests
 from config import PDF_DOWNLOAD_TIMEOUT
+
 
 def download_pdf(url: str, filename: str = "temp.pdf") -> Optional[str]:
     try:
         response = requests.get(url, timeout=PDF_DOWNLOAD_TIMEOUT, stream=True)
         response.raise_for_status()
-        
+
         if not response.content:
             print(f"Warning: Empty PDF of {url}")
             return None
-            
+
         with open(filename, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
@@ -22,6 +24,7 @@ def download_pdf(url: str, filename: str = "temp.pdf") -> Optional[str]:
         print(f"Error while downloading PDF: {e}")
         return None
 
+
 def pdf_to_text(url: str) -> str:
     temp_file = None
     text = ""
@@ -30,7 +33,7 @@ def pdf_to_text(url: str) -> str:
         if not temp_file or not os.path.exists(temp_file):
             print(f"Error: PDF file not downloaded correctly from {url}")
             return text
-            
+
         doc = fitz.open(temp_file)
         for page in doc:
             text += page.get_text()
@@ -44,6 +47,7 @@ def pdf_to_text(url: str) -> str:
             except OSError as e:
                 print(f"Warning: Unable to remove temporary file: {e}")
     return text
+
 
 def save_text_to_file(text: str, filename: str) -> bool:
     try:
