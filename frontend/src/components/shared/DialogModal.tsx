@@ -25,7 +25,7 @@ import {
   PolarAngleAxis,
   Radar,
 } from 'recharts';
-import { Votes, DialogModalProps } from '@/types';
+import { DialogModalProps } from '@/types';
 
 const chartConfig = {
   percentageNo: {

@@ -7,7 +7,7 @@ import DialogModal from '@/components/shared/DialogModal';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
-import { ActsAndKeywordsResponse, Act, CardGridProps } from '@/types';
+import { Act, CardGridProps } from '@/types';
 import { useModalLimit } from '@/app/hooks/useModalLimit';
 import { useUser } from '@clerk/nextjs';
 import SubscriptionModal from './SubscriptionModal';
