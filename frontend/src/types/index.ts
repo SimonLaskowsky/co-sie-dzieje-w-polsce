@@ -21,6 +21,7 @@ export interface Act {
   file: string;
   votes?: Votes | null;
   category?: string | null;
+  confidence_score?: number | null;
 }
 
 export interface ActReferences {
@@ -98,6 +99,7 @@ export interface CardProps {
   onClick: () => void;
   categories?: string[];
   governmentPercentage: number;
+  confidenceScore?: number | null;
 }
 
 export interface DialogModalProps {
@@ -112,6 +114,7 @@ export interface DialogModalProps {
     categories?: string[];
     votes?: Votes;
     url: string;
+    confidence_score?: number | null;
   } | null;
 }
 
