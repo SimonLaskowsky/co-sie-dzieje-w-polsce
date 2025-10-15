@@ -14,7 +14,8 @@ pozostaje nierozwiązana i wymaga workflowu.
 
 Dwa przypadki workflow admina: (A) ustawa niepodejrzana — widoczna dla
 użytkowników, admin może poprawić błędy jeśli występują; (B) ustawa podejrzana —
-widoczna tylko dla admina, admin może edytować i musi zatwierdzić.
+widoczna tylko dla admina. Sam fakt zapisu zmian przez admina czyni ją widoczną
+dla wszystkich użytkowników i usuwa oznaczenie „podejrzana”.
 
 Na etapie MVP nie przechowujemy pełnych tekstów i PDF-ów — jedynie linki do PDF
 w rządowym API; baza wektorowa i przechowywanie surowych dokumentów planowane na
@@ -74,7 +75,7 @@ parametrem verbosity.
 Prezentacja: strona główna z kafelkami ustaw, widok szczegółowy ze streszczeniem
 i linkiem do oryginalnego PDF.
 
-Autoryzacja: opcjonalne logowanie (Okta SSO) — role: user i admin.
+Autoryzacja: opcjonalne logowanie (Clerk) — role: user i admin.
 
 Panel admina: przegląd ustaleń, kolejka „podejrzanych”, możliwość edycji i
 zatwierdzania (draft → approve → publish), historia zmian/audit log.
@@ -146,7 +147,7 @@ głosowaniu — kto inicjuje i jak oznaczać ponowne przetworzenie.
 Plan migracji do przechowywania surowych tekstów i bazy wektorowej (timeline i
 kryteria decyzji).
 
-Sposób mapowania ról Okta → aplikacja (synchronizacja, tokeny, odwołanie
+Sposób mapowania ról Clerk → aplikacja (synchronizacja, tokeny, odwołanie
 dostępu).
 
 </prd_planning_summary>
