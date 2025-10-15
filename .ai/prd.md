@@ -60,8 +60,9 @@ prawa; użytkownicy anonimowi oraz zalogowani; administratorzy treści.
   (uproszczony tytuł), impact_section (wpływ na obywatela) oraz confidence_score
   (Decimal 3,2 - wartość od 0.00 do 9.99 wskazująca pewność modelu). (NF-005)
 - Oznaczanie niskiej pewności: jeśli confidence_score < prog (konfigurowalny,
-  domyślnie 0.50), akt jest publikowany z widocznym ostrzeżeniem dla
-  użytkowników. Admin może edytować wszystkie akty niezależnie od
+  domyślnie 0.50), akt nie jest widoczny dla zwykłych użytkowników. Jest
+  widoczny tylko na liście admina z odpowiednim oznaczeniem, aby mógł go
+  zweryfikować. Admin może edytować wszystkie akty niezależnie od
   confidence_score. (NF-006)
 - Retry/backoff i alerty operacyjne przy błędach ingestu; metryki błędów i
   logowanie. (NF-007)
@@ -155,8 +156,9 @@ Co jest w MVP (zwięzłe):
   obejścia, akceptowane w MVP). (B-003)
 - Konto admina z możliwością edycji przez textarea + API route. (B-004)
 - Ingest 2× dziennie, dane + link do PDF. (B-005)
-- Wszystkie akty publikowane od razu; akty z niskim confidence_score (<
-  threshold) mają badge ostrzegawczy. Admin może edytować dowolny akt. (B-006)
+- Akty z niskim confidence_score (< threshold) są widoczne tylko dla adminów. Po
+  zapisaniu przez admina, confidence_score jest maksymalizowany i stają
+  się widoczne dla wszystkich. Admin może edytować dowolny akt. (B-006)
 - Przechowujemy metadane i streszczenia LLM w bazie; PDFy tylko jako linki (pole
   file). (B-007)
 - Prosty mechanizm zgłoszeń (mailto z pre-wypełnionym tematem). (B-008)
@@ -232,20 +234,18 @@ US-002 Tytuł: Otwieranie widoku szczegółowego aktu (anonim) Opis: Jako anonim
 użytkownik chcę otworzyć widok szczegółowy aktu, zobaczyć streszczenie i link do
 oryginału. Kryteria akceptacji:
 
-- Kliknięcie kafelka otwiera /acts/{id} z pełnym streszczeniem, sekcją wpływu i
-  linkiem do PDF.
+- Kliknięcie kafelka otwiera modal, a URL jest aktualizowany do `/?eli={eli}` z
+  pełnym streszczeniem, sekcją wpływu i linkiem do PDF.
 - Jeśli brak danych o głosowaniach, UI pokazuje komunikat "dane o głosowaniu
   niedostępne".
 
 US-003 Tytuł: Limit odczytów dla anonimów Opis: Jako anonimowy użytkownik mogę
 przeczytać 3 pełne streszczenia; po przekroczeniu limitu nie mogę otwierać
-kolejnych i widzę komunikat z możliwością zalogowania oraz informację o pełnej
-wersji premium. Kryteria akceptacji:
+kolejnych i widzę komunikat z możliwością zalogowania. Kryteria akceptacji:
 
 - System zlicza odczyty w localStorage (client-side, łatwe do obejścia).
 - Po przekroczeniu limitu UI pokazuje komunikat: "Wykorzystano limit 3
-  bezpłatnych odczytów. Zaloguj się lub wyczyść localStorage aby kontynuować.
-  Pełna ochrona dostępna w wersji premium."
+  bezpłatnych odczytów. Zaloguj się, aby kontynuować bez ograniczeń."
 - Testowalne: otworzyć 4 akty i na 4. zobaczyć komunikat blokujący.
 
 US-004 Tytuł: Zgłoszenie problemu (anonim) Opis: Jako anonimowy użytkownik chcę
@@ -293,6 +293,9 @@ Kryteria akceptacji:
 - Przycisk "Zapisz" wywołuje POST /api/admin/update-act z nową treścią.
 - API route waliduje rolę admin (Clerk), aktualizuje bazę danych (Prisma/raw
   SQL) i triggeruje Vercel rebuild webhook.
+- Jeśli edytowany był akt o niskiej pewności, po zapisie jego `confidence_score`
+  jest ustawiany na maksymalną wartość (np. 9.99), co czyni go widocznym dla
+  wszystkich użytkowników.
 - Po zapisie admin widzi komunikat "Zapisano. Rebuild w toku (~2-5 min)".
 - Testowalne: admin zmienia treść, zapisuje, sprawdza DB że zaktualizowane.
 
@@ -308,15 +311,16 @@ autoryzacją Clerk. Kryteria akceptacji:
 - Testowalne: POST z tokenem admina → success, POST bez tokena → 401, POST z
   user (nie admin) → 403.
 
-US-012 Tytuł: Badge dla aktów niskiej pewności Opis: Jako użytkownik chcę
+US-012 Tytuł: Badge dla aktów niskiej pewności (Admin) Opis: Jako admin chcę
 widzieć ostrzeżenie przy aktach o niskiej pewności AI, aby wiedzieć że
-streszczenie może być niedokładne. Kryteria akceptacji:
+streszczenie wymaga weryfikacji. Kryteria akceptacji:
 
 - Akty z confidence_score < threshold (np. 0.50) mają widoczny badge informujący
-  o niskim zaufaniuxw.
-- Badge wyświetlany zarówno na liście (kafelek) jak i na stronie szczegółowej.
-- Testowalne: utworzyć akt z confidence_score 0.30, sprawdzić że badge jest
-  widoczny.
+  o niskim zaufaniu.
+- Badge jest widoczny tylko dla admina, zarówno na liście (kafelek) jak i w
+  modalu szczegółów.
+- Testowalne: utworzyć akt z confidence_score 0.30, zalogować się jako admin i
+  sprawdzić że badge jest widoczny.
 
 US-013 Tytuł: Powiadomienia o niskim confidence (admin) Opis: Jako admin chcę
 otrzymywać powiadomienia (email) o wpisach z confidence_score < threshold, aby
@@ -554,7 +558,7 @@ Główna tabela przechowująca akty prawne i ich streszczenia.
 
 **Reguły biznesowe:**
 
-- Akty z `confidence_score < 0.50` wyświetlają ostrzeżenie
+- Akty z `confidence_score < 0.50` są widoczne tylko dla admina
 - Akty z `needs_reprocess = true` są przetwarzane priorytetowo
 - Brakujące dane (file, votes, content) triggerują reprocessing
 
