@@ -3,24 +3,27 @@ import type { ActsAndKeywordsResponse, Act, Category } from '@/types';
 
 const prisma = new PrismaClient();
 
+const actSelect = {
+  id: true,
+  title: true,
+  simple_title: true,
+  content: true,
+  announcement_date: true,
+  promulgation: true,
+  keywords: true,
+  item_type: true,
+  file: true,
+  votes: true,
+  category: true,
+  confidence_score: true,
+} as const;
+
 export const getActsAndKeywords =
   async (): Promise<ActsAndKeywordsResponse> => {
     try {
       const [acts, category] = await Promise.all([
         prisma.acts.findMany({
-          select: {
-            id: true,
-            title: true,
-            simple_title: true,
-            content: true,
-            announcement_date: true,
-            promulgation: true,
-            keywords: true,
-            item_type: true,
-            file: true,
-            votes: true,
-            category: true,
-          },
+          select: actSelect,
         }) as unknown as Promise<Act[]>,
         prisma.category.findMany({
           select: {
