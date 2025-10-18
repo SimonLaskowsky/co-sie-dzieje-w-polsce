@@ -1,4 +1,5 @@
 import { useUser } from '@clerk/nextjs';
+import { CONFIDENCE_THRESHOLD } from './config';
 
 export const useIsAdmin = () => {
   const { user } = useUser();
@@ -6,7 +7,6 @@ export const useIsAdmin = () => {
 };
 
 export const isLowConfidence = (confidenceScore?: number | null): boolean => {
-  const CONFIDENCE_THRESHOLD = 0.5;
   return (
     confidenceScore !== null &&
     confidenceScore !== undefined &&

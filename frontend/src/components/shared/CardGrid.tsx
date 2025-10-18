@@ -11,6 +11,7 @@ import { Act, CardGridProps } from '@/types';
 import { useModalLimit } from '@/app/hooks/useModalLimit';
 import { useUser } from '@clerk/nextjs';
 import SubscriptionModal from './SubscriptionModal';
+import { CONFIDENCE_THRESHOLD } from '@/lib/config';
 
 const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   const [selectedCard, setSelectedCard] = useState<Act | null>(null);
@@ -67,7 +68,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
         isAdmin ||
         card.confidence_score === null ||
         card.confidence_score === undefined ||
-        card.confidence_score >= 0.5;
+        card.confidence_score >= CONFIDENCE_THRESHOLD;
 
       return matchesQuery && matchesType && confidenceCheck;
     });
