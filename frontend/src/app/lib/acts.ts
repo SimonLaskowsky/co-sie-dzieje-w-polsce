@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import type { ActsAndKeywordsResponse, Act, Category } from '@/types';
 
 const prisma = new PrismaClient();
@@ -18,21 +18,55 @@ const actSelect = {
   confidence_score: true,
 } as const;
 
+type PrismaAct = Prisma.actsGetPayload<{ select: typeof actSelect }>;
+type PrismaCategory = Prisma.categoryGetPayload<{ select: { category: true } }>;
+
+const mapPrismaActToAct = (prismaAct: PrismaAct): Act => {
+  return {
+    id: prismaAct.id,
+    title: prismaAct.title ?? '',
+    simple_title: prismaAct.simple_title ?? undefined,
+    content: prismaAct.content ?? undefined,
+    item_type: prismaAct.item_type ?? '',
+    announcement_date:
+      prismaAct.announcement_date?.toISOString().split('T')[0] ?? '',
+    promulgation: prismaAct.promulgation?.toISOString().split('T')[0],
+    keywords: prismaAct.keywords,
+    file: prismaAct.file ?? '',
+    votes: prismaAct.votes as Act['votes'],
+    category: prismaAct.category,
+    confidence_score: prismaAct.confidence_score
+      ? Number(prismaAct.confidence_score)
+      : null,
+  };
+};
+
+const mapPrismaCategoryToCategory = (
+  prismaCategory: PrismaCategory
+): Category => {
+  return {
+    category: prismaCategory.category ?? '',
+  };
+};
+
 export const getActsAndKeywords =
   async (): Promise<ActsAndKeywordsResponse> => {
     try {
-      const [acts, category] = await Promise.all([
+      const [prismaActs, prismaCategories] = await Promise.all([
         prisma.acts.findMany({
           select: actSelect,
-        }) as unknown as Promise<Act[]>,
+        }),
         prisma.category.findMany({
           select: {
             category: true,
           },
-        }) as Promise<Category[]>,
+        }),
       ]);
 
-      return { acts, categories: category };
+      const acts = prismaActs.map(mapPrismaActToAct);
+      const categories = prismaCategories.map(mapPrismaCategoryToCategory);
+
+      return { acts, categories };
     } catch (error) {
       console.error('Error while downloading data:', error);
       throw new Error('Failed to download data');
