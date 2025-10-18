@@ -180,7 +180,6 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
                 </Badge>
               )}
             </div>
-            <DialogDescription></DialogDescription>
             <DialogDescription className="text-base tracking-wide text-neutral-900 font-light dark:text-neutral-100 md:max-w-4/5 text-left">
               {stripHtml(card?.content ?? '')}
             </DialogDescription>
