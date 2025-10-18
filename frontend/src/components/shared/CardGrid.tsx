@@ -11,6 +11,7 @@ import { Act, CardGridProps } from '@/types';
 import { useModalLimit } from '@/app/hooks/useModalLimit';
 import { useUser } from '@clerk/nextjs';
 import SubscriptionModal from './SubscriptionModal';
+import { CONFIDENCE_THRESHOLD } from '@/lib/config';
 
 const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
   const [selectedCard, setSelectedCard] = useState<Act | null>(null);
@@ -49,6 +50,8 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
     setSortOrder('desc');
   };
 
+  const isAdmin = user?.publicMetadata?.role === 'admin';
+
   const baseFilteredActs = useMemo(() => {
     if (!acts) return [];
 
@@ -61,9 +64,15 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
 
       const matchesType = selectedTypes.includes(card.item_type);
 
-      return matchesQuery && matchesType;
+      const confidenceCheck =
+        isAdmin ||
+        card.confidence_score === null ||
+        card.confidence_score === undefined ||
+        card.confidence_score >= CONFIDENCE_THRESHOLD;
+
+      return matchesQuery && matchesType && confidenceCheck;
     });
-  }, [acts, searchQuery, selectedTypes]);
+  }, [acts, searchQuery, selectedTypes, isAdmin]);
 
   const availableCategories = useMemo(() => {
     if (!baseFilteredActs.length) return [];
@@ -345,6 +354,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
             governmentPercentage={
               card.votes?.votesSupportByGroup?.government.yesPercentage || 0
             }
+            confidenceScore={card.confidence_score}
             onClick={() => openModal(card)}
           />
         ))}
@@ -363,6 +373,7 @@ const CardGrid = ({ searchQuery, selectedTypes, data }: CardGridProps) => {
             categories: selectedCard.category ? [selectedCard.category] : [],
             votes: (selectedCard as Act).votes ?? {},
             url: (selectedCard as Act).file ?? '',
+            confidence_score: selectedCard.confidence_score,
           }}
         />
       )}
