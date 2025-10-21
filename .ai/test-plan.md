@@ -48,7 +48,7 @@ prawnych składający się z następujących komponentów:
 
 - **Zakres**: Pojedyncze klasy i metody w izolacji
 - **Cel**: Weryfikacja logiki biznesowej bez zależności zewnętrznych
-- **Pokrycie**: 100%+ dla warstw Services, Utils, Models
+- **Pokrycie**: 90%+ dla warstw Services, Utils, Models
 
 #### 2.2 Testy Integracyjne (Integration Tests)
 
