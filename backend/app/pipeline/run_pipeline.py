@@ -3,20 +3,13 @@ import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from api import fetch_api_data, fetch_one_law, get_voting_data
-from config import (
-    ACT_ANALYSIS_FILE,
-    ACT_CONTENT_FILE,
-    BASIC_URL,
-    ELI_FOR_LATER,
-    MAX_ACTS_TO_PROCESS,
-    check_environment,
-)
-from database import save_to_database
-from openai_analyzer import save_analysis_to_file, split_and_analyze_text
-from pdf_utils import pdf_to_text, save_text_to_file
-from storage import get_last_known, save_last_known
-from votes_calculator import get_sejm_voting_data
+from ..services.analyze_service import split_and_analyze_text, save_analysis_to_file
+from ..services.pdf_service import pdf_to_text, save_text_to_file
+from ..services.storage_service import get_last_known, save_last_known
+from ..services.api_service import fetch_api_data, fetch_one_law, get_voting_data
+from ..services.votes_service import get_sejm_voting_data
+from ..db.database import save_to_database
+from ..core.config import BASIC_URL, MAX_ACTS_TO_PROCESS, ACT_CONTENT_FILE, ACT_ANALYSIS_FILE, ELI_FOR_LATER, check_environment
 
 
 def extract_last_vote_info(
