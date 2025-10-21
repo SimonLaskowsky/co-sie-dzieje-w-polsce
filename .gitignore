@@ -46,3 +46,4 @@ backend/app/act_content.txt
 backend/app/eli_for_later.json
 backend/app/logs/app.log
 backend/.coverage
+backend/app/logs/app.log
