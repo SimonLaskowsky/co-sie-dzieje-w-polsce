@@ -92,13 +92,20 @@ const ProductsWrapper = ({
   return (
     <div className="flex flex-col gap-4 text-left text-sm">
       <div className="flex gap-4">
-        {plans.map(plan => (
+        {/* {plans.map(plan => (
           <Product
             key={plan.id}
             plan={plan}
             handleSubscribe={handleSubscribe}
           />
-        ))}
+        ))} */}
+        <button className="w-fit text-lg px-6 py-3 red-background-gloss font-semibold text-white rounded-lg shadow-none hover:shadow-2xl hover:shadow-red-500/60 focus:shadow-none active:shadow-none transition-shadow duration-300 cursor-pointer">
+          <div className="description Box-root text-start">
+            <h3>Subskrybuj</h3>
+            <p>Subskrypcja odnawia się automatycznie co miesiąc</p>
+            <p>Cena: 20 zł / miesiąc</p>
+          </div>
+        </button>
       </div>
 
       <label className="flex items-start gap-2 cursor-pointer group">
@@ -137,6 +144,8 @@ const ProductsWrapper = ({
     </div>
   );
 };
+
+// Im leaving this because we gonna use it later
 
 const Product = ({
   plan,
