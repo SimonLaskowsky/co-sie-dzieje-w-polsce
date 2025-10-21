@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -23,6 +23,7 @@ MAX_ACTS_TO_PROCESS = 10
 PDF_DOWNLOAD_TIMEOUT = 30
 
 REQUIRED_ENV_VARS = ["BASIC_URL", "DU_URL", "DATABASE_URL", "OPENAI_API_KEY"]
+
 
 def check_environment() -> bool:
     missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]

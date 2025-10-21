@@ -3,6 +3,7 @@ from typing import Dict, Any, Optional
 from pathlib import Path
 from ..core.config import LAST_KNOWN_FILE
 
+
 def get_last_known() -> Optional[Dict[str, Any]]:
     try:
         if LAST_KNOWN_FILE.exists():
@@ -12,6 +13,7 @@ def get_last_known() -> Optional[Dict[str, Any]]:
     except (json.JSONDecodeError, IOError) as e:
         print(f"Error while reading file {LAST_KNOWN_FILE}: {e}")
         return None
+
 
 def save_last_known(act: Dict[str, Any]) -> bool:
     try:

@@ -1,11 +1,5 @@
 import React from 'react';
-
-type MenuProps = {
-  isOpen: boolean;
-  toggleMenu: () => void;
-  selectedTypes: string[];
-  setSelectedTypes: React.Dispatch<React.SetStateAction<string[]>>;
-};
+import { MenuProps } from '@/types';
 
 const Menu = ({
   isOpen,
@@ -21,8 +15,8 @@ const Menu = ({
       return shouldRemove
         ? prev.filter(t => t !== type)
         : includesType
-        ? prev
-        : [...prev, type];
+          ? prev
+          : [...prev, type];
     });
   };
 

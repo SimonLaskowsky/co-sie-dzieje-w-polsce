@@ -25,22 +25,9 @@ import {
   PolarAngleAxis,
   Radar,
 } from 'recharts';
-import { Votes } from '@/app/lib/types';
-
-type DialogModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  card: {
-    title: string;
-    content: string;
-    announcement_date: string;
-    promulgation: string;
-    item_type?: string;
-    categories?: string[];
-    votes?: Votes;
-    url: string;
-  } | null;
-};
+import { DialogModalProps } from '@/types';
+import { Badge } from '@/components/ui/badge';
+import { useIsAdmin, isLowConfidence } from '@/lib/authHelpers';
 
 const chartConfig = {
   percentageNo: {
@@ -170,6 +157,9 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
     return html.replace(/<[^>]*>/g, '');
   };
 
+  const isAdmin = useIsAdmin();
+  const needsVerification = isLowConfidence(card?.confidence_score);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
@@ -177,10 +167,19 @@ const DialogModal = ({ isOpen, onClose, card }: DialogModalProps) => {
       >
         <>
           <DialogHeader className="h-fit">
-            <DialogTitle className="text-2xl font-bold leading-tight text-left max-sm: w-11/12">
-              {card?.title}
-            </DialogTitle>
-            <DialogDescription></DialogDescription>
+            <div className="flex items-start gap-2 mb-2">
+              <DialogTitle className="text-2xl font-bold leading-tight text-left flex-1">
+                {card?.title}
+              </DialogTitle>
+              {isAdmin && needsVerification && (
+                <Badge
+                  variant="outline"
+                  className="bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-500/50 shrink-0 mt-1"
+                >
+                  ⚠️ Wymaga weryfikacji
+                </Badge>
+              )}
+            </div>
             <DialogDescription className="text-base tracking-wide text-neutral-900 font-light dark:text-neutral-100 md:max-w-4/5 text-left">
               {stripHtml(card?.content ?? '')}
             </DialogDescription>

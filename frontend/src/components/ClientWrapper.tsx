@@ -4,7 +4,7 @@ import SearchBar from '@/components/shared/SearchBar';
 import CardGrid from '@/components/shared/CardGrid';
 import Navbar from '@/components/layout/Navbar';
 import { useState } from 'react';
-import type { ActsAndKeywordsResponse } from '@/app/lib/types';
+import type { ActsAndKeywordsResponse } from '@/types';
 // import SuccessModal from '@/components/shared/SuccessModal';
 
 const ClientWrapper = ({ data }: { data: ActsAndKeywordsResponse }) => {

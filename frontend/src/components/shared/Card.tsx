@@ -1,17 +1,9 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-
-type InfoTileProps = {
-  title: string;
-  content?: string;
-  summary?: string;
-  date: string;
-  isImportant?: boolean;
-  onClick: () => void;
-  categories?: string[];
-  governmentPercentage: number;
-};
+import { CardProps } from '@/types';
+import { Badge } from '@/components/ui/badge';
+import { useIsAdmin, isLowConfidence } from '@/lib/authHelpers';
 
 const Card = ({
   title,
@@ -22,7 +14,8 @@ const Card = ({
   onClick,
   categories = [],
   governmentPercentage,
-}: InfoTileProps) => {
+  confidenceScore,
+}: CardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [totalDots, setTotalDots] = useState(14);
 
@@ -62,6 +55,9 @@ const Card = ({
     return titleWithoutDate;
   };
 
+  const isAdmin = useIsAdmin();
+  const needsVerification = isLowConfidence(confidenceScore);
+
   return (
     <div
       onClick={onClick}
@@ -69,8 +65,18 @@ const Card = ({
       dark:hover:ring-neutral-100 hover:ring-neutral-300 hover:!border-transparent transition-all duration-300 h-fit w-full
       ${isImportant && 'border-2 border-red-500/70 shadow-red-500/10'}`}
     >
-      <div className="dark:text-neutral-600 text-neutral-500 text-xs">
-        {formattedDate}
+      <div className="flex items-center justify-between">
+        <div className="dark:text-neutral-600 text-neutral-500 text-xs">
+          {formattedDate}
+        </div>
+        {isAdmin && needsVerification && (
+          <Badge
+            variant="outline"
+            className="bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-500/50 text-[10px] px-1.5 py-0"
+          >
+            ⚠️ Wymaga weryfikacji
+          </Badge>
+        )}
       </div>
       <h3 className="text-lg leading-snug font-semibold tracking-tight line-clamp-3 -mt-2.5">
         {stripDateFromTitle(title)}

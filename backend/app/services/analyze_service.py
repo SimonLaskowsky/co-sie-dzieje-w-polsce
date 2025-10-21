@@ -1,57 +1,64 @@
-import os
 import json
-import time
 import logging
 from typing import Dict, Any, List, Optional, Union
 from ..db.database import create_new_category, extend_category_keywords
 from openai import OpenAI, APIError
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-from contextlib import contextmanager
+from openai import APIError, OpenAI
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 logging.basicConfig(
-    filename='app.log',
+    filename="app.log",
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
+
 @contextmanager
 def get_openai_client():
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise ValueError("OpenAI API key missing.")
-    
+
     client = OpenAI(api_key=api_key)
     try:
         yield client
     finally:
         client.close()
 
+
 @retry(
-    stop=stop_after_attempt(5), 
-    wait=wait_exponential(multiplier=1, min=4, max=60), 
-    retry=retry_if_exception_type(APIError)
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=4, max=60),
+    retry=retry_if_exception_type(APIError),
 )
-def analyze_text_with_openai(text: str, prompt: str, max_tokens: int = 1000) -> Union[Dict[str, Any], str]:
+def analyze_text_with_openai(
+    text: str, prompt: str, max_tokens: int = 1000
+) -> Union[Dict[str, Any], str]:
     logger.info(f"Processing text, length: {len(text)} characters")
-    
+
     try:
         with get_openai_client() as client:
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": prompt}, 
-                    {"role": "user", "content": text}
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": text},
                 ],
-                max_tokens=max_tokens
+                max_tokens=max_tokens,
             )
             content = response.choices[0].message.content
-            
+
             if "json" in prompt.lower():
                 try:
                     return json.loads(content)
@@ -62,18 +69,20 @@ def analyze_text_with_openai(text: str, prompt: str, max_tokens: int = 1000) -> 
     except APIError as e:
         logger.error(f"API error: {e}")
         raise
-    
+
     time.sleep(1.0)
+
 
 def summarize_fragment(text: str) -> str:
     prompt = "Podsumuj ten fragment dokumentu prawnego w języku polskim w 2-3 zwięzłych zdaniach, wychwytując kluczowe zmiany lub przepisy. Skup się na istocie, unikając zbędnych szczegółów."
     return analyze_text_with_openai(text, prompt, max_tokens=200)
 
-def split_and_analyze_text(text: str, chunk_size: int = 3000, chunk_overlap: int = 200) -> Dict[str, Any]:
+
+def split_and_analyze_text(
+    text: str, chunk_size: int = 3000, chunk_overlap: int = 200
+) -> Dict[str, Any]:
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size, 
-        chunk_overlap=chunk_overlap, 
-        length_function=len
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len
     )
     chunks = text_splitter.split_text(text)
     logger.info(f"Split into {len(chunks)} chunks")
@@ -88,16 +97,17 @@ def split_and_analyze_text(text: str, chunk_size: int = 3000, chunk_overlap: int
     logger.info(f"Summaries combined, length: {len(combined_summary)} characters")
 
     analysis_prompt = (
-        'Napisz jasne i zwięzłe podsumowanie zmiany prawnej w języku polskim, odpowiednie dla wiadomości na stronie głównej lub powiadomienia push. '
+        "Napisz jasne i zwięzłe podsumowanie zmiany prawnej w języku polskim, odpowiednie dla wiadomości na stronie głównej lub powiadomienia push. "
         'Zwróć wynik jako obiekt JSON z dwoma polami: "title": krótki, informacyjny nagłówek (maks. 8 słów, neutralny ton, bez języka pierwszoosobowego), '
         '"content_html": lekki tekst HTML (<p>, <ul>, <li>, <strong>), zawierający: Nieco rozszerzone wyjaśnienie, co się zmieniło (3-5 zdań), '
-        'Jeśli istotne, proste wyjaśnienie konsekwencji lub skutków zmiany (1-2 zdania), '
+        "Jeśli istotne, proste wyjaśnienie konsekwencji lub skutków zmiany (1-2 zdania), "
         'Unikaj zbędnych porównań typu "przed i po". Skup się na samej zmianie, bez wyraźnego porównania jej z przeszłością, chyba że jest to konieczne dla kontekstu. '
         'Pisz neutralnym i profesjonalnym tonem. Unikaj niepotrzebnych wstępów ("ten tekst informuje..."). '
-        'Dane wejściowe to połączone streszczenie większego dokumentu prawnego; przedstaw spójne podsumowanie na tej podstawie. '
-        '**Cała treść musi być napisana w języku polskim.**'
+        "Dane wejściowe to połączone streszczenie większego dokumentu prawnego; przedstaw spójne podsumowanie na tej podstawie. "
+        "**Cała treść musi być napisana w języku polskim.**"
     )
     return analyze_text_with_openai(combined_summary, analysis_prompt, max_tokens=1000)
+
 
 def save_analysis_to_file(analysis: Union[Dict[str, Any], str], filename: str) -> None:
     try:
@@ -107,16 +117,22 @@ def save_analysis_to_file(analysis: Union[Dict[str, Any], str], filename: str) -
     except Exception as e:
         logger.error(f"Save error: {e}")
 
-def find_or_create_category_with_ai(act_keywords: List[str], all_categories: List[Dict[str, Any]], act_title: str = "", act_content: str = "") -> Optional[str]:
+
+def find_or_create_category_with_ai(
+    act_keywords: List[str],
+    all_categories: List[Dict[str, Any]],
+    act_title: str = "",
+    act_content: str = "",
+) -> Optional[str]:
 
     if not act_keywords or not all_categories:
         return None
-    
+
     categories_info = []
     for category_data in all_categories:
         category_name = category_data.get("category")
         category_keywords = category_data.get("keywords", [])
-        
+
         if isinstance(category_keywords, str):
             try:
                 keywords_list = json.loads(category_keywords)
@@ -126,18 +142,15 @@ def find_or_create_category_with_ai(act_keywords: List[str], all_categories: Lis
             keywords_list = category_keywords
         else:
             keywords_list = []
-            
-        categories_info.append({
-            "category": category_name,
-            "keywords": keywords_list
-        })
-    
+
+        categories_info.append({"category": category_name, "keywords": keywords_list})
+
     act_info = {
         "keywords": act_keywords,
         "title": act_title[:200] if act_title else "",
-        "content_preview": act_content[:500] if act_content else ""
+        "content_preview": act_content[:500] if act_content else "",
     }
-    
+
     prompt = f"""
     Analizujesz akt prawny i musisz zdecydować o kategorii. Masz do wyboru:
     
@@ -166,34 +179,40 @@ def find_or_create_category_with_ai(act_keywords: List[str], all_categories: Lis
     - Nazwy kategorii po polsku, krótkie, opisowe
     - Keywords to kluczowe terminy prawne, nie całe frazy
     """
-    
+
     try:
         ai_decision = analyze_text_with_openai("", prompt, max_tokens=500)
-        
+
         if isinstance(ai_decision, dict) and "action" in ai_decision:
             action = ai_decision.get("action")
             category_name = ai_decision.get("category_name")
             new_keywords = ai_decision.get("new_keywords", [])
-            
-            logger.info(f"AI decision: {ai_decision.get('reasoning', 'No reasoning provided')}")
-            
+
+            logger.info(
+                f"AI decision: {ai_decision.get('reasoning', 'No reasoning provided')}"
+            )
+
             if action == "match":
                 if any(cat.get("category") == category_name for cat in all_categories):
                     return category_name
                 else:
-                    logger.warning(f"AI suggested non-existent category: {category_name}")
+                    logger.warning(
+                        f"AI suggested non-existent category: {category_name}"
+                    )
                     return None
-                    
+
             elif action == "extend":
-                return extend_category_keywords(category_name, new_keywords, all_categories)
-                
+                return extend_category_keywords(
+                    category_name, new_keywords, all_categories
+                )
+
             elif action == "create":
                 return create_new_category(category_name, new_keywords + act_keywords)
-                
+
         else:
             logger.error(f"Invalid AI response format: {ai_decision}")
             return None
-            
+
     except Exception as e:
         logger.error(f"Error in AI categorization: {e}")
         return None
