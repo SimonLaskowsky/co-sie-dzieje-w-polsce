@@ -82,10 +82,9 @@ const SubscriptionModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-const ProductsWrapper = ({
-  plans,
-  handleSubscribe,
-}: {
+const ProductsWrapper = ({}: // plans,
+// handleSubscribe,
+{
   plans: SubscriptionPlan[];
   handleSubscribe: (priceId: string) => void;
 }) => {
@@ -147,28 +146,28 @@ const ProductsWrapper = ({
 
 // Im leaving this because we gonna use it later
 
-const Product = ({
-  plan,
-  handleSubscribe,
-}: {
-  plan: SubscriptionPlan;
-  handleSubscribe: (priceId: string) => void;
-}) => {
-  return (
-    <button
-      key={plan.id}
-      className="w-fit text-lg px-6 py-3 red-background-gloss font-semibold text-white rounded-lg shadow-none hover:shadow-2xl hover:shadow-red-500/60 focus:shadow-none active:shadow-none transition-shadow duration-300 cursor-pointer"
-      onClick={() => handleSubscribe(plan.price_id)}
-    >
-      <div className="description Box-root text-start">
-        <h3>{plan.name}</h3>
-        <p>{plan.description}</p>
-        <p>
-          Cena: ${plan.price / 100} / {plan.interval}
-        </p>
-      </div>
-    </button>
-  );
-};
+// const Product = ({
+//   plan,
+//   handleSubscribe,
+// }: {
+//   plan: SubscriptionPlan;
+//   handleSubscribe: (priceId: string) => void;
+// }) => {
+//   return (
+//     <button
+//       key={plan.id}
+//       className="w-fit text-lg px-6 py-3 red-background-gloss font-semibold text-white rounded-lg shadow-none hover:shadow-2xl hover:shadow-red-500/60 focus:shadow-none active:shadow-none transition-shadow duration-300 cursor-pointer"
+//       onClick={() => handleSubscribe(plan.price_id)}
+//     >
+//       <div className="description Box-root text-start">
+//         <h3>{plan.name}</h3>
+//         <p>{plan.description}</p>
+//         <p>
+//           Cena: ${plan.price / 100} / {plan.interval}
+//         </p>
+//       </div>
+//     </button>
+//   );
+// };
 
 export default SubscriptionModal;
