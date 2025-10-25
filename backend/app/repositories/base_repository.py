@@ -1,14 +1,15 @@
 """Base repository with database connection management."""
 
 import os
-
-import psycopg2
-import pg8000
 from contextlib import contextmanager
-from typing import Tuple, Any
+from typing import Any, Tuple
+
+import pg8000
+import psycopg2
 from dotenv import load_dotenv
-from ..core.logging import get_logger
+
 from ..core.exceptions import DatabaseError
+from ..core.logging import get_logger
 
 logger = get_logger(__name__)
 load_dotenv()

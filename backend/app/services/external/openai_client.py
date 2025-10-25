@@ -1,12 +1,14 @@
 """OpenAI API client for text analysis."""
 
-import os
 import json
-from typing import Union, Dict, Any
-from openai import OpenAI
+import os
+from typing import Any, Dict, Union
+
 from dotenv import load_dotenv
-from ...core.logging import get_logger
+from openai import OpenAI
+
 from ...core.exceptions import AIServiceError
+from ...core.logging import get_logger
 from ...utils.retry_handler import retry_ai_service
 
 logger = get_logger(__name__)

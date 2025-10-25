@@ -1,14 +1,16 @@
 """Retry logic decorators for external services."""
 
 from functools import wraps
+
+import requests
+from openai import APIError
 from tenacity import (
     retry,
+    retry_if_exception_type,
     stop_after_attempt,
     wait_exponential,
-    retry_if_exception_type,
 )
-from openai import APIError
-import requests
+
 from ..core.logging import get_logger
 
 logger = get_logger(__name__)

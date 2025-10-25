@@ -1,10 +1,12 @@
 """Client for Sejm API interactions."""
 
+from typing import Any, Dict, List, Optional
+
 import requests
-from typing import Optional, Any, List, Dict
-from ...core.config import BASIC_URL, API_URL, CURRENT_YEAR
-from ...core.logging import get_logger
+
+from ...core.config import API_URL, BASIC_URL, CURRENT_YEAR
 from ...core.exceptions import ExternalAPIError
+from ...core.logging import get_logger
 from ...utils.retry_handler import retry_external_api
 
 logger = get_logger(__name__)

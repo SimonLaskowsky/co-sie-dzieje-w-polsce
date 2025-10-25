@@ -1,8 +1,7 @@
 import json
 import logging
-from typing import Dict, Any, List, Optional, Union
-from ..db.database import create_new_category, extend_category_keywords
-from openai import OpenAI, APIError
+from typing import Any, Dict, List, Optional, Union
+
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from openai import APIError, OpenAI
@@ -12,6 +11,8 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+
+from ..db.database import create_new_category, extend_category_keywords
 
 logging.basicConfig(
     filename="app.log",

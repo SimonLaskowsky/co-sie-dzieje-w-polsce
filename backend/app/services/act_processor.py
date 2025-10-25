@@ -1,18 +1,19 @@
 """Act processing orchestrator service."""
 
 import json
-from typing import Dict, Any, Optional, Tuple
 from datetime import datetime
-from .external.sejm_api import SejmAPIClient
-from .external.pdf_processor import PDFProcessor
-from .ai.text_analyzer import TextAnalyzer
-from .ai.categorizer import Categorizer
-from .votes_calculator import VotesCalculator
-from ..repositories.act_repository import ActRepository
-from ..models.act import Act
+from typing import Any, Dict, Optional, Tuple
+
 from ..core.config import BASIC_URL
+from ..core.exceptions import AIServiceError, ExternalAPIError, PDFProcessingError
 from ..core.logging import get_logger
-from ..core.exceptions import ExternalAPIError, PDFProcessingError, AIServiceError
+from ..models.act import Act
+from ..repositories.act_repository import ActRepository
+from .ai.categorizer import Categorizer
+from .ai.text_analyzer import TextAnalyzer
+from .external.pdf_processor import PDFProcessor
+from .external.sejm_api import SejmAPIClient
+from .votes_calculator import VotesCalculator
 
 logger = get_logger(__name__)
 

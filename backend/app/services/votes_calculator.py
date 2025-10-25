@@ -1,7 +1,8 @@
 """Voting statistics calculator."""
 
-from typing import Dict, Any, List
 from collections import defaultdict
+from typing import Any, Dict, List
+
 from ..core.logging import get_logger
 
 logger = get_logger(__name__)

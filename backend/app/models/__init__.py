@@ -3,11 +3,11 @@
 from .act import Act, ActAnalysis, ActData
 from .category import Category
 from .voting import (
-    VotingData,
-    PartyVotes,
-    VoteSummary,
     GovernmentVotes,
+    PartyVotes,
     VotesSupportByGroup,
+    VoteSummary,
+    VotingData,
 )
 
 __all__ = [

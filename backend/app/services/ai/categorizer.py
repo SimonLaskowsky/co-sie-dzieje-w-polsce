@@ -2,11 +2,12 @@
 
 import json
 from typing import List, Optional
-from ..external.openai_client import OpenAIClient
+
+from ...core.exceptions import AIServiceError
+from ...core.logging import get_logger
 from ...models.category import Category
 from ...repositories.category_repository import CategoryRepository
-from ...core.logging import get_logger
-from ...core.exceptions import AIServiceError
+from ..external.openai_client import OpenAIClient
 
 logger = get_logger(__name__)
 

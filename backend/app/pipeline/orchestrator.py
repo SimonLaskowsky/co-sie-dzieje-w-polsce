@@ -1,17 +1,18 @@
 """Main pipeline orchestrator."""
 
-from typing import Dict, Any
-from .act_fetcher import ActFetcher
-from ..services.act_processor import ActProcessor
-from ..services.external.sejm_api import SejmAPIClient
-from ..utils.file_handler import FileHandler
+from typing import Any, Dict
+
 from ..core.config import (
-    LAST_KNOWN_FILE,
     ELI_FOR_LATER,
+    LAST_KNOWN_FILE,
     MAX_ACTS_TO_PROCESS,
     check_environment,
 )
 from ..core.logging import get_logger
+from ..services.act_processor import ActProcessor
+from ..services.external.sejm_api import SejmAPIClient
+from ..utils.file_handler import FileHandler
+from .act_fetcher import ActFetcher
 
 logger = get_logger(__name__)
 

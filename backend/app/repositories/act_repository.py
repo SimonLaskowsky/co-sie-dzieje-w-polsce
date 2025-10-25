@@ -2,10 +2,11 @@
 
 import json
 from typing import Optional
-from .base_repository import BaseRepository
-from ..models.act import Act
-from ..core.logging import get_logger
+
 from ..core.exceptions import DatabaseError
+from ..core.logging import get_logger
+from ..models.act import Act
+from .base_repository import BaseRepository
 
 logger = get_logger(__name__)
 

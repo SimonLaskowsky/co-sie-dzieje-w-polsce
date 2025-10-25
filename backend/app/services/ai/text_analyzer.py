@@ -1,11 +1,13 @@
 """Text analysis service using AI."""
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from ..external.openai_client import OpenAIClient
-from ...models.act import ActAnalysis
-from ...core.logging import get_logger
+
 from ...core.exceptions import AIServiceError
+from ...core.logging import get_logger
+from ...models.act import ActAnalysis
+from ..external.openai_client import OpenAIClient
 
 logger = get_logger(__name__)
 

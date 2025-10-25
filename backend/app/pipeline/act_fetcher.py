@@ -1,12 +1,13 @@
 """Service for fetching and filtering acts."""
 
-from typing import List, Dict, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from ..core.config import ELI_FOR_LATER, LAST_KNOWN_FILE
+from ..core.logging import get_logger
 from ..services.external.sejm_api import SejmAPIClient
 from ..utils.file_handler import FileHandler
 from ..utils.validators import validate_act_data
-from ..core.config import LAST_KNOWN_FILE, ELI_FOR_LATER
-from ..core.logging import get_logger
 
 logger = get_logger(__name__)
 

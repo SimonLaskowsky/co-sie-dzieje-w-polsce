@@ -1,7 +1,8 @@
 """Validation utilities for data integrity."""
 
 import re
-from typing import Dict, Any
+from typing import Any, Dict
+
 from ..core.logging import get_logger
 
 logger = get_logger(__name__)

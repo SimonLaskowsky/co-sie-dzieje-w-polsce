@@ -1,13 +1,15 @@
 """PDF processing service for downloading and extracting text."""
 
 import os
-import requests
-import fitz  # PyMuPDF
-from typing import Optional
 from pathlib import Path
+from typing import Optional
+
+import fitz  # PyMuPDF
+import requests
+
 from ...core.config import PDF_DOWNLOAD_TIMEOUT
-from ...core.logging import get_logger
 from ...core.exceptions import PDFProcessingError
+from ...core.logging import get_logger
 from ...utils.retry_handler import retry_external_api
 
 logger = get_logger(__name__)
