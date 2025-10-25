@@ -1,12 +1,10 @@
-import logging
-import pg8000
-import os
 import json
 import logging
 import os
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional
 
+import pg8000
 import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values
@@ -26,7 +24,7 @@ def get_db_connection():
     conn = None
     cursor = None
     try:
-        conn = pg8000.connect(connection_string)
+        conn = psycopg2.connect(connection_string)
         cursor = conn.cursor()
         yield conn, cursor
     except Exception as e:
@@ -244,8 +242,12 @@ def create_new_category(category_name: str, keywords: List[str]) -> Optional[str
         logger.error(f"Error creating new category: {e}")
         return None
 
-def smart_find_category_by_keywords(keywords: List[str], title: str = "", content: str = "") -> Optional[str]:
+
+def smart_find_category_by_keywords(
+    keywords: List[str], title: str = "", content: str = ""
+) -> Optional[str]:
     from ..services.analyze_service import find_or_create_category_with_ai
+
     if not keywords:
         return None
 

@@ -1,12 +1,14 @@
 """Data models for legal acts."""
+
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
 class ActAnalysis:
     """Result of AI analysis of an act."""
+
     title: str
     content_html: str
 
@@ -14,6 +16,7 @@ class ActAnalysis:
 @dataclass
 class ActData:
     """Raw act data from API before processing."""
+
     eli: str
     title: str
     type: str
@@ -31,6 +34,7 @@ class ActData:
 @dataclass
 class Act:
     """Complete act entity ready for database storage."""
+
     title: str
     act_number: Optional[str]
     simple_title: Optional[str]
@@ -47,7 +51,7 @@ class Act:
     file: str
     votes: Optional[Dict[str, Any]]
     category: Optional[str]
-    
+
     def to_db_tuple(self) -> tuple:
         """Convert to tuple for database insertion."""
         return (
@@ -66,6 +70,5 @@ class Act:
             self.keywords,
             self.file,
             self.votes,
-            self.category
+            self.category,
         )
-
