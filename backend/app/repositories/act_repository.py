@@ -26,8 +26,8 @@ class ActRepository(BaseRepository):
         INSERT INTO acts (
             title, act_number, simple_title, content, refs, texts, item_type,
             announcement_date, change_date, promulgation, item_status, comments,
-            keywords, file, votes, category
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            keywords, file, votes, category, created_at, updated_at
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
         """
         
         try:
@@ -85,9 +85,30 @@ class ActRepository(BaseRepository):
                 
                 if not result:
                     return None
-                
-                # TODO: Convert database row to Act entity
-                return None
+
+                # Convert database row to Act entity
+                # result is a tuple with columns in this order:
+                # 0:id, 1:title, 2:act_number, 3:simple_title, 4:content, 5:refs, 6:texts, 7:item_type,
+                # 8:announcement_date, 9:change_date, 10:promulgation, 11:item_status, 12:comments,
+                # 13:keywords, 14:file, 15:votes, 16:category
+                return Act(
+                    title=result[1],
+                    act_number=result[2],
+                    simple_title=result[3],
+                    content=result[4],
+                    refs=result[5],
+                    texts=result[6],
+                    item_type=result[7],
+                    announcement_date=result[8],
+                    change_date=result[9],
+                    promulgation=result[10],
+                    item_status=result[11],
+                    comments=result[12],
+                    keywords=result[13] or [],
+                    file=result[14],
+                    votes=result[15],
+                    category=result[16]
+                )
                 
         except Exception as e:
             logger.error(f"Error fetching act: {e}")

@@ -26,7 +26,7 @@ def get_db_connection():
     conn = None
     cursor = None
     try:
-        conn = pg8000.connect(connection_string)
+        conn = psycopg2.connect(connection_string)
         cursor = conn.cursor()
         yield conn, cursor
     except Exception as e:

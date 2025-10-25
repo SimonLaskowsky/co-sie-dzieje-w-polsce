@@ -1,5 +1,7 @@
 """Base repository with database connection management."""
 import os
+
+import psycopg2
 import pg8000
 from contextlib import contextmanager
 from typing import Tuple, Any
@@ -39,7 +41,7 @@ class BaseRepository:
         conn = None
         cursor = None
         try:
-            conn = pg8000.connect(self.connection_string)
+            conn = psycopg2.connect(self.connection_string)
             cursor = conn.cursor()
             yield conn, cursor
         except Exception as e:
