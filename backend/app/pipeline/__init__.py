@@ -3,9 +3,8 @@ from .orchestrator import PipelineOrchestrator, check_for_new_acts, check_old_el
 from .act_fetcher import ActFetcher
 
 __all__ = [
-    'PipelineOrchestrator',
-    'ActFetcher',
-    'check_for_new_acts',
-    'check_old_elis',
+    "PipelineOrchestrator",
+    "ActFetcher",
+    "check_for_new_acts",
+    "check_old_elis",
 ]
-

@@ -244,8 +244,12 @@ def create_new_category(category_name: str, keywords: List[str]) -> Optional[str
         logger.error(f"Error creating new category: {e}")
         return None
 
-def smart_find_category_by_keywords(keywords: List[str], title: str = "", content: str = "") -> Optional[str]:
+
+def smart_find_category_by_keywords(
+    keywords: List[str], title: str = "", content: str = ""
+) -> Optional[str]:
     from ..services.analyze_service import find_or_create_category_with_ai
+
     if not keywords:
         return None
 

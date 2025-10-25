@@ -124,7 +124,6 @@ def find_or_create_category_with_ai(
     act_title: str = "",
     act_content: str = "",
 ) -> Optional[str]:
-
     if not act_keywords or not all_categories:
         return None
 

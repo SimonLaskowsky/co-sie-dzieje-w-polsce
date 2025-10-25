@@ -6,12 +6,11 @@ logger = get_logger(__name__)
 
 if __name__ == "__main__":
     logger.info("Starting CO-SIE-DZIEJE-W-POLSCE backend pipeline")
-    
+
     # Check for new acts
     check_for_new_acts()
-    
+
     # Check old ELIs (acts waiting for voting data)
     check_old_elis()
-    
-    logger.info("Pipeline execution completed")
 
+    logger.info("Pipeline execution completed")

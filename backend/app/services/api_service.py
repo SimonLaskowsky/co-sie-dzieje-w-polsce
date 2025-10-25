@@ -4,6 +4,7 @@ import requests
 from typing import Optional, Any
 from ..core.config import BASIC_URL, API_URL, CURRENT_YEAR
 
+
 def fetch_json(url: str, error_prefix: str = "API") -> Optional[Any]:
     if not url:
         print(f"Error: URL is not set ({error_prefix})")

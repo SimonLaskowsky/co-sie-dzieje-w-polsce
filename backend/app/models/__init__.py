@@ -6,18 +6,17 @@ from .voting import (
     PartyVotes,
     VoteSummary,
     GovernmentVotes,
-    VotesSupportByGroup
+    VotesSupportByGroup,
 )
 
 __all__ = [
-    'Act',
-    'ActAnalysis',
-    'ActData',
-    'Category',
-    'VotingData',
-    'PartyVotes',
-    'VoteSummary',
-    'GovernmentVotes',
-    'VotesSupportByGroup',
+    "Act",
+    "ActAnalysis",
+    "ActData",
+    "Category",
+    "VotingData",
+    "PartyVotes",
+    "VoteSummary",
+    "GovernmentVotes",
+    "VotesSupportByGroup",
 ]
-

@@ -11,14 +11,14 @@ logger = get_logger(__name__)
 
 class ActRepository(BaseRepository):
     """Repository for acts data access."""
-    
+
     def save_act(self, act: Act) -> bool:
         """
         Save an act to the database.
-        
+
         Args:
             act: Act entity to save
-            
+
         Returns:
             True if successful, False otherwise
         """
@@ -29,13 +29,13 @@ class ActRepository(BaseRepository):
             keywords, file, votes, category, created_at, updated_at
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
         """
-        
+
         try:
             # Serialize JSON fields
             refs = json.dumps(act.refs) if act.refs is not None else None
             texts = json.dumps(act.texts) if act.texts is not None else None
             votes = json.dumps(act.votes) if act.votes is not None else None
-            
+
             data_tuple = (
                 act.title,
                 act.act_number,
@@ -52,37 +52,37 @@ class ActRepository(BaseRepository):
                 act.keywords,
                 act.file,
                 votes,
-                act.category
+                act.category,
             )
-            
+
             with self.get_connection() as (conn, cursor):
                 cursor.execute(insert_query, data_tuple)
                 conn.commit()
-            
+
             logger.info(f"Successfully saved act: {act.title}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error saving act to database: {e}")
             raise DatabaseError(f"Failed to save act: {e}")
-    
+
     def get_act_by_number(self, act_number: str) -> Optional[Act]:
         """
         Get an act by its number.
-        
+
         Args:
             act_number: Act number to search for
-            
+
         Returns:
             Act entity or None if not found
         """
         query = "SELECT * FROM acts WHERE act_number = %s LIMIT 1"
-        
+
         try:
             with self.get_connection() as (conn, cursor):
                 cursor.execute(query, (act_number,))
                 result = cursor.fetchone()
-                
+
                 if not result:
                     return None
 
@@ -107,10 +107,9 @@ class ActRepository(BaseRepository):
                     keywords=result[13] or [],
                     file=result[14],
                     votes=result[15],
-                    category=result[16]
+                    category=result[16],
                 )
-                
+
         except Exception as e:
             logger.error(f"Error fetching act: {e}")
             raise DatabaseError(f"Failed to fetch act: {e}")
-

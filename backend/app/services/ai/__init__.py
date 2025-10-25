@@ -3,7 +3,6 @@ from .text_analyzer import TextAnalyzer
 from .categorizer import Categorizer
 
 __all__ = [
-    'TextAnalyzer',
-    'Categorizer',
+    "TextAnalyzer",
+    "Categorizer",
 ]
-

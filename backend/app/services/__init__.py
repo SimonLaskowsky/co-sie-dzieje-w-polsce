@@ -3,7 +3,6 @@ from .act_processor import ActProcessor
 from .votes_calculator import VotesCalculator
 
 __all__ = [
-    'ActProcessor',
-    'VotesCalculator',
+    "ActProcessor",
+    "VotesCalculator",
 ]
-
