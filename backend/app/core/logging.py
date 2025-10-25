@@ -1,4 +1,5 @@
 """Centralized logging configuration for the backend application."""
+
 import logging
 import sys
 from pathlib import Path

@@ -1,4 +1,5 @@
 """AI-powered categorization service."""
+
 import json
 from typing import List, Optional
 from ..external.openai_client import OpenAIClient

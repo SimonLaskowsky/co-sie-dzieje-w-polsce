@@ -1,4 +1,5 @@
 """OpenAI API client for text analysis."""
+
 import os
 import json
 from typing import Union, Dict, Any

@@ -1,4 +1,5 @@
 """Unit tests for SejmAPIClient.fetch_acts_for_year()"""
+
 import json
 import pytest
 import requests
@@ -6,6 +7,7 @@ from unittest.mock import Mock, patch
 
 from app.services.external.sejm_api import SejmAPIClient
 from app.core.exceptions import ExternalAPIError
+
 
 class TestSejmAPIClientFetchActsForYear:
     """Unit tests for SejmAPIClient.fetch_acts_for_year()"""
@@ -15,7 +17,6 @@ class TestSejmAPIClientFetchActsForYear:
         """Create real SejmAPIClient (uses env variables)"""
         return SejmAPIClient()
 
-
     def test_fetch_acts_for_year_missing_env_variables_raises_exception(self):
         """Test initialization fails when env vars missing"""
         with patch("app.services.external.sejm_api.BASIC_URL", None):
@@ -23,14 +24,13 @@ class TestSejmAPIClientFetchActsForYear:
                 with pytest.raises(ExternalAPIError, match="is not set"):
                     SejmAPIClient()
 
-
     def test_fetch_acts_for_year_network_unavailable_raises_exception(
         self, sejm_client
     ):
         """Test network connection error handling"""
         with patch(
             "requests.get",
-            side_effect=requests.exceptions.ConnectionError("Network unavailable")
+            side_effect=requests.exceptions.ConnectionError("Network unavailable"),
         ):
             with pytest.raises(ExternalAPIError):
                 sejm_client.fetch_acts_for_year(2024)
@@ -38,8 +38,7 @@ class TestSejmAPIClientFetchActsForYear:
     def test_fetch_acts_for_year_timeout_raises_exception(self, sejm_client):
         """Test timeout handling"""
         with patch(
-            "requests.get",
-            side_effect=requests.exceptions.Timeout("Request timed out")
+            "requests.get", side_effect=requests.exceptions.Timeout("Request timed out")
         ):
             with pytest.raises(ExternalAPIError):
                 sejm_client.fetch_acts_for_year(2024)
@@ -69,4 +68,3 @@ class TestSejmAPIClientFetchActsForYear:
         with patch("requests.get", return_value=mock_response):
             with pytest.raises(ExternalAPIError, match="HTTP error: 500"):
                 sejm_client.fetch_acts_for_year(2024)
-

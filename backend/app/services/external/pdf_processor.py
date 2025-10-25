@@ -1,4 +1,5 @@
 """PDF processing service for downloading and extracting text."""
+
 import os
 import requests
 import fitz  # PyMuPDF

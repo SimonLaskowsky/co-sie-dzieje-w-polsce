@@ -1,4 +1,5 @@
 """Client for Sejm API interactions."""
+
 import requests
 from typing import Optional, Any, List, Dict
 from ...core.config import BASIC_URL, API_URL, CURRENT_YEAR

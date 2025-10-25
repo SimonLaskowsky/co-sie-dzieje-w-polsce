@@ -1,4 +1,5 @@
 """Repository for category table operations."""
+
 import json
 from typing import List, Optional
 from .base_repository import BaseRepository

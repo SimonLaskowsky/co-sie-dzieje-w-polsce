@@ -1,4 +1,5 @@
 """Services layer for business logic."""
+
 from .act_processor import ActProcessor
 from .votes_calculator import VotesCalculator
 

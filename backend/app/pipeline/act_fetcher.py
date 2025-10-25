@@ -1,4 +1,5 @@
 """Service for fetching and filtering acts."""
+
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from ..services.external.sejm_api import SejmAPIClient

@@ -1,4 +1,5 @@
 """Data models for legal acts."""
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional, List, Dict, Any

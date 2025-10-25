@@ -1,4 +1,5 @@
 """Global pytest configuration and fixtures."""
+
 import pytest
 from unittest.mock import patch
 
@@ -47,4 +48,3 @@ def sample_acts_list():
             "promulgation": "2024-01-10",
         },
     ]
-

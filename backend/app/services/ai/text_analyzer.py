@@ -1,4 +1,5 @@
 """Text analysis service using AI."""
+
 from typing import Dict, Any
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..external.openai_client import OpenAIClient

@@ -1,4 +1,5 @@
 """Data models for categories."""
+
 from dataclasses import dataclass, field
 from typing import List
 

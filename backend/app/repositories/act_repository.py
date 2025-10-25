@@ -1,4 +1,5 @@
 """Repository for acts table operations."""
+
 import json
 from typing import Optional
 from .base_repository import BaseRepository

@@ -1,4 +1,5 @@
 """Core modules for the application."""
+
 from .config import (
     BASIC_URL,
     API_URL,

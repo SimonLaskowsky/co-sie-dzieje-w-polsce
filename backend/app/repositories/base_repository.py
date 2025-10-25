@@ -1,4 +1,5 @@
 """Base repository with database connection management."""
+
 import os
 
 import psycopg2

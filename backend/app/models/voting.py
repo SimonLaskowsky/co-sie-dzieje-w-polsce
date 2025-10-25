@@ -1,4 +1,5 @@
 """Data models for voting information."""
+
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 

@@ -1,4 +1,5 @@
 """E2E test for Sejm API integration with database storage."""
+
 import pytest
 from app.services.external.sejm_api import SejmAPIClient
 from app.services.act_processor import ActProcessor

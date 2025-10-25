@@ -1,4 +1,5 @@
 """Validation utilities for data integrity."""
+
 import re
 from typing import Dict, Any
 from ..core.logging import get_logger
