@@ -30,7 +30,8 @@ class FileHandler:
                 return None
 
             with open(file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                return data if isinstance(data, dict) else None
         except (json.JSONDecodeError, IOError) as e:
             logger.error(f"Error reading JSON file {file_path}: {e}")
             raise FileOperationError(f"Failed to read JSON file: {e}")
