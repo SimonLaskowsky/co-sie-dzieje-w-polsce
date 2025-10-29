@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from typing import Any, Dict, Optional
 
 from ..core.config import LAST_KNOWN_FILE

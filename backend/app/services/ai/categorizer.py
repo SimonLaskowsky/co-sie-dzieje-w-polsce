@@ -3,7 +3,6 @@
 import json
 from typing import List, Optional
 
-from ...core.exceptions import AIServiceError
 from ...core.logging import get_logger
 from ...models.category import Category
 from ...repositories.category_repository import CategoryRepository

@@ -4,7 +4,6 @@ import os
 from contextlib import contextmanager
 from typing import Any, Tuple
 
-import pg8000
 import psycopg2
 from dotenv import load_dotenv
 

@@ -1,7 +1,6 @@
 """PDF processing service for downloading and extracting text."""
 
 import os
-from pathlib import Path
 from typing import Optional
 
 import fitz  # PyMuPDF

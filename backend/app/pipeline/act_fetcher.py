@@ -1,7 +1,7 @@
 """Service for fetching and filtering acts."""
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from ..core.config import ELI_FOR_LATER, LAST_KNOWN_FILE
 from ..core.logging import get_logger

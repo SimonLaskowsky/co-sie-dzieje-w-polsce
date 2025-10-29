@@ -1,11 +1,9 @@
 """Act processing orchestrator service."""
 
-import json
 from datetime import datetime
 from typing import Any, Dict, Optional, Tuple
 
-from ..core.config import BASIC_URL
-from ..core.exceptions import AIServiceError, ExternalAPIError, PDFProcessingError
+from ..core.exceptions import AIServiceError, PDFProcessingError
 from ..core.logging import get_logger
 from ..models.act import Act
 from ..repositories.act_repository import ActRepository

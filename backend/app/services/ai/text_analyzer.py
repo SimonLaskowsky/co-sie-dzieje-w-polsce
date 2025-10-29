@@ -1,7 +1,5 @@
 """Text analysis service using AI."""
 
-from typing import Any, Dict
-
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from ...core.exceptions import AIServiceError

@@ -1,6 +1,9 @@
 import os
 from typing import Optional
 
+import fitz
+import requests
+
 from ..core.config import PDF_DOWNLOAD_TIMEOUT
 
 
