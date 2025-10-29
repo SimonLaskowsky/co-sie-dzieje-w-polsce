@@ -3,7 +3,7 @@ import logging
 import os
 import time
 from contextlib import contextmanager
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import Any, Dict, Generator, List, Optional
 
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -48,7 +48,7 @@ def get_openai_client() -> Generator[OpenAI, None, None]:
 )
 def analyze_text_with_openai(
     text: str, prompt: str, max_tokens: int = 1000
-) -> Union[Dict[str, Any], str]:
+) -> Dict[str, Any]:
     logger.info(f"Processing text, length: {len(text)} characters")
 
     try:
@@ -69,7 +69,7 @@ def analyze_text_with_openai(
                 except json.JSONDecodeError:
                     logger.error(f"Invalid JSON format: {content}")
                     return {"error": "Invalid response format", "raw_content": content}
-            return content
+            return {"content": content}
     except APIError as e:
         logger.error(f"API error: {e}")
         raise
@@ -113,7 +113,7 @@ def split_and_analyze_text(
     return analyze_text_with_openai(combined_summary, analysis_prompt, max_tokens=1000)
 
 
-def save_analysis_to_file(analysis: Union[Dict[str, Any], str], filename: str) -> None:
+def save_analysis_to_file(analysis: Dict[str, Any], filename: str) -> None:
     try:
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(analysis, f, ensure_ascii=False, indent=2)

@@ -1,6 +1,6 @@
 """Client for Sejm API interactions."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 
@@ -27,7 +27,7 @@ class SejmAPIClient:
             raise ExternalAPIError("API_URL is not set in environment")
 
     @retry_external_api
-    def _fetch_json(self, url: str) -> Optional[Any]:
+    def _fetch_json(self, url: str) -> Optional[Union[Dict[str, Any], List[Any]]]:
         """
         Fetch JSON data from URL.
 
@@ -52,7 +52,9 @@ class SejmAPIClient:
             logger.error(f"Request error: {e}")
             raise ExternalAPIError(f"Request failed: {e}")
 
-    def fetch_acts_for_year(self, year: int = None) -> Optional[List[Dict[str, Any]]]:
+    def fetch_acts_for_year(
+        self, year: Optional[int] = None
+    ) -> Optional[List[Dict[str, Any]]]:
         """
         Fetch all acts for a given year.
 
