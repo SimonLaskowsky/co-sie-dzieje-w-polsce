@@ -1,5 +1,7 @@
 """Text analysis service using AI."""
 
+from typing import Optional
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from ...core.exceptions import AIServiceError
@@ -13,7 +15,7 @@ logger = get_logger(__name__)
 class TextAnalyzer:
     """Service for analyzing legal text using AI."""
 
-    def __init__(self, openai_client: OpenAIClient = None):
+    def __init__(self, openai_client: Optional[OpenAIClient] = None):
         """
         Initialize text analyzer.
 

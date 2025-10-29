@@ -2,7 +2,7 @@
 
 import json
 import os
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -18,7 +18,7 @@ load_dotenv()
 class OpenAIClient:
     """Client for OpenAI API interactions."""
 
-    def __init__(self, api_key: str = None, model: str = "gpt-3.5-turbo"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-3.5-turbo"):
         """
         Initialize OpenAI client.
 
@@ -76,7 +76,7 @@ class OpenAIClient:
             logger.error(f"OpenAI API error: {e}")
             raise AIServiceError(f"OpenAI analysis failed: {e}")
 
-    def close(self):
+    def close(self) -> None:
         """Close the OpenAI client."""
         if self.client:
             self.client.close()

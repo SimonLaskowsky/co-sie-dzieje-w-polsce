@@ -16,8 +16,8 @@ class Categorizer:
 
     def __init__(
         self,
-        openai_client: OpenAIClient = None,
-        category_repo: CategoryRepository = None,
+        openai_client: Optional[OpenAIClient] = None,
+        category_repo: Optional[CategoryRepository] = None,
     ):
         """
         Initialize categorizer.

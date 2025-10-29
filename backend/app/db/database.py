@@ -36,7 +36,7 @@ def get_db_connection():
             conn.close()
 
 
-def find_category_by_keywords(keywords):
+def find_category_by_keywords(keywords: List[str]) -> Optional[str]:
     if not keywords:
         return None
 
@@ -93,7 +93,7 @@ def find_category_by_keywords(keywords):
         return None
 
 
-def get_all_categories_with_keywords():
+def get_all_categories_with_keywords() -> Optional[List[Dict[str, Any]]]:
     try:
         with get_db_connection() as (conn, cursor):
             cursor.execute("SELECT category, keywords FROM category ORDER BY category")

@@ -21,12 +21,12 @@ class ActProcessor:
 
     def __init__(
         self,
-        sejm_api: SejmAPIClient = None,
-        pdf_processor: PDFProcessor = None,
-        text_analyzer: TextAnalyzer = None,
-        categorizer: Categorizer = None,
-        votes_calculator: VotesCalculator = None,
-        act_repo: ActRepository = None,
+        sejm_api: Optional[SejmAPIClient] = None,
+        pdf_processor: Optional[PDFProcessor] = None,
+        text_analyzer: Optional[TextAnalyzer] = None,
+        categorizer: Optional[Categorizer] = None,
+        votes_calculator: Optional[VotesCalculator] = None,
+        act_repo: Optional[ActRepository] = None,
     ):
         """
         Initialize act processor.

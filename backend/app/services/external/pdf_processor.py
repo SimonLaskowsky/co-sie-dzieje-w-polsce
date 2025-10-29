@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 class PDFProcessor:
     """Service for processing PDF files."""
 
-    def __init__(self, download_timeout: int = None):
+    def __init__(self, download_timeout: Optional[int] = None):
         """
         Initialize PDF processor.
 

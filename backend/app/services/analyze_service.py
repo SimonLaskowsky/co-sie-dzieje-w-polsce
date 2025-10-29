@@ -3,7 +3,7 @@ import logging
 import os
 import time
 from contextlib import contextmanager
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Generator, List, Optional, Union
 
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -29,7 +29,7 @@ load_dotenv()
 
 
 @contextmanager
-def get_openai_client():
+def get_openai_client() -> Generator[OpenAI, None, None]:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise ValueError("OpenAI API key missing.")

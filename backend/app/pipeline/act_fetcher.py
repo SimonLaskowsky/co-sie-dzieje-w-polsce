@@ -1,7 +1,7 @@
 """Service for fetching and filtering acts."""
 
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from ..core.config import ELI_FOR_LATER, LAST_KNOWN_FILE
 from ..core.logging import get_logger
@@ -16,7 +16,9 @@ class ActFetcher:
     """Service for fetching acts from API."""
 
     def __init__(
-        self, sejm_api: SejmAPIClient = None, file_handler: FileHandler = None
+        self,
+        sejm_api: Optional[SejmAPIClient] = None,
+        file_handler: Optional[FileHandler] = None,
     ):
         """
         Initialize act fetcher.
@@ -36,7 +38,7 @@ class ActFetcher:
             List of filtered acts sorted by promulgation date
         """
         logger.info("Fetching acts from API...")
-        items = self.sejm_api.fetch_acts_for_year()
+        items: List[Dict[str, Any]] = self.sejm_api.fetch_acts_for_year()
 
         if not items:
             logger.error("Failed to fetch data from API")

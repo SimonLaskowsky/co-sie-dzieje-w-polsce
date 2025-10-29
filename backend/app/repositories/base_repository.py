@@ -2,7 +2,7 @@
 
 import os
 from contextlib import contextmanager
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 
 import psycopg2
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ load_dotenv()
 class BaseRepository:
     """Base repository class for database operations."""
 
-    def __init__(self, connection_string: str = None):
+    def __init__(self, connection_string: Optional[str] = None):
         """
         Initialize repository.
 
