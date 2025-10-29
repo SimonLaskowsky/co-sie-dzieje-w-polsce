@@ -7,6 +7,7 @@ import requests
 from ...core.config import API_URL, BASIC_URL, CURRENT_YEAR
 from ...core.exceptions import ExternalAPIError
 from ...core.logging import get_logger
+from ...models.act import ActData
 from ...utils.retry_handler import retry_external_api
 
 logger = get_logger(__name__)
@@ -75,7 +76,7 @@ class SejmAPIClient:
 
         return None
 
-    def fetch_act_details(self, eli: str) -> Optional[Dict[str, Any]]:
+    def fetch_act_details(self, eli: str) -> Optional[ActData]:
         """
         Fetch detailed information about a specific act.
 
@@ -87,7 +88,27 @@ class SejmAPIClient:
         """
         url = f"{self.basic_url}//{eli}"
         logger.info(f"Fetching act details for ELI: {eli}")
-        return self._fetch_json(url)
+        data = self._fetch_json(url)
+        if isinstance(data, dict):
+            try:
+                return ActData(
+                    eli=eli,
+                    title=data.get("title", ""),
+                    type=data.get("type", ""),
+                    promulgation=data.get("promulgation", ""),
+                    announcement_date=data.get("announcementDate"),
+                    change_date=data.get("changeDate"),
+                    status=data.get("status"),
+                    comments=data.get("comments"),
+                    keywords=data.get("keywords", []),
+                    references=data.get("references"),
+                    texts=data.get("texts"),
+                    prints=data.get("prints", []),
+                )
+            except Exception as e:
+                logger.error(f"Failed to parse act data: {e}")
+                return None
+        return None
 
     def fetch_voting_process(self, process_url: str) -> Optional[Dict[str, Any]]:
         """

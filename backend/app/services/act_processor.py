@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from ..core.exceptions import AIServiceError, PDFProcessingError
 from ..core.logging import get_logger
-from ..models.act import Act
+from ..models.act import Act, ActData
 from ..repositories.act_repository import ActRepository
 from .ai.categorizer import Categorizer
 from .ai.text_analyzer import TextAnalyzer
@@ -93,7 +93,7 @@ class ActProcessor:
 
             # Step 4: Categorize act
             logger.info("Categorizing act...")
-            keywords = act_details.get("keywords", [])
+            keywords = act_details.keywords
             category = None
 
             if keywords:
@@ -133,9 +133,7 @@ class ActProcessor:
             logger.error(f"Unexpected error processing {title}: {e}")
             return False
 
-    def _get_voting_details(
-        self, act_details: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+    def _get_voting_details(self, act_details: ActData) -> Optional[Dict[str, Any]]:
         """
         Extract and fetch voting details from act details.
 
@@ -145,7 +143,7 @@ class ActProcessor:
         Returns:
             Voting data or None
         """
-        prints = act_details.get("prints", [])
+        prints = act_details.prints
 
         if not prints or not isinstance(prints, list):
             return None
@@ -205,7 +203,7 @@ class ActProcessor:
 
     def _build_act_entity(
         self,
-        act_details: Dict[str, Any],
+        act_details: ActData,
         analysis: Any,
         voting_details: Optional[Dict[str, Any]],
         category: Optional[str],
@@ -224,28 +222,27 @@ class ActProcessor:
         Returns:
             Act entity
         """
-        eli = act_details.get("ELI", "")
-        act_number = eli.split("/")[-1] if eli else None
+        act_number = act_details.eli.split("/")[-1] if act_details.eli else None
 
         # Parse dates
-        announcement_date = self._parse_date(act_details.get("announcementDate"))
-        change_date = self._parse_date(act_details.get("changeDate"))
-        promulgation = self._parse_date(act_details.get("promulgation"))
+        announcement_date = self._parse_date(act_details.announcement_date)
+        change_date = self._parse_date(act_details.change_date)
+        promulgation = self._parse_date(act_details.promulgation)
 
         return Act(
-            title=act_details.get("title"),
+            title=act_details.title,
             act_number=act_number,
             simple_title=analysis.title,
             content=analysis.content_html,
-            refs=act_details.get("references"),
-            texts=act_details.get("texts"),
-            item_type=act_details.get("type"),
+            refs=act_details.references,
+            texts=act_details.texts,
+            item_type=act_details.type,
             announcement_date=announcement_date,
             change_date=change_date,
             promulgation=promulgation,
-            item_status=act_details.get("status"),
-            comments=act_details.get("comments"),
-            keywords=act_details.get("keywords", []),
+            item_status=act_details.status,
+            comments=act_details.comments,
+            keywords=act_details.keywords,
             file=pdf_url,
             votes=voting_details,
             category=category,

@@ -16,6 +16,7 @@ from tenacity import (
 )
 
 from ..db.database import create_new_category, extend_category_keywords
+from ..models.act import CategoryData
 
 logging.basicConfig(
     filename="app.log",
@@ -124,7 +125,7 @@ def save_analysis_to_file(analysis: Dict[str, Any], filename: str) -> None:
 
 def find_or_create_category_with_ai(
     act_keywords: List[str],
-    all_categories: List[Dict[str, Any]],
+    all_categories: List[CategoryData],
     act_title: str = "",
     act_content: str = "",
 ) -> Optional[str]:
@@ -133,20 +134,10 @@ def find_or_create_category_with_ai(
 
     categories_info = []
     for category_data in all_categories:
-        category_name = category_data.get("category")
-        category_keywords = category_data.get("keywords", [])
-
-        if isinstance(category_keywords, str):
-            try:
-                keywords_list = json.loads(category_keywords)
-            except json.JSONDecodeError:
-                keywords_list = [category_keywords]
-        elif isinstance(category_keywords, list):
-            keywords_list = category_keywords
-        else:
-            keywords_list = []
-
-        categories_info.append({"category": category_name, "keywords": keywords_list})
+        # CategoryData już ma prawidłowy format - keywords są listą stringów
+        categories_info.append(
+            {"category": category_data.category, "keywords": category_data.keywords}
+        )
 
     act_info = {
         "keywords": act_keywords,
@@ -196,7 +187,7 @@ def find_or_create_category_with_ai(
             )
 
             if action == "match":
-                if any(cat.get("category") == category_name for cat in all_categories):
+                if any(cat.category == category_name for cat in all_categories):
                     return category_name
                 else:
                     logger.warning(

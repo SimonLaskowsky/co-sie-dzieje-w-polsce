@@ -117,10 +117,10 @@ class PipelineOrchestrator:
                 if act_details:
                     # Convert to format expected by processor
                     act_data = {
-                        "ELI": eli,
-                        "title": act_details.get("title"),
-                        "type": act_details.get("type"),
-                        "promulgation": act_details.get("promulgation"),
+                        "ELI": act_details.eli,
+                        "title": act_details.title,
+                        "type": act_details.type,
+                        "promulgation": act_details.promulgation,
                     }
 
                     if self.processor.process_and_save(act_data):

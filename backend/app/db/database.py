@@ -2,10 +2,12 @@ import json
 import logging
 import os
 from contextlib import contextmanager
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generator, List, Optional, Tuple
 
 import psycopg2
 from dotenv import load_dotenv
+
+from ..models.act import CategoryData
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -14,7 +16,7 @@ load_dotenv()
 
 
 @contextmanager
-def get_db_connection():
+def get_db_connection() -> Generator[Tuple[Any, Any], None, None]:
     connection_string = os.getenv("DATABASE_URL")
     if not connection_string:
         raise ValueError("DATABASE_URL is not set in environment variables")
@@ -93,7 +95,7 @@ def find_category_by_keywords(keywords: List[str]) -> Optional[str]:
         return None
 
 
-def get_all_categories_with_keywords() -> Optional[List[Dict[str, Any]]]:
+def get_all_categories_with_keywords() -> Optional[List[CategoryData]]:
     try:
         with get_db_connection() as (conn, cursor):
             cursor.execute("SELECT category, keywords FROM category ORDER BY category")
@@ -101,9 +103,21 @@ def get_all_categories_with_keywords() -> Optional[List[Dict[str, Any]]]:
 
             categories_data = []
             for row in results:
-                category_name, keywords = row
+                category_name, keywords_raw = row
+
+                # Parse keywords from JSON string to list
+                if isinstance(keywords_raw, str):
+                    try:
+                        keywords = json.loads(keywords_raw)
+                    except json.JSONDecodeError:
+                        keywords = [keywords_raw]
+                elif isinstance(keywords_raw, list):
+                    keywords = keywords_raw
+                else:
+                    keywords = []
+
                 categories_data.append(
-                    {"category": category_name, "keywords": keywords}
+                    CategoryData(category=category_name, keywords=keywords)
                 )
 
             return categories_data
@@ -185,20 +199,14 @@ def save_to_database(filtered_item: Dict[str, Any]) -> bool:
 
 
 def extend_category_keywords(
-    category_name: str, new_keywords: List[str], all_categories: List[Dict[str, Any]]
+    category_name: str, new_keywords: List[str], all_categories: List[CategoryData]
 ) -> Optional[str]:
     try:
         current_keywords = []
         for category_data in all_categories:
-            if category_data.get("category") == category_name:
-                cat_keywords = category_data.get("keywords", [])
-                if isinstance(cat_keywords, str):
-                    try:
-                        current_keywords = json.loads(cat_keywords)
-                    except json.JSONDecodeError:
-                        current_keywords = [cat_keywords]
-                elif isinstance(cat_keywords, list):
-                    current_keywords = cat_keywords
+            if category_data.category == category_name:
+                # CategoryData.keywords jest już listą stringów
+                current_keywords = category_data.keywords
                 break
 
         all_keywords = list(set(current_keywords + new_keywords))

@@ -1,7 +1,7 @@
 """Validation utilities for data integrity."""
 
 import re
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 from ..core.logging import get_logger
 
@@ -62,7 +62,7 @@ def validate_act_data(data: Dict[str, Any]) -> bool:
     return True
 
 
-def validate_keywords(keywords: Any) -> bool:
+def validate_keywords(keywords: Optional[Union[List[str], List[Any]]]) -> bool:
     """
     Validate keywords format.
 

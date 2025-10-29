@@ -32,6 +32,14 @@ class ActData:
 
 
 @dataclass
+class CategoryData:
+    """Category data with keywords."""
+
+    category: str
+    keywords: List[str]
+
+
+@dataclass
 class Act:
     """Complete act entity ready for database storage."""
 

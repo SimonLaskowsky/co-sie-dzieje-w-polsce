@@ -120,7 +120,7 @@ class ActFetcher:
                 logger.warning(f"Could not fetch details for {eli}")
                 return False
 
-            prints = act_details.get("prints", [])
+            prints = act_details.prints
             if not prints or not isinstance(prints, list):
                 return False
 
