@@ -35,7 +35,7 @@ def retry_external_api(func):
             )
         ),
         before_sleep=lambda retry_state: logger.warning(
-            f"Retrying {func.__name__} after error: {retry_state.outcome.exception()}"
+            f"Retrying {func.__name__} after error: {retry_state.outcome.exception() if retry_state.outcome else 'Unknown error'}"
         ),
     )
     def wrapper(*args, **kwargs):
@@ -57,7 +57,7 @@ def retry_ai_service(func):
         wait=wait_exponential(multiplier=1, min=4, max=60),
         retry=retry_if_exception_type(APIError),
         before_sleep=lambda retry_state: logger.warning(
-            f"Retrying {func.__name__} after AI error: {retry_state.outcome.exception()}"
+            f"Retrying {func.__name__} after AI error: {retry_state.outcome.exception() if retry_state.outcome else 'Unknown error'}"
         ),
     )
     def wrapper(*args, **kwargs):
