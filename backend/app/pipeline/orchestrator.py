@@ -159,13 +159,13 @@ class PipelineOrchestrator:
             logger.error(f"Error saving last known act: {e}")
 
 
-def check_for_new_acts():
+def check_for_new_acts() -> None:
     """Public entry point for checking new acts."""
     orchestrator = PipelineOrchestrator()
     orchestrator.check_for_new_acts()
 
 
-def check_old_elis():
+def check_old_elis() -> None:
     """Public entry point for checking old ELIs."""
     orchestrator = PipelineOrchestrator()
     orchestrator.check_old_elis()

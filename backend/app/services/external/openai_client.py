@@ -2,7 +2,7 @@
 
 import json
 import os
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -36,7 +36,7 @@ class OpenAIClient:
     @retry_ai_service
     def analyze_with_prompt(
         self, text: str, prompt: str, max_tokens: int = 1000, expect_json: bool = False
-    ) -> Union[Dict[str, Any], str]:
+    ) -> Dict[str, Any]:
         """
         Analyze text with OpenAI using a custom prompt.
 
@@ -47,7 +47,7 @@ class OpenAIClient:
             expect_json: Whether to expect JSON response
 
         Returns:
-            Analysis result (dict if JSON, str otherwise)
+            Analysis result as dictionary (parsed JSON or {"content": text})
         """
         logger.info(f"Analyzing text, length: {len(text)} characters")
 
@@ -70,7 +70,7 @@ class OpenAIClient:
                     logger.error(f"Invalid JSON format: {content}")
                     return {"error": "Invalid response format", "raw_content": content}
 
-            return content
+            return {"content": content}
 
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
