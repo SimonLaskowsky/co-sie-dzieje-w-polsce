@@ -3,7 +3,7 @@ import logging
 import os
 import time
 from contextlib import contextmanager
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, List, Optional, cast
 
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -66,7 +66,7 @@ def analyze_text_with_openai(
 
             if "json" in prompt.lower():
                 try:
-                    return json.loads(content or "{}")
+                    return cast(Dict[str, Any], json.loads(content or "{}"))
                 except json.JSONDecodeError:
                     logger.error(f"Invalid JSON format: {content}")
                     return {"error": "Invalid response format", "raw_content": content}
@@ -82,7 +82,8 @@ def summarize_fragment(text: str) -> str:
     prompt = "Podsumuj ten fragment dokumentu prawnego w języku polskim w 2-3 zwięzłych zdaniach, wychwytując kluczowe zmiany lub przepisy. Skup się na istocie, unikając zbędnych szczegółów."
     result = analyze_text_with_openai(text, prompt, max_tokens=200)
     if isinstance(result, dict):
-        return result.get("content", "")
+        content = result.get("content", "")
+        return str(content) if content else ""
     return str(result)
 
 

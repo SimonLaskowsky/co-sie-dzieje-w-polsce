@@ -39,9 +39,12 @@ class TextAnalyzer:
             "wychwytując kluczowe zmiany lub przepisy. Skup się na istocie, unikając zbędnych szczegółów."
         )
 
-        return self.openai_client.analyze_with_prompt(
+        result = self.openai_client.analyze_with_prompt(
             text=text, prompt=prompt, max_tokens=200, expect_json=False
         )
+        if isinstance(result, dict):
+            return str(result.get("content", ""))
+        return str(result)
 
     def analyze_full_text(
         self, text: str, chunk_size: int = 3000, chunk_overlap: int = 200
